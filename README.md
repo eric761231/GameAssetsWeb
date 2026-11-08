@@ -19,6 +19,12 @@
 
 `img/` 約 113MB，是建置產物，不進 git（見 `.gitignore`）；新 clone 下來要先跑一次建置。
 
+## Netlify 部署
+
+以專案根目錄作為發布目錄；根目錄的 `_redirects` 會將 `/` 重新導向至 `/icon-compare/`。若在 Netlify 設定了其他發布目錄，必須確保該目錄同時包含 `_redirects` 與 `icon-compare/`。
+
+Git 部署不包含被忽略的 `icon-compare/img/`，因此網頁可以載入，但圖片會回傳 404。建置圖片需要本機遊戲資源及 GameLauncher，Netlify 無法僅從此倉庫重建；如需在線上顯示圖片，須另外提供可公開發布的圖片來源及部署方式。
+
 ## 目錄
 
 ```
