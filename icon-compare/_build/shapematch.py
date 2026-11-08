@@ -13,12 +13,13 @@
     python icon-compare/_build/shapematch.py --export-status-map <xml>  讀現有 shape-data.js，輸出狀態圖示例外表
                                                                       （GameLauncher EditXml/RStatusIconMap.xml，規則見 export_status_map 上方註解）
 
-需要 Python 3 + Pillow + numpy（pip install pillow numpy）。只讀 img/381、img/r 與 data.js，不改它們、不複製圖。
+需要 Python 3 + Pillow + numpy（pip install pillow numpy）。只讀 img/ 與 data.js，不改它們、不複製圖。
 
 輸入：
 - data.js（build.py 產生）：取各分類（items／skills／status）381 側與 R 側用到的圖號與名稱。
-- 381 候選池：img/381/<數字>.png（只收純數字檔名；<數字>c.png 等其他檔不收）。
-- R 候選池：img/r/<數字>.png（排除 <數字>_d.png 灰圖、Thumbs.db、list 等非建置產生的檔）。
+- 381 候選池：img/{items,skills,status}/381-<數字>.png（只收此前綴＋純數字）。
+- R 候選池：img/{items,skills,status}/R-<數字>.png（排除 R-<數字>_d.png 灰圖與非 png）。
+- 退路：新資料夾沒有該圖時讀舊路徑 img/381/<數字>.png、img/r/<數字>.png（純數字檔名）。
 
 演算法（以形狀為主，顏色只佔 10%）：
 1. 取前景強度圖 ink（0～1）：
@@ -57,7 +58,11 @@ SCORE_SAME = 70   # ≥ 這個分數視為「應是同一張圖」；第一名 <
 TIE = 2.0         # 同圖號分數與第一名差距在這以內算並列第一（R 常把同一個圖案存成多個圖號、只差顏色或細節）
 TOPK = 3
 
-# 驗證組（2026-11-06 肉眼比對 img/381 與 img/r 的對照圖）：
+IMG_CATS = ('items', 'skills', 'status')
+SIDE_PREFIX = {'381': '381-', 'r': 'R-'}
+SIDE_OLD_DIR = {'381': '381', 'r': 'r'}
+
+# 驗證組（2026-11-06 肉眼比對 381 與 R 的對照圖）：
 # VALID_SAME：狀態圖同圖號、新舊版同一個圖案（加速 5397、勇水 5395、緩速 480、六芒星 5399 …）→ 決定 SCORE_SAME。
 VALID_SAME = [
     (5397, 5397), (5395, 5395), (480, 480), (485, 485), (783, 783), (482, 482), (483, 483),
@@ -119,13 +124,39 @@ def category_icons(data, cats):
     return a, b
 
 
-def pool(folder, exclude_suffix=True):
-    out = []
-    for f in os.listdir(folder):
-        m = re.fullmatch(r'(\d+)\.png', f)
-        if m:
-            out.append(int(m.group(1)))
-    return sorted(out)
+def icon_path(img_root, side, n, cats=None):
+    """回傳 side（'381' 或 'r'）圖號 n 的 PNG 路徑；新路徑優先，舊 img/381、img/r 當退路。沒有則 None。"""
+    prefix = SIDE_PREFIX[side]
+    order = cats if cats else IMG_CATS
+    for cat in order:
+        p = os.path.join(img_root, cat, '%s%d.png' % (prefix, n))
+        if os.path.isfile(p):
+            return p
+    old = os.path.join(img_root, SIDE_OLD_DIR[side], '%d.png' % n)
+    if os.path.isfile(old):
+        return old
+    return None
+
+
+def pool(img_root, side):
+    """掃新資料夾 381-N.png／R-N.png，並併入舊資料夾純數字檔名（新資料夾尚無該圖時當退路）。"""
+    found = set()
+    pat = re.compile('^' + re.escape(SIDE_PREFIX[side]) + r'(\d+)\.png$')
+    for cat in IMG_CATS:
+        folder = os.path.join(img_root, cat)
+        if not os.path.isdir(folder):
+            continue
+        for f in os.listdir(folder):
+            m = pat.fullmatch(f)
+            if m:
+                found.add(int(m.group(1)))
+    old_dir = os.path.join(img_root, SIDE_OLD_DIR[side])
+    if os.path.isdir(old_dir):
+        for f in os.listdir(old_dir):
+            m = re.fullmatch(r'(\d+)\.png', f)
+            if m:
+                found.add(int(m.group(1)))
+    return sorted(found)
 
 
 # ---------- 特徵 ----------
@@ -289,14 +320,17 @@ def features(path):
     }
 
 
-def feature_matrix(folder, ids, label):
+def feature_matrix(img_root, side, ids, label):
     import numpy as np
     keys = ('mask', 'dil', 'edge', 'hash', 'color')
     rows = {k: [] for k in keys}
     ok = []
     t0 = time.time()
     for i, n in enumerate(ids):
-        f = features(os.path.join(folder, '%d.png' % n))
+        path = icon_path(img_root, side, n)
+        if not path:
+            continue
+        f = features(path)
         if f is None:
             continue
         ok.append(n)
@@ -413,8 +447,8 @@ def check(out_path, img):
             refs = [(mine, row['n'])] + [(other, c[0]) for c in row['top']]
             for side, n in refs:
                 total += 1
-                if not os.path.exists(os.path.join(img, side, '%d.png' % n)):
-                    miss.append('%s/%d.png' % (side, n))
+                if not icon_path(img, side, n):
+                    miss.append('%s%d.png' % (SIDE_PREFIX[side], n))
     print('shape-data.js 引用圖 %d 次，缺 %d 個' % (total, len(miss)))
     for m in sorted(set(miss))[:50]:
         print('  缺', m)
@@ -430,13 +464,15 @@ def check(out_path, img):
 # - 待確認（寫成 XML 註解，不生效）：第一名 ≥ SCORE_SAME 但未達自動改號；同圖號分數在 FALLBACK_BELOW～SCORE_SAME 之間。
 MAP_MIN = 85.0
 FALLBACK_BELOW = 50.0
-# 同號分數 < FALLBACK_BELOW 但 2026-11-06 肉眼比對 img/381 與 img/r 是同一個圖案（381 圖小、細節在 32×32 被併掉或發光底不同）：
+# 同號分數 < FALLBACK_BELOW 但 2026-11-06 肉眼比對 381 與 R 是同一個圖案（381 圖小、細節在 32×32 被併掉或發光底不同）：
 # 不自動退回，改列待確認（建議維持畫 R 同號）。751 漩渦、824 圓環、852 散點、1116 眼睛波紋、1557 爪形火焰、3734 紋章。
 STATUS_SAME_BY_EYE = {751, 824, 852, 1116, 1557, 3734}
 
 
 def _file_md5(path):
     import hashlib
+    if not path:
+        return None
     try:
         with open(path, 'rb') as fp:
             return hashlib.md5(fp.read()).hexdigest()
@@ -444,12 +480,13 @@ def _file_md5(path):
         return None
 
 
-def classify_status_rows(rows, r_status, img_r):
+def classify_status_rows(rows, r_status, img_root):
     """回傳 (maps, fallbacks, pend_maps, pend_fallbacks)，每項是 dict（n、r、score、same、second、secondScore）。"""
     maps = []
     fallbacks = []
     pend_maps = []
     pend_fallbacks = []
+    r_cats = ('status', 'items', 'skills')
     for row in rows:
         if 'status' not in row['c']:
             continue
@@ -457,10 +494,10 @@ def classify_status_rows(rows, r_status, img_r):
         same = row['same']
         top = row['top']
         first_n, first_s = top[0][0], top[0][1]
-        first_md5 = _file_md5(os.path.join(img_r, '%d.png' % first_n))
+        first_md5 = _file_md5(icon_path(img_root, 'r', first_n, r_cats) or '')
         second_n, second_s = None, 0.0
         for c in top[1:]:
-            if first_md5 is not None and _file_md5(os.path.join(img_r, '%d.png' % c[0])) == first_md5:
+            if first_md5 is not None and _file_md5(icon_path(img_root, 'r', c[0], r_cats) or '') == first_md5:
                 continue
             second_n, second_s = c[0], c[1]
             break
@@ -487,7 +524,7 @@ def export_status_map(shape_path, data_path, img, out_path):
     t = open(shape_path, encoding='utf-8').read()
     d = json.loads(t[t.index('{'):t.rindex('}') + 1])
     _, r_status = category_icons(load_data_js(data_path), ['status'])
-    maps, fallbacks, pend_maps, pend_fallbacks = classify_status_rows(d.get('f', []), r_status, os.path.join(img, 'r'))
+    maps, fallbacks, pend_maps, pend_fallbacks = classify_status_rows(d.get('f', []), r_status, img)
 
     def fmt(v):
         return 'none' if v is None else '%.1f' % v
@@ -548,8 +585,7 @@ def query(args):
     meta381, metaR = category_icons(data, ['status', 'items', 'skills'])
     pools = {}
     for side in sorted({q[0] for q in qs} | {('r' if q[0] == '381' else '381') for q in qs}):
-        folder = os.path.join(args.img, side)
-        ids, mats = feature_matrix(folder, pool(folder), side)
+        ids, mats = feature_matrix(args.img, side, pool(args.img, side), side)
         pools[side] = (ids, mats, {n: i for i, n in enumerate(ids)})
     rows = []
     for side, n in qs:
@@ -584,7 +620,7 @@ def query(args):
 
         def paste(side, n, x, y, text):
             try:
-                im = Image.open(os.path.join(args.img, side, '%d.png' % n)).convert('RGBA')
+                im = Image.open(icon_path(args.img, side, n)).convert('RGBA')
                 im = im.resize((im.width * 2, im.height * 2), Image.NEAREST)
                 im.thumbnail((cell, cell), Image.NEAREST)
                 bg = Image.new('RGBA', im.size, (0, 0, 0, 255))
@@ -632,12 +668,12 @@ def main():
     data = load_data_js(args.data)
     cat_a, cat_b = category_icons(data, cats)
     _, cat_b_all = category_icons(data, ['status', 'items', 'skills'])
-    ids381 = pool(os.path.join(args.img, '381'))
-    idsR = pool(os.path.join(args.img, 'r'))
-    print('候選池：381 %d 張、R %d 張（已排除 _d 灰圖與非 png）' % (len(ids381), len(idsR)))
+    ids381 = pool(args.img, '381')
+    idsR = pool(args.img, 'r')
+    print('候選池：381 %d 張、R %d 張（381-N.png／R-N.png；舊 img/381、img/r 純數字檔當退路）' % (len(ids381), len(idsR)))
     t0 = time.time()
-    ids381, A = feature_matrix(os.path.join(args.img, '381'), ids381, '381')
-    idsR, B = feature_matrix(os.path.join(args.img, 'r'), idsR, 'R')
+    ids381, A = feature_matrix(args.img, '381', ids381, '381')
+    idsR, B = feature_matrix(args.img, 'r', idsR, 'R')
     t_feat = time.time() - t0
     print('特徵：381 %d、R %d（%.1fs）' % (len(ids381), len(idsR), t_feat))
     v = validation(A, ids381, B, idsR)

@@ -9,6 +9,7 @@
 - 381 技能圖：client/spellicon.idx 只有 220 筆，6000 以上一律沒有。
 - R 技能圖候選：SpellList-c.xml、passiveSpells-c.xml 的名稱；R 狀態圖候選：effectlist2-c.xml 的 icon，
   名稱取 startMsg 指到的 string-c.tbl 那一行（第 N+1 行，去掉 #system_xxx# 前綴，冒號前當名稱）。
+- 匯出圖（build.py）：icon-compare/img/skills/381-<圖號>.png 與 R-<圖號>.png（轉職技能用技能圖資料夾）。
 """
 import os
 import re

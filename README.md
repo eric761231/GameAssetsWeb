@@ -13,7 +13,7 @@
 ## 開網頁
 
 直接用瀏覽器開 `icon-compare/index.html`（`file://` 即可，不需要伺服器）。
-頁面讀同資料夾的 `data.js` 和 `img/381/*.png`、`img/r/*.png`。轉職技能分頁挑的圖可以從頁面匯出成 JSON。
+頁面讀同資料夾的 `data.js` 和 `img/items|skills|status/` 底下的 `381-<圖號>.png`、`R-<圖號>.png`。轉職技能分頁挑的圖可以從頁面匯出成 JSON。
 381 圖在道具、技能與轉職技能頁以 31×31 顯示區保持比例呈現，不改變原始 PNG 尺寸；R 圖顯示尺寸不變。
 道具、技能與狀態圖示頁可用固定於上方的首頁、上一頁、下一頁、末頁及頁碼輸入切換頁面。狀態圖示頁的搜尋可輸入圖號、效果編號或名稱文字。
 
@@ -37,8 +37,15 @@ icon-compare/
   shape-compare.html       形狀比對網頁（讀 shape-data.js）
   shape-data.js            形狀比對資料（shapematch.py 產生）
   data.js                  建置產生的資料（window.ICON_DATA）
-  img/381/<圖號>.png       381 圖（Sprite*.pak 或另行匯入的 BMP 轉 png）
-  img/r/<圖號>.png         R 圖（icon.idx 的 <圖號>.png）
+  img/items/381-<圖號>.png  道具 381 圖
+  img/items/R-<圖號>.png    道具 R 圖
+  img/skills/381-<圖號>.png 技能／轉職技能 381 圖
+  img/skills/R-<圖號>.png   技能／轉職技能 R 圖
+  img/status/381-<圖號>.png 狀態 381 圖
+  img/status/R-<圖號>.png   狀態 R 圖
+  img/maps/R-<地圖編號>.png 天堂R主程式地圖縮圖（等角投影，跟遊戲同一套 24×12；最長邊 420）
+  img/381/<圖號>.png       381 解包快取（Sprite*.pak 或 BMP 轉 png；舊路徑，建置不刪）
+  img/r/<圖號>.png         R 解包快取（icon.idx 的 <圖號>.png；舊路徑，建置不刪）
   _build/
     build.py               建置腳本（入口）
     classskills.py         轉職技能分頁的資料與 R 候選圖配對（build.py 呼叫）
@@ -62,15 +69,17 @@ artifacts/shots/icon-compare/  網頁截圖
 需要 Python 3（套件 `brotli`、`cryptography`）。在 GameAssets 根目錄執行：
 
 ```
-python icon-compare/_build/build.py                 產生 data.js 與 img（已存在的圖會略過）
+python icon-compare/_build/build.py                 產生 data.js 與 img/{items,skills,status}（解包快取已存在的圖會略過）
 python icon-compare/_build/build.py --out <資料夾>  輸出到別的資料夾（例如從零重建來比對）
-python icon-compare/_build/build.py --check          只檢查 data.js 引用的圖是否都在、img 裡有沒有沒被引用的圖
+python icon-compare/_build/build.py --check          只檢查 data.js 引用的分類圖是否都在、三個資料夾裡有沒有沒被引用的圖
+python icon-compare/_build/build.py --split-img      依現有 data.js 從 img/381、img/r 複製到三個分類資料夾（不解包）
+python icon-compare/_build/build.py --import-assets  掃天堂R主程式全部地圖並畫縮圖，並複製 R 版 UI／立繪 PNG
 python icon-compare/_build/build.py --import-bmp <資料夾>  匯入 LineageTool BMP（需要 Pillow；不覆蓋既有 PNG）
 python icon-compare/_build/build.py --center-381    置中道具與技能頁引用的 381 PNG，並備份原圖（需要 Pillow）
 python icon-compare/_build/build.py --style-preview 424 426 651 389 720 726 655 793 --style-output <新的輸出資料夾>
 ```
 
-建置會用 `export-icon-pngs.exe` 匯出 381 圖、從 R 的 `icon.idx` 解出 R 圖；`img/381` 未引用的圖會保留，因此 `--check` 可能回報未引用的圖片。匯入 BMP 時依同名 INI 的 RGB555 `BackgroundColor` 將背景轉透明，INI 的偏移值不會改變圖片尺寸。數字加 `c` 的檔名保留原樣，不作為頁面的數字圖號。頁面資料列仍由任一側的道具或技能資料圖號產生，但兩側皆依實際圖檔顯示；該側同類資料未引用時名稱標為「未使用」，不表示此圖沒有其他用途。
+建置會用 `export-icon-pngs.exe` 匯出 381 圖到 `img/381`、從 R 的 `icon.idx` 解出 R 圖到 `img/r`（解包快取，已存在就略過），再依道具／技能／狀態引用複製到 `img/items`、`img/skills`、`img/status`，檔名加 `381-` 或 `R-` 前綴。同一圖號被多類引用就複製到多個資料夾。轉職技能圖算技能。`img/381` 未引用的圖會保留；`--check` 只掃三個分類資料夾。匯入 BMP 時依同名 INI 的 RGB555 `BackgroundColor` 將背景轉透明，INI 的偏移值不會改變圖片尺寸。數字加 `c` 的檔名保留原樣，不作為頁面的數字圖號。頁面資料列仍由任一側的道具或技能資料圖號產生，但兩側皆依實際圖檔顯示；該側同類資料未引用時名稱標為「未使用」，不表示此圖沒有其他用途。
 
 `--center-381` 保留 PNG 原尺寸，將非透明像素的外框移到畫布中央；這不等同視覺重心，也會影響共用相同 PNG 的轉職技能圖。每張首次修改前的原檔存於輸出目錄的 `_build/381-originals/`，之後重複執行不會覆蓋備份。重新從零產生圖檔後須再執行此命令；備份目錄與圖片均不進 git。
 
@@ -101,6 +110,9 @@ python icon-compare/_build/build.py --style-preview 424 426 651 389 720 726 655 
 | 381 客戶端資源 | `<GA_GAMELAUNCHER>\client` | `GA_CLIENT` | `spellicon.idx`、`Sprite.pak`／`Sprite00～15.pak`（.tbt 圖示）、`Data\EffectList2.xml` 散檔（沒有才讀 `Data.pak` 的）、`Text.pak` 的 `string-c.tbl`（DES 加密，狀態圖示名稱） |
 | 381 Java 後端 | `C:\Users\eric7\eclipse-workspace\Lineage381C` | `GA_BACKEND` | `db\etcitem.sql`（etcitem）、`db\renewal_381.sql`（weapon、armor、skills）、`src\com\lineage\server\model\skill\L1SkillId.java`（BUFF_TRANSFOR_*） |
 | 天堂R 客戶端 | `D:\天堂資料\天堂-主程式懶人包\天堂R\LineageRemastered` | `GA_RCLIENT` | `data.idx/pak` 的 `contents\item-common.bin`、`desc-c.tbl`、`string-c.tbl`、`SpellList-c.xml`、`passiveSpells-c.xml`、`effectlist2-c.xml`；`icon.idx/pak` 的 `<圖號>.png`；根目錄 `icon\` 散檔（icon.idx 沒有時才補用） |
+| MapEditor | `D:\程式碼測試區\C++\MapEditor` | `GA_MAPEDITOR` | `mapnames.txt`（地圖名稱；沒有再查後端 `mapids`） |
+| 天堂R 主程式地圖 | `<GA_RCLIENT>\map`、`Tile.idx`、`data.idx` 的 `zone3.xml` | `GA_RCLIENT` | 每一個 `map\<編號>\*.s32／*.seg` 畫縮圖到 `img/maps/R-<編號>.png`；R 名稱取 zone3 同編號第一個區域。381 名稱仍用 MapEditor `mapnames.txt`，沒有再查後端 `mapids`。點縮圖可單獨放大 |
+| 天堂R UI 解包 | 桌面 `LineageTool_20230627\_PakOutput` | `GA_R_PAKOUTPUT` | `UI\**\*.png`（略過 Sample／FX_）、`Image\PO_*.png` 立繪 |
 
 ### 狀態圖示分頁怎麼對應（statusicons.py）
 
@@ -108,17 +120,17 @@ python icon-compare/_build/build.py --style-preview 424 426 651 389 720 726 655 
 - R：`data.idx` 的 `effectlist2-c.xml`，欄位跟 381 相同（多 `tooltipMsg`、`gauge*`、`foodId` 等）；`icon` 是 `icon.idx` 的 `<icon>.png`，名稱查 R 的 `string-c.tbl`（同樣第 N+2 行）。R 客戶端用效果列建狀態圖示（LinR `016ae690`：列 +0x00 icon＝on 圖、+0x24 offIcon＝off 圖），但 R 伺服器的一般狀態走 `SC_SPELL_BUFF_NOTI`，圖號由封包直接給（見 GameLauncher `docs/re/r-status-icons.md`）。
 - 配對（使用者 2026-11-06 改定、2026-11-07 放寬）：**以圖號為主**——381 狀態圖號 N（Sprite 的 `N.tbt`）和 R 狀態圖號 N（`icon.idx` 的 `N.png`）放同一列。使用者觀察兩邊大部分是同一張圖的新舊版，效果 ID／用途因為改版容易對不上。
   - 列集合＝兩邊效果清單用到的圖號聯集；每一側「有效果引用」或「圖檔存在」就顯示該側的圖（2026-11-07 放寬，跟道具／技能分頁一致：例如 R 沒有效果用圖號 1554，但 icon.idx 有 1554.png，就並排顯示，效果欄位留空並標「這一版的狀態沒用這個圖號」）。
-  - 改號例外（2026-11-07）：建置時讀 GameLauncher `EditXml\RStatusIconMap.xml` 的 `<map icon381="N" r="M"/>`，381 圖號 N **直接改成** R 圖號 M 再配對（效果清單分組前改寫圖號；圖檔把 `img/381/N.png` 複製成 `img/381/M.png`，原圖號保留，道具分頁等可能還在用），之後完全照一般規則、不另標記。目前 9 筆（481→5397、486→5395、3589→5231、3776→753、10000→8478、10001→8480、10021→8487、10023→8496、10024→8520）。改號目標圖號不從 381 原生 tbt 匯出（避免拿到不同內容的同號圖）；目標圖號若跟 381 道具／技能原生圖號衝突，建置會報錯。`<fallback>` 不影響本網站。
+  - 改號例外（2026-11-07）：建置時讀 GameLauncher `EditXml\RStatusIconMap.xml` 的 `<map icon381="N" r="M"/>`，381 圖號 N **直接改成** R 圖號 M 再配對（效果清單分組前改寫圖號；圖檔把 `img/381/N.png` 複製成 `img/381/M.png`（解包快取）與 `img/status/381-M.png`，原圖號保留，道具分頁等可能還在用），之後完全照一般規則、不另標記。目前 9 筆（481→5397、486→5395、3589→5231、3776→753、10000→8478、10001→8480、10021→8487、10023→8496、10024→8520）。改號目標圖號不從 381 原生 tbt 匯出（避免拿到不同內容的同號圖）；目標圖號若跟 381 道具／技能原生圖號衝突，建置會報錯。`<fallback>` 不影響本網站。
   - 每側列出「這一版用到圖號 N 的效果」（效果 ID、名稱、`startMsgName`），只當輔助；列上第一個效果直接顯示，全部效果在滑鼠提示裡。
   - 兩邊都有效果引用圖號 N 時：任何一個效果兩邊 `startMsgName` 相同 →「用途相同」，否則標「用途不同」（**不拆列**），可用「用途不同」篩選；任一側沒有效果引用、或該列是改號併列（用途本來就不同）時不標用途。
   - 每列上方印「圖號 N・對照依據：圖號・用途相同／用途不同」。
   - 圖案相似度這頁不算（形狀比對另有代理做 `_build/shapematch.py`、`shape-compare.html`）。
   - 搜尋：數字比對圖號或效果 ID，文字比對名稱、訊息、`startMsgName`。
 - 效果 ID 兩邊是同一套（2026-11-06 抽樣：0 加速 `HASTE_S`、2 勇水 `SPEED_DOUBLE_S`、377 隱身 `BLIND_HIDING_S`、391 中毒 `CURSE_POISON` 等兩邊相同），所以用途比對用 `startMsgName` 有意義；但 R 改過約 30 個效果 ID 的用途。
-- 圖：381 狀態圖跟道具／技能圖同一套 Sprite 編號，放 `img/381/`；R 狀態圖跟道具同一套 icon.idx 編號，放 `img/r/`。
+- 圖：381 狀態圖跟道具／技能圖同一套 Sprite 編號，建置後放 `img/status/381-<圖號>.png`；R 狀態圖跟道具同一套 icon.idx 編號，放 `img/status/R-<圖號>.png`。解包快取仍在 `img/381/`、`img/r/`。
 - 2026-11-07 建置結果：321 個圖號（9 筆改號直接改寫 381 圖號）；兩邊都顯示 262（兩邊都有效果引用 172：用途相同 160、用途不同 12——含改號後用途本來就不同的列）、只有 381 8、只有 R 47、兩邊缺圖 4。
 
-`img/r` 若放了建置不會產生的檔（例如有人把 `icon.idx` 整包解出，含 `<編號>_d.png`、`list`、`Thumbs.db`），建置會**略過清理未用圖**，不刪任何檔，`--check` 會把它們算成未引用。
+R 解包快取 `img/r` 若放了建置不會產生的檔（例如有人把 `icon.idx` 整包解出，含 `<編號>_d.png`、`list`、`Thumbs.db`），建置會**略過清理解包快取**，不刪任何檔。`--check` 只掃 `img/items`、`img/skills`、`img/status`。舊路徑 `img/381/`、`img/r/` 若還在，建置不會刪。
 
 天堂R 客戶端會自動更新，重建後 R 的道具名稱可能和舊的 `data.js` 有少數差異，這是正常的。
 
@@ -148,8 +160,8 @@ python icon-compare/_build/shapematch.py --check         只檢查 shape-data.js
 python icon-compare/_build/shapematch.py --export-status-map <xml>  讀現有 shape-data.js，輸出 GameLauncher 的狀態圖示例外表（RStatusIconMap.xml）
 ```
 
-- 只讀 `data.js`（取各分類兩邊用到的圖號與名稱）和 `img/381`、`img/r`，不改它們、不複製圖。
-- 候選池：381 是 `img/381/<數字>.png` 全部（`<數字>c.png` 等不收）；R 是 `img/r/<數字>.png` 全部，排除 `_d` 灰圖、`Thumbs.db`、`list` 等非 png。
+- 只讀 `data.js`（取各分類兩邊用到的圖號與名稱）和 `img/`，不改它們、不複製圖。
+- 候選池：381 是 `img/{items,skills,status}/381-<數字>.png` 全部（同號只算一次）；R 是 `R-<數字>.png` 全部，排除 `_d` 灰圖、`Thumbs.db`、`list` 等非 png。新資料夾沒有該圖時，退路讀舊的 `img/381/<數字>.png`、`img/r/<數字>.png`。
 - 2026-11-06 耗時：讀圖算特徵約 70～100 秒（381 6259 張＋R 7187 張，讀不到或全空的 20 張略過），比對 381→R 3787 列＋R→381 4619 列共 5 秒（矩陣乘法向量化，分塊每次 256 列，全量比對不用先粗篩）。
 - `--export-status-map`（2026-11-06）：GameLauncher R 介面以圖號為主，例外寫成 `EditXml\RStatusIconMap.xml`。規則：同號 < 70（或 R 無同號）且第一名 ≥ 85、與內容不同的下一名差 ≥ 2（或第一名是 R 狀態圖、下一名不是）→ `<map>` 改號；沒改號且同號 < 50 → `<fallback>` 畫 381（`STATUS_SAME_BY_EYE` 肉眼確認同圖的除外）；其餘門檻附近的寫成檔尾 `pending` 註解。細節見 GameLauncher `docs/plans/status-icons-r.md` 階段 8。
 - `data.js` 改版（例如狀態圖改成以圖號對照）後重跑即可；腳本只取每列 `a`／`b` 的 `icon`（沒有就 `iconNo`）與名稱。

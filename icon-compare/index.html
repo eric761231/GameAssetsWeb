@@ -19,6 +19,10 @@
     --tag-both: #2f7a4b;
     --tag-r: #2f5f9a;
     --tag-381: #9a5a2f;
+    --rail: #7a1f1f;
+    --rail-ink: #f7ecec;
+    --rail-muted: #e3b8b8;
+    --rail-active: #c43c3c;
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -35,6 +39,10 @@
         --tag-both: #5fbf83;
         --tag-r: #6f9fe0;
         --tag-381: #e0995f;
+        --rail: #4a1414;
+        --rail-ink: #f6e8e8;
+        --rail-muted: #c99494;
+        --rail-active: #b33333;
     }
 }
 :root[data-theme="dark"] {
@@ -51,6 +59,10 @@
     --tag-both: #5fbf83;
     --tag-r: #6f9fe0;
     --tag-381: #e0995f;
+    --rail: #4a1414;
+    --rail-ink: #f6e8e8;
+    --rail-muted: #c99494;
+    --rail-active: #b33333;
 }
 * {
     box-sizing: border-box;
@@ -58,11 +70,25 @@
 [hidden] {
     display: none !important;
 }
+html, body {
+    height: 100%;
+}
 body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
     font: 14px/1.45 "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+}
+.page {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-right: 52px;
 }
 header {
     position: sticky;
@@ -85,7 +111,7 @@ h1 {
     margin: 0 8px 0 0;
     white-space: nowrap;
 }
-.tabs, .filters {
+.tabs, .filters, .subtabs {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
@@ -131,13 +157,128 @@ input[type="search"] {
 }
 main {
     max-width: 1280px;
+    width: 100%;
     margin: 0 auto;
     padding: 14px 16px 40px;
+    flex: 1;
 }
 .summary {
     color: var(--muted);
     font-size: 13px;
     margin-bottom: 10px;
+}
+.asset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+}
+.asset-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 0;
+}
+.asset-card img {
+    display: block;
+    width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+    background: var(--slot);
+    border-radius: 4px;
+}
+.asset-card .name {
+    white-space: normal;
+    word-break: break-all;
+}
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+.map-card img,
+.map-card .map-missing {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: var(--slot);
+    border-radius: 4px;
+}
+.map-card .map-missing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+}
+.map-card {
+    cursor: pointer;
+}
+.map-card .meta {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.map-view[hidden] {
+    display: none !important;
+}
+.map-view {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    right: 52px;
+    bottom: 0;
+    background: rgba(12, 11, 10, .88);
+    display: flex;
+    flex-direction: column;
+}
+.map-view-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+}
+.map-view-title {
+    flex: 1;
+    min-width: 180px;
+}
+.map-view-title .name {
+    white-space: normal;
+}
+.map-view-stage {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    position: relative;
+}
+.map-view-stage.is-drag {
+    cursor: grabbing;
+}
+.map-view-stage img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    max-width: 92%;
+    max-height: 92%;
+    transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.empty-state {
+    background: var(--panel);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    padding: 36px 18px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.7;
 }
 .grid {
     display: grid;
@@ -367,9 +508,55 @@ select {
     border-radius: 6px;
     margin-top: 10px;
 }
+.rail {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 52px;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--rail);
+    border-left: 1px solid #5a1515;
+}
+.rail button {
+    flex: 1;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    background: transparent;
+    color: var(--rail-muted);
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: .18em;
+    font-weight: bold;
+}
+.rail button:last-child {
+    border-bottom: 0;
+}
+.rail button[aria-pressed="true"] {
+    background: var(--rail-active);
+    border-color: transparent;
+    color: var(--rail-ink);
+}
 @media (max-width: 720px) {
     .cls-row {
         grid-template-columns: 1fr;
+    }
+    .page {
+        margin-right: 40px;
+    }
+    .rail {
+        width: 40px;
+    }
+    .map-view {
+        right: 40px;
     }
 }
 @media (max-width: 520px) {
@@ -387,19 +574,22 @@ select {
 </style>
 </head>
 <body>
+<div class="page">
 <header>
     <div class="bar">
         <h1>381 → R 圖示對照</h1>
-        <div class="tabs" id="tabs">
-            <button data-tab="items" aria-pressed="true">道具</button>
-            <button data-tab="skills" aria-pressed="false">技能</button>
-            <button data-tab="classSkills" aria-pressed="false">轉職技能</button>
-            <button data-tab="status" aria-pressed="false">狀態圖示</button>
-            <a href="shape-compare.html" style="align-self:center;margin-left:8px;color:var(--accent);white-space:nowrap">形狀比對 →</a>
+        <div class="subtabs" id="skillViews" hidden>
+            <button data-view="skills" aria-pressed="true">技能對照</button>
+            <button data-view="classSkills" aria-pressed="false">轉職技能</button>
+            <button data-view="status" aria-pressed="false">狀態圖示</button>
         </div>
+        <a href="shape-compare.html" style="align-self:center;color:var(--accent);white-space:nowrap">形狀比對 →</a>
         <input type="search" id="q" placeholder="搜尋圖片編號" aria-label="搜尋圖片編號">
         <select id="clsSel" aria-label="職業" hidden>
             <option value="">全部職業</option>
+        </select>
+        <select id="assetSel" aria-label="資料夾" hidden>
+            <option value="">全部資料夾</option>
         </select>
         <div class="filters" id="pickBar" hidden>
             <button id="exportBtn">匯出選擇</button>
@@ -429,17 +619,46 @@ select {
     <div class="grid" id="grid"></div>
     <div class="legend" id="legend"></div>
 </main>
+</div>
+<nav class="rail" id="rail" aria-label="分類">
+    <button type="button" data-tab="map" aria-pressed="false">地圖</button>
+    <button type="button" data-tab="skills" aria-pressed="false">技能</button>
+    <button type="button" data-tab="items" aria-pressed="true">道具</button>
+    <button type="button" data-tab="ui" aria-pressed="false">介面</button>
+    <button type="button" data-tab="portraits" aria-pressed="false">人物立繪</button>
+</nav>
+<div id="mapView" class="map-view" hidden>
+    <div class="map-view-bar">
+        <div class="map-view-title" id="mapViewTitle"></div>
+        <button type="button" data-zoom="in">放大</button>
+        <button type="button" data-zoom="out">縮小</button>
+        <button type="button" data-zoom="reset">整張</button>
+        <button type="button" id="mapViewClose">關閉</button>
+    </div>
+    <div class="map-view-stage" id="mapViewStage">
+        <img id="mapViewImg" alt="">
+    </div>
+</div>
 <script src="data.js"></script>
 <script>
 (function () {
     var DATA = window.ICON_DATA;
     var PAGE = 120;
-    var state = { tab: 'items', f: 'all', q: '', page: 0 };
-    var TABS = ['items', 'skills', 'classSkills', 'status'];
+    var MAIN_TABS = ['map', 'skills', 'items', 'ui', 'portraits'];
+    var SKILL_VIEWS = ['skills', 'classSkills', 'status'];
+    var EMPTY_TABS = {};
+    var LEGACY_TABS = { classSkills: 1, status: 1 };
+    var state = { tab: 'items', view: 'skills', f: 'all', q: '', page: 0 };
     try {
         var saved = JSON.parse(localStorage.getItem('iconCompareState') || '{}');
-        if (TABS.indexOf(saved.tab) >= 0) {
+        if (LEGACY_TABS[saved.tab]) {
+            state.tab = 'skills';
+            state.view = saved.tab;
+        } else if (MAIN_TABS.indexOf(saved.tab) >= 0) {
             state.tab = saved.tab;
+        }
+        if (SKILL_VIEWS.indexOf(saved.view) >= 0) {
+            state.view = saved.view;
         }
         if (saved.theme) {
             document.documentElement.setAttribute('data-theme', saved.theme);
@@ -449,14 +668,23 @@ select {
     var hash = location.hash.replace('#', '').split('&');
     hash.forEach(function (kv) {
         var p = kv.split('=');
-        if (p[0] === 'tab' && TABS.indexOf(p[1]) >= 0) {
-            state.tab = p[1];
+        if (p[0] === 'tab') {
+            if (LEGACY_TABS[p[1]]) {
+                state.tab = 'skills';
+                state.view = p[1];
+            } else if (MAIN_TABS.indexOf(p[1]) >= 0) {
+                state.tab = p[1];
+            }
+        } else if (p[0] === 'view' && SKILL_VIEWS.indexOf(p[1]) >= 0) {
+            state.view = p[1];
         } else if (p[0] === 'f' && ['all', 'both', 'r', '381', 'missing', 'diff'].indexOf(p[1]) >= 0) {
             state.f = p[1];
         } else if (p[0] === 'q') {
             state.q = decodeURIComponent(p[1] || '');
         } else if (p[0] === 'p') {
             state.page = Math.max(0, (parseInt(p[1], 10) || 1) - 1);
+        } else if (p[0] === 'map') {
+            state.openMap = parseInt(p[1], 10);
         }
     });
 
@@ -464,10 +692,23 @@ select {
         try {
             localStorage.setItem('iconCompareState', JSON.stringify({
                 tab: state.tab,
+                view: state.view,
                 theme: document.documentElement.getAttribute('data-theme') || ''
             }));
         } catch (e) {
         }
+    }
+
+    function dataKey() {
+        if (state.tab === 'skills') {
+            return state.view;
+        }
+        return state.tab;
+    }
+
+    function imgSrc(folder, dir, icon) {
+        var prefix = (dir === 'r' || dir === 'R') ? 'R' : '381';
+        return 'img/' + folder + '/' + prefix + '-' + icon + '.png';
     }
 
     // 搜尋只使用圖片編號，不依名稱或資料編號配對。
@@ -507,6 +748,10 @@ select {
         });
     };
 
+    function isStatusView() {
+        return state.tab === 'skills' && state.view === 'status';
+    }
+
     function matches(r, q) {
         if (!q) {
             return true;
@@ -514,7 +759,7 @@ select {
         if (/^\d+$/.test(q)) {
             return r.t.indexOf(' ' + q + ' ') >= 0;
         }
-        return state.tab === 'status' && r.n2.indexOf(q) >= 0;
+        return isStatusView() && r.n2.indexOf(q) >= 0;
     }
 
     // 狀態圖示一側：圖號 N 的圖，下面列出這一版裡用到圖號 N 的效果（效果 ID、名稱、startMsgName），只是輔助資訊。
@@ -524,7 +769,7 @@ select {
             return '<div class="side"><div class="slot empty"></div><div class="meta">這一版的狀態沒用這個圖號</div></div>';
         }
         var img = s.icon
-            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="img/' + dir + '/' + s.icon + '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
+            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="' + imgSrc('status', dir, s.icon) + '" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
             : '<div class="slot noimg">缺圖</div>';
         if (!s.effects.length) {
             return '<div class="side">' + img +
@@ -542,7 +787,7 @@ select {
 
     function filtered() {
         var q = state.q.trim().toLowerCase();
-        var rows = DATA[state.tab];
+        var rows = DATA[dataKey()];
         var counts = { all: 0, both: 0, r: 0, '381': 0, missing: 0, diff: 0 };
         var list = [];
         rows.forEach(function (r) {
@@ -561,12 +806,12 @@ select {
         return { list: list, counts: counts };
     }
 
-    function side(s, dir) {
+    function side(s, dir, folder) {
         if (!s) {
             return '<div class="side"><div class="slot empty"></div></div>';
         }
         var img = s.icon
-            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="img/' + dir + '/' + s.icon + '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
+            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="' + imgSrc(folder, dir, s.icon) + '" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
             : '<div class="slot noimg">缺圖</div>';
         var names = s.count ? s.names.join('、') : '未使用';
         var tooltip = s.count ? s.names.join('\n') : '未使用';
@@ -582,10 +827,203 @@ select {
         status: { both: '兩邊都有', r: '只有 R', '381': '只有 381', missing: '兩邊缺圖' }
     };
 
+    function syncChrome() {
+        document.querySelectorAll('#rail button').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.tab === state.tab));
+        });
+        document.querySelectorAll('#skillViews button').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.view === state.view));
+        });
+    }
+
+    function writeHash(extra) {
+        var h = 'tab=' + state.tab;
+        if (state.tab === 'skills') {
+            h += '&view=' + state.view;
+        }
+        if (extra) {
+            h += extra;
+        } else if (state.q) {
+            h += '&q=' + encodeURIComponent(state.q);
+        }
+        history.replaceState(null, '', '#' + h);
+    }
+
+    function renderEmpty(label) {
+        $('filters').hidden = true;
+        $('clsSel').hidden = true;
+        $('pickBar').hidden = true;
+        $('topPager').hidden = true;
+        $('skillViews').hidden = true;
+        $('q').hidden = true;
+        $('grid').className = 'grid';
+        if ($('exportOut')) {
+            $('exportOut').remove();
+        }
+        syncChrome();
+        $('summary').textContent = '';
+        $('legend').innerHTML = '';
+        $('grid').innerHTML = '<div class="empty-state">' + esc(label) + '目前尚無資料。</div>';
+        writeHash(state.q ? '&q=' + encodeURIComponent(state.q) : '');
+    }
+
+    function fillAssetFolders(rows) {
+        var sel = $('assetSel');
+        var keep = sel.value;
+        var seen = {};
+        sel.innerHTML = '';
+        var all = document.createElement('option');
+        all.value = '';
+        all.textContent = '全部資料夾';
+        sel.appendChild(all);
+        rows.forEach(function (r) {
+            var f = r.folder || '(根目錄)';
+            if (!seen[f]) {
+                seen[f] = true;
+                var o = document.createElement('option');
+                o.value = r.folder || '';
+                o.textContent = f;
+                sel.appendChild(o);
+            }
+        });
+        if (keep && seen[keep] || keep === '') {
+            sel.value = keep;
+        }
+    }
+
+    function hideIconChrome() {
+        $('filters').hidden = true;
+        $('clsSel').hidden = true;
+        $('pickBar').hidden = true;
+        $('skillViews').hidden = true;
+        if ($('exportOut')) {
+            $('exportOut').remove();
+        }
+        $('legend').innerHTML = '';
+        $('q').hidden = false;
+        $('topPager').hidden = false;
+        syncChrome();
+    }
+
+    function setPager(total) {
+        var pages = Math.max(1, Math.ceil(total / PAGE));
+        if (state.page >= pages) {
+            state.page = pages - 1;
+        }
+        $('topPager').querySelector('[data-p="prev"]').disabled = state.page === 0;
+        $('topPager').querySelector('[data-p="first"]').disabled = state.page === 0;
+        $('topPager').querySelector('[data-p="next"]').disabled = state.page >= pages - 1;
+        $('topPager').querySelector('[data-p="last"]').disabled = state.page >= pages - 1;
+        $('pgin').max = pages;
+        $('pgin').value = state.page + 1;
+        $('topPages').textContent = pages;
+        return pages;
+    }
+
+    function renderMaps() {
+        hideIconChrome();
+        $('assetSel').hidden = true;
+        $('q').placeholder = '搜尋地圖編號或名稱';
+        var q = state.q.trim().toLowerCase();
+        var rows = DATA.maps || [];
+        var list = rows.filter(function (r) {
+            if (!q) {
+                return true;
+            }
+            var blob = String(r.id) + ' ' + (r.name381 || r.name || '') + ' ' + (r.nameR || '');
+            return blob.toLowerCase().indexOf(q) >= 0;
+        });
+        setPager(list.length);
+        var start = state.page * PAGE;
+        var slice = list.slice(start, start + PAGE);
+        var html = [];
+        slice.forEach(function (r) {
+            var img = r.file
+                ? '<img loading="lazy" decoding="async" alt="" src="img/maps/' + r.file + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">'
+                : '<div class="map-missing">缺圖</div>';
+            html.push('<div class="asset-card map-card" data-map="' + r.id + '">' + img +
+                '<div class="name">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
+                '<div class="name">R　' + esc(r.nameR || '未知') + '</div>' +
+                '<div class="meta">地圖 ' + r.id + '</div>' +
+                '<div class="meta">X ' + r.startX + '～' + r.endX + '</div>' +
+                '<div class="meta">Y ' + r.startY + '～' + r.endY + '</div></div>');
+        });
+        $('grid').className = 'map-grid';
+        $('grid').innerHTML = html.join('') || '<div class="empty-state">沒有符合的地圖。</div>';
+        var unknown381 = 0;
+        var unknownR = 0;
+        rows.forEach(function (r) {
+            if ((r.name381 || r.name) === '未知' || r.name381Src === 'unknown' || r.nameSrc === 'unknown') {
+                unknown381++;
+            }
+            if (!r.nameR || r.nameR === '未知' || r.nameRSrc === 'unknown') {
+                unknownR++;
+            }
+        });
+        $('summary').textContent = '地圖：點一張可單獨放大（滾輪縮放、拖曳移動）。381 名稱來自 mapnames.txt，沒有再查後端 mapids；R 名稱來自 zone3.xml 同編號的第一個區域，兩邊不一樣就各顯示各的。本頁 ' +
+            list.length + ' 張（全部 ' + rows.length + '，381 未知 ' + unknown381 + '，R 未知 ' + unknownR + '）。';
+        writeHash('&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1));
+    }
+
+    function renderAssets(kind) {
+        hideIconChrome();
+        var rows = DATA[kind] || [];
+        fillAssetFolders(rows);
+        $('assetSel').hidden = rows.length === 0;
+        $('q').placeholder = '搜尋資料夾或檔名';
+        var q = state.q.trim().toLowerCase();
+        var folder = $('assetSel').value;
+        var list = rows.filter(function (r) {
+            if (folder && r.folder !== folder) {
+                return false;
+            }
+            if (!q) {
+                return true;
+            }
+            return (r.file || '').toLowerCase().indexOf(q) >= 0 || (r.name || '').toLowerCase().indexOf(q) >= 0;
+        });
+        setPager(list.length);
+        var start = state.page * PAGE;
+        var slice = list.slice(start, start + PAGE);
+        var html = [];
+        var prefix = kind === 'ui' ? 'img/ui/' : 'img/portraits/';
+        slice.forEach(function (r) {
+            html.push('<div class="asset-card"><img loading="lazy" decoding="async" alt="" src="' +
+                prefix + r.file + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">' +
+                '<div class="name">' + esc(r.name) + '</div>' +
+                '<div class="meta">' + esc(r.folder || '') + '</div></div>');
+        });
+        $('grid').className = 'asset-grid';
+        $('grid').innerHTML = html.join('') || '<div class="empty-state">目前尚無資料。</div>';
+        var label = kind === 'ui' ? '介面' : '人物立繪';
+        var extra = kind === 'ui' && DATA.meta && DATA.meta.uiSkippedFx
+            ? '；另略過 Sample／FX_ 特效貼圖 ' + DATA.meta.uiSkippedFx + ' 張'
+            : '';
+        $('summary').textContent = label + '：R 版 _PakOutput，檔名加 R- 前綴。本頁 ' + list.length + ' 張' + extra + '。';
+        writeHash('&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1));
+    }
+
     function render() {
-        var isClass = state.tab === 'classSkills';
+        var isClass = state.tab === 'skills' && state.view === 'classSkills';
+        var isAsset = state.tab === 'map' || state.tab === 'ui' || state.tab === 'portraits';
+        var isEmpty = !!EMPTY_TABS[state.tab];
+        $('skillViews').hidden = state.tab !== 'skills';
+        $('q').hidden = isEmpty;
+        if (isAsset) {
+            if (state.tab === 'map') {
+                renderMaps();
+            } else {
+                renderAssets(state.tab);
+            }
+            return;
+        }
+        if (isEmpty) {
+            renderEmpty(EMPTY_TABS[state.tab]);
+            return;
+        }
         $('filters').hidden = isClass;
         $('clsSel').hidden = !isClass;
+        $('assetSel').hidden = true;
         $('pickBar').hidden = !isClass;
         $('topPager').hidden = isClass;
         if (isClass) {
@@ -596,13 +1034,11 @@ select {
         if ($('exportOut')) {
             $('exportOut').remove();
         }
-        document.querySelectorAll('#tabs button').forEach(function (b) {
-            b.setAttribute('aria-pressed', String(b.dataset.tab === state.tab));
-        });
+        syncChrome();
         document.querySelectorAll('#filters button').forEach(function (b) {
             b.setAttribute('aria-pressed', String(b.dataset.f === state.f));
         });
-        var isStatus = state.tab === 'status';
+        var isStatus = isStatusView();
         $('filters').querySelector('[data-f="diff"]').hidden = !isStatus;
         if (!isStatus && state.f === 'diff') {
             state.f = 'all';
@@ -630,6 +1066,7 @@ select {
         var start = state.page * PAGE;
         var slice = res.list.slice(start, start + PAGE);
         var html = [];
+        var folder = state.tab === 'items' ? 'items' : 'skills';
         slice.forEach(function (r) {
             if (isStatus) {
                 var st = STATUS_TAG[r.k];
@@ -642,9 +1079,9 @@ select {
             }
             var t = TAG[r.k];
             html.push('<div class="row"><span class="tag ' + t[0] + '">' + t[1] + '</span>' +
-                side(r.a, '381') +
+                side(r.a, '381', folder) +
                 '<div class="arrow" aria-hidden="true">→</div>' +
-                side(r.b, 'r') + '</div>');
+                side(r.b, 'r', folder) + '</div>');
         });
         $('grid').innerHTML = html.join('') || '<div class="summary">沒有符合的資料。</div>';
         var range = '第 ' + (res.list.length ? start + 1 : 0) + '～' + Math.min(start + PAGE, res.list.length);
@@ -656,8 +1093,7 @@ select {
                 ' 個圖號，' + range + ' 個。左邊 381、右邊 R。';
         }
         renderLegend();
-        var h = 'tab=' + state.tab + '&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1);
-        history.replaceState(null, '', '#' + h);
+        writeHash('&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1));
     }
 
     // ---------- 轉職技能分頁 ----------
@@ -704,10 +1140,11 @@ select {
         });
     })();
 
-    function slotHtml(dir, icon, emptyText) {
+    function slotHtml(folder, dir, icon, emptyText) {
         if (icon) {
-            return '<div class="slot"><img class="icon-' + dir + '" loading="lazy" width="50" height="50" alt="" src="img/' + dir + '/' + icon +
-                '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>';
+            return '<div class="slot"><img class="icon-' + dir + '" loading="lazy" width="50" height="50" alt="" src="' +
+                imgSrc(folder, dir, icon) +
+                '" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>';
         }
         return '<div class="slot empty">' + (emptyText ? '<span class="meta">' + emptyText + '</span>' : '') + '</div>';
     }
@@ -716,7 +1153,8 @@ select {
         var p = picks[c.id] || {};
         var sel = cand.iconNo && p[kind] === cand.iconNo;
         var idText = kind === 'skillIcon' ? 'R 技能 ' + cand.rid + '（' + cand.cls + '）' : 'R 狀態 ' + cand.eid;
-        return '<div class="cand' + (sel ? ' sel' : '') + '">' + slotHtml('r', cand.icon, cand.icon ? '' : '無圖') +
+        var folder = kind === 'skillIcon' ? 'skills' : 'status';
+        return '<div class="cand' + (sel ? ' sel' : '') + '">' + slotHtml(folder, 'r', cand.icon, cand.icon ? '' : '無圖') +
             '<div class="name">' + esc(cand.name || '（無名稱）') + '</div>' +
             '<div class="meta" title="' + esc(cand.msg || '') + '">' + esc(idText) + '<br>圖 ' + cand.iconNo + '</div>' +
             '<div class="how">' + esc(cand.how) + '</div>' +
@@ -725,9 +1163,7 @@ select {
     }
 
     function renderClass() {
-        document.querySelectorAll('#tabs button').forEach(function (b) {
-            b.setAttribute('aria-pressed', String(b.dataset.tab === state.tab));
-        });
+        syncChrome();
         var q = state.q.trim().toLowerCase();
         var cls = $('clsSel').value;
         var html = [];
@@ -753,8 +1189,8 @@ select {
                 (st.graphic ? 'castgfx ' + st.graphic + ' 不在 effectlist2' : '沒有 castgfx');
             var p = picks[c.id] || {};
             var left = '<div class="cls-left"><div class="icons">' +
-                '<div>' + slotHtml('381', 0, '') + '<div class="lbl">381 技能圖<br>無</div></div>' +
-                '<div>' + slotHtml('381', stIcon, '') + '<div class="lbl">381 狀態圖<br>' + esc(stNote) + '</div></div>' +
+                '<div>' + slotHtml('skills', '381', 0, '') + '<div class="lbl">381 技能圖<br>無</div></div>' +
+                '<div>' + slotHtml('status', '381', stIcon, '') + '<div class="lbl">381 狀態圖<br>' + esc(stNote) + '</div></div>' +
                 '</div><div class="title">' + esc(c.name) + '</div>' +
                 '<div class="meta">技能 ' + c.id + '・' + esc(head) + '・' + c.stage + ' 轉 ' + esc(c.route) + '</div>' +
                 '<div class="desc">' + esc(c.desc) + '</div>' +
@@ -776,9 +1212,9 @@ select {
         $('grid').innerHTML = html.join('') || '<div class="summary">沒有符合的資料。</div>';
         $('summary').textContent = '轉職技能：' + shown + ' 個（共 ' + DATA.classSkills.length +
             '）。左邊 381 現況，右邊 R 候選圖；按「選這張」記住選擇，最後按「匯出選擇」。';
+        $('legend').innerHTML = legendNormal;
         $('pickCount').textContent = '已選 ' + Object.keys(picks).length + ' 個技能';
-        var h = 'tab=classSkills' + (state.q ? '&q=' + encodeURIComponent(state.q) : '');
-        history.replaceState(null, '', '#' + h);
+        writeHash(state.q ? '&q=' + encodeURIComponent(state.q) : '');
     }
 
     function exportPicks() {
@@ -816,7 +1252,109 @@ select {
         }
     }
 
+    var mapZoom = 1;
+    var mapPanX = 0;
+    var mapPanY = 0;
+    var mapDrag = null;
+
+    function mapById(id) {
+        var rows = DATA.maps || [];
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].id === id) {
+                return rows[i];
+            }
+        }
+        return null;
+    }
+
+    function applyMapTransform() {
+        var img = $('mapViewImg');
+        img.style.transform = 'translate(calc(-50% + ' + mapPanX + 'px), calc(-50% + ' + mapPanY + 'px)) scale(' + mapZoom + ')';
+    }
+
+    function openMap(r) {
+        if (!r) {
+            return;
+        }
+        mapZoom = 1;
+        mapPanX = 0;
+        mapPanY = 0;
+        var img = $('mapViewImg');
+        img.src = r.file ? 'img/maps/' + r.file : '';
+        img.alt = (r.name381 || r.name || '') + ' / ' + (r.nameR || '');
+        $('mapViewTitle').innerHTML = '<div class="name">地圖 ' + r.id + '</div>' +
+            '<div class="meta">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
+            '<div class="meta">R　' + esc(r.nameR || '未知') + '</div>' +
+            '<div class="meta">X ' + r.startX + '～' + r.endX + '　Y ' + r.startY + '～' + r.endY + '</div>';
+        $('mapView').hidden = false;
+        applyMapTransform();
+    }
+
+    function closeMap() {
+        $('mapView').hidden = true;
+        $('mapViewImg').removeAttribute('src');
+    }
+
+    $('mapViewClose').addEventListener('click', closeMap);
+    $('mapView').addEventListener('click', function (e) {
+        var zoom = e.target.closest('button[data-zoom]');
+        if (!zoom) {
+            return;
+        }
+        if (zoom.dataset.zoom === 'in') {
+            mapZoom = Math.min(8, mapZoom * 1.25);
+        } else if (zoom.dataset.zoom === 'out') {
+            mapZoom = Math.max(0.4, mapZoom / 1.25);
+        } else {
+            mapZoom = 1;
+            mapPanX = 0;
+            mapPanY = 0;
+        }
+        applyMapTransform();
+    });
+    $('mapViewStage').addEventListener('wheel', function (e) {
+        if ($('mapView').hidden) {
+            return;
+        }
+        e.preventDefault();
+        var next = e.deltaY < 0 ? mapZoom * 1.12 : mapZoom / 1.12;
+        mapZoom = Math.max(0.4, Math.min(8, next));
+        applyMapTransform();
+    }, { passive: false });
+    $('mapViewStage').addEventListener('pointerdown', function (e) {
+        if (e.button !== 0) {
+            return;
+        }
+        mapDrag = { x: e.clientX, y: e.clientY, px: mapPanX, py: mapPanY };
+        $('mapViewStage').classList.add('is-drag');
+        $('mapViewStage').setPointerCapture(e.pointerId);
+    });
+    $('mapViewStage').addEventListener('pointermove', function (e) {
+        if (!mapDrag) {
+            return;
+        }
+        mapPanX = mapDrag.px + (e.clientX - mapDrag.x);
+        mapPanY = mapDrag.py + (e.clientY - mapDrag.y);
+        applyMapTransform();
+    });
+    function endMapDrag() {
+        mapDrag = null;
+        $('mapViewStage').classList.remove('is-drag');
+    }
+    $('mapViewStage').addEventListener('pointerup', endMapDrag);
+    $('mapViewStage').addEventListener('pointercancel', endMapDrag);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !$('mapView').hidden) {
+            closeMap();
+        }
+    });
+
     $('grid').addEventListener('click', function (e) {
+        var card = e.target.closest('.map-card');
+        if (card && state.tab === 'map') {
+            openMap(mapById(parseInt(card.dataset.map, 10)));
+            return;
+        }
         var b = e.target.closest('button[data-pick]');
         if (!b) {
             return;
@@ -838,6 +1376,10 @@ select {
     $('clsSel').addEventListener('change', function () {
         renderClass();
     });
+    $('assetSel').addEventListener('change', function () {
+        state.page = 0;
+        update(true);
+    });
     $('exportBtn').addEventListener('click', exportPicks);
     $('clearBtn').addEventListener('click', function () {
         if (confirm('清除全部選擇？')) {
@@ -855,10 +1397,18 @@ select {
         }
     }
 
-    $('tabs').addEventListener('click', function (e) {
+    $('rail').addEventListener('click', function (e) {
         var b = e.target.closest('button');
         if (b) {
             state.tab = b.dataset.tab;
+            state.page = 0;
+            update(true);
+        }
+    });
+    $('skillViews').addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (b) {
+            state.view = b.dataset.view;
             state.page = 0;
             update(true);
         }
@@ -928,10 +1478,13 @@ select {
         '兩邊都有 ' + (sm.bothIcons || 0) + ' 個圖號（用途相同 ' + (sm.usageSame || 0) + '、用途不同 ' + (sm.usageDiff || 0) + '）；只有 381 ' + (sm.only381 || 0) + '、只有 R ' + (sm.onlyR || 0) + '。「兩邊缺圖」＝兩邊都找不到圖檔。';
 
     function renderLegend() {
-        $('legend').innerHTML = state.tab === 'status' ? legendStatus : legendNormal;
+        $('legend').innerHTML = isStatusView() ? legendStatus : legendNormal;
     }
 
     render();
+    if (state.openMap || state.openMap === 0) {
+        openMap(mapById(state.openMap));
+    }
 })();
 </script>
 </body>

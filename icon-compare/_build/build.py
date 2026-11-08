@@ -4,15 +4,19 @@ r"""381 → R 版道具、技能圖示對照網頁的建置腳本（2026-11-04�
 2026-11-06 從 GameLauncher\artifacts\icon-compare 搬到 GameAssets 專案。
 
 重跑：在 GameAssets 根目錄執行
-    python icon-compare/_build/build.py              產生 icon-compare/data.js、img/381/*.png、img/r/*.png（圖已存在就略過）
+    python icon-compare/_build/build.py              產生 icon-compare/data.js、img/{items,skills,status}/381-<圖號>.png 與 R-<圖號>.png
     python icon-compare/_build/build.py --out <資料夾> 輸出到別的資料夾（例如驗證能否從零重建）
-    python icon-compare/_build/build.py --check       只檢查 data.js 引用的圖是否都在、img 裡有沒有沒被引用的圖
+    python icon-compare/_build/build.py --check       只檢查 data.js 引用的圖是否都在三個分類資料夾、有沒有沒被引用的圖
+    python icon-compare/_build/build.py --split-img  依現有 data.js 從 img/381、img/r 複製到三個分類資料夾（不解包）
+    python icon-compare/_build/build.py --import-assets  掃天堂R主程式地圖並畫縮圖、從 R 版 _PakOutput 複製 UI／立繪 PNG
 
 來源路徑（全部唯讀，可用環境變數改）：
     GA_GAMELAUNCHER  GameLauncher 專案（預設 D:\程式碼測試區\C++\GameLauncher；用它的 tools/re/re_tools.py）
     GA_CLIENT        381 客戶端資源（預設 <GA_GAMELAUNCHER>\client）
     GA_BACKEND       381 Java 後端（預設 C:\Users\eric7\eclipse-workspace\Lineage381C；用 db\*.sql、src\）
     GA_RCLIENT       天堂R 客戶端（預設 D:\天堂資料\天堂-主程式懶人包\天堂R\LineageRemastered）
+    GA_MAPEDITOR     MapEditor 專案（預設 D:\\程式碼測試區\\C++\\MapEditor；讀 mapnames.txt 與 MapEditor.ini 的 client）
+    GA_R_PAKOUTPUT   天堂R LineageTool 解包（預設桌面 LineageTool_20230627\\_PakOutput；UI 與 Image/PO_）
 
 資料來源：
 - 381 道具：後端 db/etcitem.sql（etcitem，2026-09-23 匯出）、db/renewal_381.sql（weapon、armor，2026-08-18 匯出）。
@@ -32,6 +36,7 @@ import io
 import json
 import os
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -45,15 +50,159 @@ CLIENT = os.environ.get('GA_CLIENT', os.path.join(GAMELAUNCHER, 'client'))
 BACKEND = os.environ.get('GA_BACKEND', r'C:\Users\eric7\eclipse-workspace\Lineage381C')
 DB = os.path.join(BACKEND, 'db')
 RCLIENT = os.environ.get('GA_RCLIENT', r'D:\天堂資料\天堂-主程式懶人包\天堂R\LineageRemastered')
+MAPEDITOR = os.environ.get('GA_MAPEDITOR', r'D:\程式碼測試區\C++\MapEditor')
+R_PAKOUTPUT = os.environ.get(
+    'GA_R_PAKOUTPUT',
+    os.path.join(os.path.expanduser('~'), 'OneDrive', '桌面', 'LineageTool_20230627', '_PakOutput'))
+MAP_BLOCK_SIZE = 64
+MAP_BLOCK_BIAS = 0x7e00
 
 sys.path.insert(0, os.path.join(GAMELAUNCHER, 'tools', 're'))
 sys.path.insert(0, BUILD)
 import re_tools  # noqa: E402
 import pb  # noqa: E402
 import classskills  # noqa: E402
+import mappreview  # noqa: E402
 import statusicons  # noqa: E402
 
 BACKEND_SRC = os.path.join(BACKEND, 'src')
+IMG_CATS = ('items', 'skills', 'status')
+
+
+def load_icon_data(out_dir):
+    path = os.path.join(out_dir, 'data.js')
+    with open(path, encoding='utf-8') as f:
+        text = f.read()
+    return json.loads(text[text.index('=') + 1:].rstrip().rstrip(';'))
+
+
+def icons_from_payload(data):
+    """items／skills／status／classSkills 引用的圖號。轉職技能全部算技能。icon 為 0 或 missing 不收。"""
+    need = {cat: {'381': set(), 'r': set()} for cat in IMG_CATS}
+    for cat in IMG_CATS:
+        for row in data.get(cat, []):
+            a = row.get('a')
+            if a and a.get('icon'):
+                need[cat]['381'].add(a['icon'])
+            b = row.get('b')
+            if b and b.get('icon'):
+                need[cat]['r'].add(b['icon'])
+    for c in data.get('classSkills', []):
+        st = c.get('status381') or {}
+        if st.get('icon') and not st.get('missing'):
+            need['skills']['381'].add(st['icon'])
+        for cand in (c.get('skillC') or []) + (c.get('statusC') or []):
+            if cand.get('icon'):
+                need['skills']['r'].add(cand['icon'])
+    return need
+
+
+def cat_png(side, icon):
+    prefix = '381' if side == '381' else 'R'
+    return '%s-%d.png' % (prefix, icon)
+
+
+def copy_to_categories(out_dir, need):
+    """從 img/381、img/r 複製到 items／skills／status，檔名加 381-／R- 前綴。不覆蓋既有檔。"""
+    copied = {cat: {'381': 0, 'r': 0} for cat in IMG_CATS}
+    missing_src = []
+    for cat in IMG_CATS:
+        dest_dir = os.path.join(out_dir, 'img', cat)
+        os.makedirs(dest_dir, exist_ok=True)
+        for side, legacy in (('381', '381'), ('r', 'r')):
+            src_dir = os.path.join(out_dir, 'img', legacy)
+            for icon in sorted(need[cat][side]):
+                dst = os.path.join(dest_dir, cat_png(side, icon))
+                if os.path.isfile(dst):
+                    continue
+                src = os.path.join(src_dir, '%d.png' % icon)
+                if not os.path.isfile(src):
+                    missing_src.append((cat, side, icon))
+                    continue
+                shutil.copyfile(src, dst)
+                copied[cat][side] += 1
+    return copied, missing_src
+
+
+def list_legacy_png(folder):
+    """舊 img/381、img/r：純數字.png 的圖號；其他檔名當未確定。"""
+    ids = set()
+    other = []
+    if not os.path.isdir(folder):
+        return ids, other
+    for n in os.listdir(folder):
+        if re.fullmatch(r'\d+\.png', n):
+            ids.add(int(n[:-4]))
+        else:
+            other.append(n)
+    return ids, other
+
+
+def overlap_icons(need):
+    """圖號出現在兩個以上分類。per_side 分 381／R；union 為兩側圖號聯集後再跨類。"""
+    per_side = {}
+    for side in ('381', 'r'):
+        where = {}
+        for cat in IMG_CATS:
+            for icon in need[cat][side]:
+                where.setdefault(icon, []).append(cat)
+        per_side[side] = {i: cats for i, cats in where.items() if len(cats) >= 2}
+    union_where = {}
+    for cat in IMG_CATS:
+        for icon in need[cat]['381'] | need[cat]['r']:
+            union_where.setdefault(icon, []).append(cat)
+    union = {i: cats for i, cats in union_where.items() if len(cats) >= 2}
+    return per_side, union
+
+
+def print_split_stats(out_dir, need, copied, missing_src):
+    print('分類圖複製：items 381=%d R=%d；skills 381=%d R=%d；status 381=%d R=%d' % (
+        copied['items']['381'], copied['items']['r'],
+        copied['skills']['381'], copied['skills']['r'],
+        copied['status']['381'], copied['status']['r']))
+    for cat in IMG_CATS:
+        folder = os.path.join(out_dir, 'img', cat)
+        n381 = n_r = extra = 0
+        if os.path.isdir(folder):
+            for name in os.listdir(folder):
+                if re.fullmatch(r'381-\d+\.png', name):
+                    n381 += 1
+                elif re.fullmatch(r'R-\d+\.png', name):
+                    n_r += 1
+                else:
+                    extra += 1
+        print('img/%s：381- %d 張、R- %d 張%s' % (
+            cat, n381, n_r, '、未確定檔名 %d' % extra if extra else ''))
+    per_side, union = overlap_icons(need)
+    print('多類重疊：分類聯集 %d 個圖號；381 側 %d、R 側 %d' % (
+        len(union), len(per_side['381']), len(per_side['r'])))
+    ref381 = set()
+    ref_r = set()
+    for cat in IMG_CATS:
+        ref381 |= need[cat]['381']
+        ref_r |= need[cat]['r']
+    have381, other381 = list_legacy_png(os.path.join(out_dir, 'img', '381'))
+    have_r, other_r = list_legacy_png(os.path.join(out_dir, 'img', 'r'))
+    unused381 = sorted(have381 - ref381)
+    unused_r = sorted(have_r - ref_r)
+    print('舊 img/381：%d 張數字圖、未引用 %d 張；舊 img/r：%d 張數字圖、未引用 %d 張（舊資料夾未刪）' % (
+        len(have381), len(unused381), len(have_r), len(unused_r)))
+    if other381:
+        print('舊 img/381 未確定檔名 %d：%s' % (len(other381), other381[:20]))
+    if other_r:
+        print('舊 img/r 未確定檔名 %d：%s' % (len(other_r), other_r[:20]))
+    if missing_src:
+        print('缺來源（未複製）%d：%s' % (len(missing_src), missing_src[:50]))
+    return unused381, unused_r, union
+
+
+def split_existing(out_dir):
+    """依現有 data.js 從 img/381、img/r 複製到三個分類資料夾，不解包。"""
+    data = load_icon_data(out_dir)
+    need = icons_from_payload(data)
+    copied, missing_src = copy_to_categories(out_dir, need)
+    print_split_stats(out_dir, need, copied, missing_src)
+    return 1 if missing_src else 0
 
 
 # ---------- 381 SQL ----------
@@ -460,8 +609,8 @@ def center_381(out_dir):
 
 
 def main():
-    os.makedirs(os.path.join(OUT, 'img', '381'), exist_ok=True)
-    os.makedirs(os.path.join(OUT, 'img', 'r'), exist_ok=True)
+    for name in ('381', 'r') + IMG_CATS:
+        os.makedirs(os.path.join(OUT, 'img', name), exist_ok=True)
 
     # 381 道具
     items381 = []
@@ -531,7 +680,8 @@ def main():
     _, status_need381, status_needR, _ = statusicons.build(status_ctx, None, None)
 
     # 狀態圖改號（2026-11-07 使用者定）：381 圖號直接改成 R 圖號。
-    # 圖檔把 img/381/<原圖號>.png 複製成 <新圖號>.png；新圖號不從 381 原生 tbt 匯出（避免拿到不同內容的同號圖）。
+    # 圖檔把 img/381/<原圖號>.png 複製成 img/381/<新圖號>.png（解包快取）以及 img/status/381-<新圖號>.png；
+    # 新圖號不從 381 原生 tbt 匯出（避免拿到不同內容的同號圖）。
     status_renum = statusicons.load_renum(status_ctx)
     renum_targets = set(status_renum.values())
     conflict = renum_targets & {e['icon'] for e in items381 + skills381 if e['icon'] > 0}
@@ -549,23 +699,30 @@ def main():
     exe = os.path.join(BUILD, 'export-icon-pngs.exe')
     subprocess.run([exe, CLIENT, ids_path, os.path.join(OUT, 'img', '381'), ''], check=True)
     # 改號圖檔：複製原圖號內容到新圖號（原圖號保留：道具分頁等可能還在用）
-    import shutil
     for n, m in sorted(status_renum.items()):
         src_png = os.path.join(OUT, 'img', '381', '%d.png' % n)
         dst_png = os.path.join(OUT, 'img', '381', '%d.png' % m)
+        dst_status = os.path.join(OUT, 'img', 'status', '381-%d.png' % m)
         if not os.path.isfile(src_png):
             continue
+        with open(src_png, 'rb') as f:
+            s_bytes = f.read()
         if os.path.isfile(dst_png):
-            with open(src_png, 'rb') as f:
-                s_bytes = f.read()
             with open(dst_png, 'rb') as f:
                 if f.read() != s_bytes:
                     # 目標圖號有 381 原生圖（內容不同）：保留原生圖。
                     # 改號來源本來就是同圖的新舊版（例 481→5397，381 的 5397 也是加速同圖），不視為衝突。
                     print('改號圖檔：img/381/%d.png 已存在原生圖，保留原生、不覆蓋（來源 %d.png）' % (m, n))
-            continue
-        shutil.copyfile(src_png, dst_png)
-        print('改號圖檔：img/381/%d.png → %d.png' % (n, m))
+        else:
+            shutil.copyfile(src_png, dst_png)
+            print('改號圖檔：img/381/%d.png → %d.png' % (n, m))
+        if os.path.isfile(dst_status):
+            with open(dst_status, 'rb') as f:
+                if f.read() != s_bytes:
+                    print('改號圖檔：img/status/381-%d.png 已存在且內容不同，保留既有、不覆蓋（來源 %d.png）' % (m, n))
+        else:
+            shutil.copyfile(src_png, dst_status)
+            print('改號圖檔：img/status/381-%d.png（來源 img/381/%d.png）' % (m, n))
     have381 = {int(n[:-4]) for n in os.listdir(os.path.join(OUT, 'img', '381'))
                if re.fullmatch(r'\d+\.png', n)}
     for c in class_skills:
@@ -589,7 +746,6 @@ def main():
         for i in todo:
             key = '%d.png' % i
             if key not in got and key in loose:
-                import shutil
                 shutil.copyfile(os.path.join(loose_dir, key), os.path.join(OUT, 'img', 'r', key))
                 print('R 圖 %s 取自 icon\\ 散檔' % key)
     missing_r = [i for i in sorted(need_r) if not os.path.isfile(os.path.join(OUT, 'img', 'r', '%d.png' % i))]
@@ -633,6 +789,9 @@ def main():
         json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
         f.write(';\n')
     print('381 圖：用到 %d 張；保留未引用的圖片' % len(need381))
+    cat_need = icons_from_payload(out)
+    copied, missing_src = copy_to_categories(OUT, cat_need)
+    print_split_stats(OUT, cat_need, copied, missing_src)
     # 2026-11-06：img/r 若有建置不會產生的檔（例如整包解出的 <編號>_d.png、list、Thumbs.db），
     # 表示有人放了完整的 icon.idx 內容，整個略過清理，不刪任何檔。
     rdir = os.path.join(OUT, 'img', 'r')
@@ -652,46 +811,336 @@ def main():
 
 
 def check(out_dir):
-    """掃 data.js：index.html 會畫的圖（img/381、img/r）是否都在，img 裡有沒有沒被引用的圖。回傳缺圖數。"""
-    with open(os.path.join(out_dir, 'data.js'), encoding='utf-8') as f:
-        text = f.read()
-    data = json.loads(text[text.index('=') + 1:].rstrip().rstrip(';'))
-    need = {'381': set(), 'r': set()}
-    for key in ('items', 'skills', 'status'):
-        for row in data[key]:
-            if row['a'] and row['a']['icon']:
-                need['381'].add(row['a']['icon'])
-            if row['b'] and row['b']['icon']:
-                need['r'].add(row['b']['icon'])
-    for c in data['classSkills']:
-        st = c['status381']
-        if st['icon'] and not st.get('missing'):
-            need['381'].add(st['icon'])
-        for cand in c['skillC'] + c['statusC']:
-            if cand['icon']:
-                need['r'].add(cand['icon'])
+    """掃 data.js：分類資料夾 img/{items,skills,status} 的 381-<圖號>.png、R-<圖號>.png 是否都在。回傳缺圖數。"""
+    data = load_icon_data(out_dir)
+    need = icons_from_payload(data)
     total_missing = 0
-    for d in ('381', 'r'):
-        folder = os.path.join(out_dir, 'img', d)
-        have = set()
+    for cat in IMG_CATS:
+        folder = os.path.join(out_dir, 'img', cat)
+        have = {'381': set(), 'r': set()}
+        extra = []
         if os.path.isdir(folder):
-            have = {int(n[:-4]) for n in os.listdir(folder) if re.match(r'^\d+\.png$', n)}
-        missing = sorted(need[d] - have)
-        unused = sorted(have - need[d])
-        total_missing += len(missing)
-        print('img/%s：引用 %d 張、存在 %d 張、缺 %d 張、未引用 %d 張' % (d, len(need[d]), len(have), len(missing), len(unused)))
-        if missing:
-            print('  缺：', missing[:50])
-        if unused:
-            print('  未引用：', unused[:50])
+            for n in os.listdir(folder):
+                m = re.fullmatch(r'(381|R)-(\d+)\.png', n)
+                if not m:
+                    extra.append(n)
+                    continue
+                side = '381' if m.group(1) == '381' else 'r'
+                have[side].add(int(m.group(2)))
+        for side, label in (('381', '381-'), ('r', 'R-')):
+            missing = sorted(need[cat][side] - have[side])
+            unused = sorted(have[side] - need[cat][side])
+            total_missing += len(missing)
+            print('img/%s %s：引用 %d 張、存在 %d 張、缺 %d 張、未引用 %d 張' % (
+                cat, label, len(need[cat][side]), len(have[side]), len(missing), len(unused)))
+            if missing:
+                print('  缺：', missing[:50])
+            if unused:
+                print('  未引用：', unused[:50])
+        if extra:
+            print('img/%s 未確定檔名 %d：%s' % (cat, len(extra), extra[:50]))
     return total_missing
+
+
+def write_icon_data(out_dir, data):
+    with open(os.path.join(out_dir, 'data.js'), 'w', encoding='utf-8') as f:
+        f.write('// 由 _build/build.py 產生，不要手改\n')
+        f.write('window.ICON_DATA = ')
+        json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
+        f.write(';\n')
+
+
+def mapeditor_client():
+    """MapEditor.ini [paths] client，沒有就用 GA_CLIENT。只讀。"""
+    ini = os.path.join(MAPEDITOR, 'MapEditor.ini')
+    if os.path.isfile(ini):
+        cfg = configparser.ConfigParser()
+        with open(ini, 'rb') as f:
+            raw = f.read(4)
+        enc = 'utf-16' if raw.startswith(b'\xff\xfe') or raw.startswith(b'\xfe\xff') else 'utf-8'
+        cfg.read(ini, encoding=enc)
+        if cfg.has_option('paths', 'client'):
+            path = cfg.get('paths', 'client').strip()
+            if path:
+                return path
+    return CLIENT
+
+
+def load_map_names():
+    """MapEditor.exe 旁 mapnames.txt：編號<Tab>名稱，# 註解。"""
+    path = os.path.join(MAPEDITOR, 'mapnames.txt')
+    names = {}
+    if not os.path.isfile(path):
+        print('地圖名稱：找不到 %s' % path)
+        return names
+    with open(path, encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            if '\t' not in line:
+                continue
+            sid, name = line.split('\t', 1)
+            if sid.isdigit():
+                names[int(sid)] = name.strip()
+    return names
+
+
+def load_r_map_names():
+    """R 版 zone3.xml：同一地圖編號的第一個區域名稱。跟 381 的 mapnames 常常不同。"""
+    idx = os.path.join(RCLIENT, 'data.idx')
+    if not os.path.isfile(idx):
+        print('R 地圖名稱：找不到 %s' % idx)
+        return {}
+    got = rpak_read(idx, ['zone3.xml'])
+    raw = got.get('zone3.xml')
+    if not raw:
+        print('R 地圖名稱：data.idx 沒有 zone3.xml')
+        return {}
+    root = ET.fromstring(xml_decrypt(raw))
+    names = {}
+    for zone in root.iter('zone'):
+        name_el = zone.find('name')
+        map_el = zone.find('map')
+        if name_el is None or map_el is None:
+            continue
+        num = map_el.get('num')
+        label = clean_name(name_el.text or '')
+        if not num or not num.isdigit() or not label:
+            continue
+        mid = int(num)
+        if mid not in names:
+            names[mid] = label
+    print('R 地圖名稱：zone3.xml %d 個地圖編號' % len(names))
+    return names
+
+
+def load_sql_map_names():
+    """後端 renewal_381.sql 的 mapids.locationname；空字串不當名稱。"""
+    path = os.path.join(DB, 'renewal_381.sql')
+    names = {}
+    if not os.path.isfile(path):
+        return names
+    for row in sql_table(path, 'mapids'):
+        mid = row.get('mapid')
+        label = (row.get('locationname') or '').strip()
+        if mid is None or mid == '' or not label:
+            continue
+        names[int(mid)] = label
+    return names
+
+
+def parse_block_stem(stem):
+    """8 碼 hex 檔名 → 地圖塊座標，同 MapEditor parseBlockName。"""
+    if len(stem) != 8:
+        return None
+    try:
+        int(stem, 16)
+    except ValueError:
+        return None
+    return int(stem[0:4], 16), int(stem[4:8], 16)
+
+
+def map_block_begin(block_coordinate):
+    return (block_coordinate - MAP_BLOCK_BIAS) * MAP_BLOCK_SIZE
+
+
+def scan_maps():
+    """天堂R主程式 map/<純數字>/ 的 .s32／.seg。381 名稱用 mapnames.txt，沒有再查後端；R 名稱用 zone3.xml。不複製地圖塊。"""
+    client = RCLIENT
+    root = os.path.join(client, 'map')
+    names = load_map_names()
+    sql_names = load_sql_map_names()
+    r_names = load_r_map_names()
+    maps = []
+    unnamed381 = 0
+    from_sql = 0
+    unnamed_r = 0
+    if not os.path.isdir(root):
+        print('地圖：找不到 %s' % root)
+        return maps
+    for name in os.listdir(root):
+        folder = os.path.join(root, name)
+        if not os.path.isdir(folder):
+            continue
+        if not name.isdigit() or len(name) > 6:
+            continue
+        mid = int(name)
+        unique = set()
+        for fn in os.listdir(folder):
+            low = fn.lower()
+            if not (low.endswith('.s32') or low.endswith('.seg')):
+                continue
+            parsed = parse_block_stem(os.path.splitext(fn)[0])
+            if parsed:
+                unique.add(parsed)
+        if not unique:
+            continue
+        min_bx = min(b[0] for b in unique)
+        max_bx = max(b[0] for b in unique)
+        min_by = min(b[1] for b in unique)
+        max_by = max(b[1] for b in unique)
+        label381 = names.get(mid, '')
+        src381 = 'mapnames'
+        if not label381:
+            label381 = sql_names.get(mid, '')
+            if label381:
+                src381 = 'sql'
+                from_sql += 1
+        if not label381:
+            label381 = '未知'
+            src381 = 'unknown'
+            unnamed381 += 1
+        label_r = r_names.get(mid, '')
+        if label_r:
+            src_r = 'zone3'
+        else:
+            label_r = '未知'
+            src_r = 'unknown'
+            unnamed_r += 1
+        row = {
+            'id': mid,
+            'name381': label381,
+            'name381Src': src381,
+            'nameR': label_r,
+            'nameRSrc': src_r,
+            'startX': map_block_begin(min_bx),
+            'endX': map_block_begin(max_bx) + 63,
+            'startY': map_block_begin(min_by),
+            'endY': map_block_begin(max_by) + 63,
+        }
+        maps.append(row)
+    maps.sort(key=lambda r: r['id'])
+    print('地圖：client=%s，%d 張（381 mapnames %d、SQL 補 %d、381 未知 %d；R zone3 %d、R 未知 %d）' % (
+        client, len(maps), len(maps) - from_sql - unnamed381, from_sql, unnamed381,
+        len(maps) - unnamed_r, unnamed_r))
+    return maps
+
+
+def skip_ui_rel(rel):
+    parts = rel.replace('\\', '/').split('/')
+    for p in parts[:-1]:
+        pl = p.lower()
+        if pl == 'sample' or pl.startswith('fx_'):
+            return True
+    return False
+
+
+def is_portrait_rel(rel):
+    path = rel.replace('\\', '/')
+    name = path.rsplit('/', 1)[-1]
+    if re.fullmatch(r'PO_\d+\.png', name, re.I):
+        return True
+    if re.search(r'LoginProcess', path, re.I):
+        return False
+    if re.search(r'(^|/)Portrait', path, re.I):
+        return True
+    if re.search(r'(^|/)Login', path, re.I):
+        return True
+    if re.search(r'_Login(/|$)', path, re.I):
+        return True
+    if re.search(r'/Char/', path):
+        return True
+    if re.search(r'/CharSelect/', path, re.I):
+        return True
+    if re.search(r'_[FM](/|$)', path):
+        return True
+    return False
+
+
+def prefixed_name(filename):
+    if filename.startswith('R-') or filename.startswith('381-'):
+        return filename
+    return 'R-' + filename
+
+
+def copy_png_tree(src_root, rel, dest_root):
+    src = os.path.join(src_root, rel.replace('/', os.sep))
+    dest_rel = '/'.join(rel.replace('\\', '/').split('/')[:-1] + [prefixed_name(os.path.basename(rel))])
+    dest = os.path.join(dest_root, dest_rel.replace('/', os.sep))
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    if not os.path.isfile(dest):
+        shutil.copyfile(src, dest)
+    return dest_rel, os.path.getsize(dest)
+
+
+def import_r_images(out_dir):
+    """從 R 版 _PakOutput 複製 PNG：UI（略過 Sample／FX_）、立繪（PO_ 與 Spine 登入角色）。"""
+    ui_src = os.path.join(R_PAKOUTPUT, 'UI')
+    image_src = os.path.join(R_PAKOUTPUT, 'Image')
+    ui_rows = []
+    portrait_rows = []
+    skipped_fx = 0
+    if not os.path.isdir(ui_src):
+        print('UI：找不到 %s' % ui_src)
+    else:
+        for dirpath, _dirnames, filenames in os.walk(ui_src):
+            for fn in filenames:
+                if not fn.lower().endswith('.png'):
+                    continue
+                rel = os.path.relpath(os.path.join(dirpath, fn), ui_src)
+                if skip_ui_rel(rel):
+                    skipped_fx += 1
+                    continue
+                kind = 'portraits' if is_portrait_rel(rel) else 'ui'
+                dest_root = os.path.join(out_dir, 'img', kind)
+                dest_rel, size = copy_png_tree(ui_src, rel, dest_root)
+                folder = dest_rel.rsplit('/', 1)[0] if '/' in dest_rel else ''
+                row = {'file': dest_rel, 'folder': folder, 'name': os.path.splitext(fn)[0], 'bytes': size}
+                if kind == 'portraits':
+                    portrait_rows.append(row)
+                else:
+                    ui_rows.append(row)
+    if os.path.isdir(image_src):
+        for fn in os.listdir(image_src):
+            if not re.fullmatch(r'PO_\d+\.png', fn, re.I):
+                continue
+            dest_root = os.path.join(out_dir, 'img', 'portraits')
+            dest_rel, size = copy_png_tree(image_src, fn, dest_root)
+            portrait_rows.append({
+                'file': dest_rel,
+                'folder': 'Image',
+                'name': os.path.splitext(fn)[0],
+                'bytes': size,
+            })
+    else:
+        print('立繪：找不到 %s（PO_*.png 未匯入）' % image_src)
+    ui_rows.sort(key=lambda r: (r['folder'], r['name']))
+    portrait_rows.sort(key=lambda r: (r['folder'], r['name']))
+    print('UI PNG：%d 張（略過 Sample／FX_ %d 張）' % (len(ui_rows), skipped_fx))
+    print('立繪 PNG：%d 張' % len(portrait_rows))
+    return ui_rows, portrait_rows, skipped_fx
+
+
+def import_assets(out_dir):
+    data = load_icon_data(out_dir)
+    maps = scan_maps()
+    mappreview.render(os.path.join(RCLIENT, 'map'), os.path.join(out_dir, 'img', 'maps'), maps)
+    data['maps'] = maps
+    ui_rows, portrait_rows, skipped_fx = import_r_images(out_dir)
+    data['ui'] = ui_rows
+    data['portraits'] = portrait_rows
+    meta = data.setdefault('meta', {})
+    meta['maps'] = len(data['maps'])
+    meta['ui'] = len(ui_rows)
+    meta['portraits'] = len(portrait_rows)
+    meta['uiSkippedFx'] = skipped_fx
+    meta['srcMaps'] = '天堂R主程式 map\\<編號>；381 名稱 mapnames.txt／mapids；R 名稱 data.idx zone3.xml'
+    meta['srcUi'] = R_PAKOUTPUT
+    write_icon_data(out_dir, data)
+    print('已寫入 data.js 的 maps／ui／portraits')
+    return 0
 
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description='381 → R 圖示對照網頁建置')
     ap.add_argument('--out', help='輸出資料夾（預設 GameAssets\\icon-compare）')
     actions = ap.add_mutually_exclusive_group()
-    actions.add_argument('--check', action='store_true', help='只檢查 data.js 引用的圖')
+    actions.add_argument('--check', action='store_true', help='只檢查 data.js 引用的分類圖')
+    actions.add_argument('--split-img', action='store_true',
+                         help='依現有 data.js 從 img/381、img/r 複製到 items／skills／status（不解包）')
+    actions.add_argument('--import-assets', action='store_true',
+                         help='掃天堂R主程式地圖、畫縮圖，並從 _PakOutput 複製 UI／立繪 PNG 寫進 data.js')
     actions.add_argument('--import-bmp', metavar='資料夾', help='匯入 LineageTool BMP 與 INI，不覆蓋既有 381 PNG（需要 Pillow）')
     actions.add_argument('--center-381', action='store_true', help='置中道具及技能對照的 381 PNG，備份原圖（需要 Pillow）')
     actions.add_argument('--style-preview', metavar='圖號', nargs='+', type=int,
@@ -704,6 +1153,10 @@ if __name__ == '__main__':
         OUT = os.path.abspath(args.out)
     if args.check:
         sys.exit(1 if check(OUT) else 0)
+    if args.split_img:
+        sys.exit(split_existing(OUT))
+    if args.import_assets:
+        sys.exit(import_assets(OUT))
     if args.import_bmp:
         import_bmp(args.import_bmp)
         sys.exit(0)

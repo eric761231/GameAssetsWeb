@@ -15,7 +15,7 @@ r"""狀態圖示分頁（2026-11-06）：381 EffectList2.xml 與 R effectlist2-c
   （2026-11-07 放寬：R 沒有效果用到但 icon.idx 有同號圖時也顯示 R 側，例如 1554；381 側對稱）。
 - 改號例外（2026-11-07）：讀 GameLauncher `EditXml/RStatusIconMap.xml` 的 `<map icon381="N" r="M"/>`
   （ctx['rstatus_map'] 給路徑），381 圖號 N **直接改成** R 圖號 M 再配對（效果清單的圖號在分組前改寫；
-  圖檔由 build.py 把 img/381/N.png 複製成 img/381/M.png），之後完全照一般規則，不另標記。
+  圖檔由 build.py 把 img/381/N.png 複製成 img/381/M.png（解包快取）與 img/status/381-M.png，之後完全照一般規則，不另標記。
   被改號的原圖號若 R 有效果用到同號，該列不再顯示 381 側（圖已改號搬走了）。`<fallback>` 不影響本網站，不讀。
 - 每一側列出「這個圖號用在哪些效果」（效果 ID、startMsgName、名稱），只當輔助資訊；該側無效果引用時效果列表為空。
 - 兩邊都有效果引用時，若有任何一個效果兩邊 startMsgName 相同 → usage='同'，否則 usage='異'（標「用途不同」，不拆列）；
@@ -117,7 +117,7 @@ def build(ctx, have381, haveR):
         return None, set(A0), set(B) | {renum[n] for n in A0 if n in renum}, None
 
     # 改號（2026-11-07 使用者定）：381 圖號直接改成 R 圖號再配對，不改其他規則、不另標記；
-    # 圖檔由 build.py 把 img/381/<原圖號>.png 複製成 img/381/<新圖號>.png
+    # 圖檔由 build.py 把 img/381/<原圖號>.png 複製成 img/381/<新圖號>.png（解包快取）與 img/status/381-<新圖號>.png
     A = {}
     for n, fx in A0.items():
         A.setdefault(renum.get(n, n), []).extend(fx)

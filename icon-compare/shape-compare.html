@@ -361,6 +361,49 @@ details p {
         return dir === 'f' ? { mine: '381', other: 'r' } : { mine: 'r', other: '381' };
     }
 
+    var IMG_CATS = ['items', 'skills', 'status'];
+
+    function imgCatHint(r) {
+        if (state.cat && r.c.indexOf(state.cat) >= 0) {
+            return state.cat;
+        }
+        return r.c[0] || 'items';
+    }
+
+    function iconFallback(el) {
+        var rest = (el.getAttribute('data-alts') || '').split('|');
+        if (!rest.length || !rest[0]) {
+            el.onerror = null;
+            return;
+        }
+        el.setAttribute('data-alts', rest.slice(1).join('|'));
+        el.src = rest[0];
+    }
+    window.iconFallback = iconFallback;
+
+    function slot(sideKey, n, isSame, catHint) {
+        var prefix = sideKey === '381' ? '381-' : 'R-';
+        var oldDir = sideKey === '381' ? '381' : 'r';
+        var ordered = [];
+        if (catHint) {
+            ordered.push(catHint);
+        }
+        IMG_CATS.forEach(function (c) {
+            if (ordered.indexOf(c) < 0) {
+                ordered.push(c);
+            }
+        });
+        var srcs = [];
+        for (var i = 0; i < ordered.length; i++) {
+            srcs.push('img/' + ordered[i] + '/' + prefix + n + '.png');
+        }
+        srcs.push('img/' + oldDir + '/' + n + '.png');
+        var cls = sideKey === '381' ? ' class="icon-381"' : '';
+        return '<div class="slot' + (isSame ? ' same' : '') + '"><img loading="lazy"' + cls +
+            ' src="' + srcs[0] + '" data-alts="' + srcs.slice(1).join('|') +
+            '" onerror="iconFallback(this)" alt="' + n + '"></div>';
+    }
+
     function sameRank(r) {
         for (var i = 0; i < r.top.length; i++) {
             if (r.top[i][0] === r.n) {
@@ -428,22 +471,18 @@ details p {
         });
     }
 
-    function slot(folder, n, isSame) {
-        var cls = folder === '381' ? ' class="icon-381"' : '';
-        return '<div class="slot' + (isSame ? ' same' : '') + '"><img loading="lazy"' + cls + ' src="img/' + folder + '/' + n + '.png" alt="' + n + '"></div>';
-    }
-
     function card(r) {
         var sd = side(state.dir);
         var st = status(r);
+        var hint = imgCatHint(r);
         var cats = r.c.map(function (c) {
             return CAT_NAME[c] || c;
         }).join('・');
         var html = '<div class="row"><div class="row-head"><span class="badge ' + st.cls + '">' + st.text + '</span><span class="cat">' + cats + '</span></div><div class="cells">';
-        html += '<div class="cell src">' + slot(sd.mine, r.n, false) + '<div class="no">' + (sd.mine === '381' ? '381 ' : 'R ') + r.n + '</div><div class="nm" title="' + esc(r.nm) + '">' + esc(r.nm || '—') + '</div></div>';
+        html += '<div class="cell src">' + slot(sd.mine, r.n, false, hint) + '<div class="no">' + (sd.mine === '381' ? '381 ' : 'R ') + r.n + '</div><div class="nm" title="' + esc(r.nm) + '">' + esc(r.nm || '—') + '</div></div>';
         for (var i = 0; i < r.top.length; i++) {
             var c = r.top[i];
-            html += '<div class="cell">' + slot(sd.other, c[0], c[0] === r.n) + '<div class="no">' + c[0] + '</div><div class="score' + (c[1] >= state.thr ? ' hi' : '') + '">' + c[1] + '</div><div class="nm" title="' + esc(c[2]) + '">' + esc(c[2] || '—') + '</div></div>';
+            html += '<div class="cell">' + slot(sd.other, c[0], c[0] === r.n, hint) + '<div class="no">' + c[0] + '</div><div class="score' + (c[1] >= state.thr ? ' hi' : '') + '">' + c[1] + '</div><div class="nm" title="' + esc(c[2]) + '">' + esc(c[2] || '—') + '</div></div>';
         }
         return html + '</div></div>';
     }
