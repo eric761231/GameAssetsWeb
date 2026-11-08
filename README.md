@@ -17,7 +17,7 @@
 381 圖在道具、技能與轉職技能頁以 31×31 顯示區保持比例呈現，不改變原始 PNG 尺寸；R 圖顯示尺寸不變。
 道具、技能與狀態圖示頁可用固定於上方的首頁、上一頁、下一頁、末頁及頁碼輸入切換頁面。狀態圖示頁的搜尋可輸入圖號、效果編號或名稱文字。
 
-`img/` 約 113MB，是建置產物，不進 git（見 `.gitignore`）；新 clone 下來要先跑一次建置。
+`img/` 是建置產物，不進 git（見 `.gitignore`）；新 clone 下來要先跑一次建置。
 
 ## Netlify 部署
 
@@ -27,7 +27,18 @@
 
 以專案根目錄作為 Root Directory；`vercel.json` 會將 `/` 重新導向至 `/icon-compare/`。
 
-Netlify 與 Vercel 的 Git 部署不包含被忽略的 `icon-compare/img/`，因此網頁可以載入，但圖片會回傳 404。建置圖片需要本機遊戲資源及 GameLauncher，兩者都無法僅從此倉庫重建圖片；如需在線上顯示圖片，須另外提供可公開發布的圖片來源及部署方式。
+## 線上圖片
+
+Git 部署不包含被忽略的 `icon-compare/img/`。線上頁面依 `drive-image-ids.js` 的對照表載入已公開分享的 Google Drive 圖片；用 `file://` 或 localhost 開啟時仍使用本機圖片。Drive 圖片必須維持「知道連結的任何人可檢視」，且 Drive 並非專用圖片代管服務，可能受流量限制或 Google 行為變更影響。
+
+更新 Drive 圖片後，使用已設定唯讀授權的 rclone，從圖片根資料夾取得完整清單並重建索引。以下 `REMOTE`、`FOLDER_ID` 和 `<清單路徑>` 請換成自己的設定，清單及授權檔不需加入 Git：
+
+```powershell
+rclone lsjson REMOTE: --drive-root-folder-id FOLDER_ID --files-only --recursive --no-modtime --no-mimetype | Out-File -Encoding utf8 <清單路徑>
+python icon-compare/_build/build.py --drive-index <清單路徑>
+```
+
+根目錄下的資料夾名稱為「道具圖」、「技能圖」、「狀態圖」、「人物圖」、「地圖」和「UI元件圖」，各自對應 `img/items`、`skills`、`status`、`portraits`、`maps`、`ui`，圖片名稱與子資料夾結構需與本機相同。形狀比對中只存在舊快取的候選圖，可另外在根目錄建立 `381` 和 `r` 資料夾，分別上傳 `img/381` 和 `img/r` 的 PNG。任何缺少索引的圖片仍使用原本路徑，若線上沒有該檔案就會顯示破圖；更新索引後須提交並重新部署。
 
 ## 目錄
 
@@ -110,8 +121,8 @@ python icon-compare/_build/build.py --style-preview 424 426 651 389 720 726 655 
 | 381 客戶端資源 | `<GA_GAMELAUNCHER>\client` | `GA_CLIENT` | `spellicon.idx`、`Sprite.pak`／`Sprite00～15.pak`（.tbt 圖示）、`Data\EffectList2.xml` 散檔（沒有才讀 `Data.pak` 的）、`Text.pak` 的 `string-c.tbl`（DES 加密，狀態圖示名稱） |
 | 381 Java 後端 | `C:\Users\eric7\eclipse-workspace\Lineage381C` | `GA_BACKEND` | `db\etcitem.sql`（etcitem）、`db\renewal_381.sql`（weapon、armor、skills）、`src\com\lineage\server\model\skill\L1SkillId.java`（BUFF_TRANSFOR_*） |
 | 天堂R 客戶端 | `D:\天堂資料\天堂-主程式懶人包\天堂R\LineageRemastered` | `GA_RCLIENT` | `data.idx/pak` 的 `contents\item-common.bin`、`desc-c.tbl`、`string-c.tbl`、`SpellList-c.xml`、`passiveSpells-c.xml`、`effectlist2-c.xml`；`icon.idx/pak` 的 `<圖號>.png`；根目錄 `icon\` 散檔（icon.idx 沒有時才補用） |
-| MapEditor | `D:\程式碼測試區\C++\MapEditor` | `GA_MAPEDITOR` | `mapnames.txt`（地圖名稱；沒有再查後端 `mapids`） |
-| 天堂R 主程式地圖 | `<GA_RCLIENT>\map`、`Tile.idx`、`data.idx` 的 `zone3.xml` | `GA_RCLIENT` | 每一個 `map\<編號>\*.s32／*.seg` 畫縮圖到 `img/maps/R-<編號>.png`；R 名稱取 zone3 同編號第一個區域。381 名稱仍用 MapEditor `mapnames.txt`，沒有再查後端 `mapids`。點縮圖可單獨放大 |
+| MapEditor | `D:\程式碼測試區\C++\MapEditor` | `GA_MAPEDITOR` | `mapnames.txt`（地圖名稱；沒有的再查後端 `mapids`） |
+| 天堂R 主程式地圖 | `<GA_RCLIENT>\map`、`Tile.idx`、`data.idx` 的 `zone3.xml` | `GA_RCLIENT` | 每一個 `map\<編號>\*.s32／*.seg` 畫縮圖到 `img/maps/R-<編號>.png`。381 名稱先用 MapEditor `mapnames.txt`，沒有的再查後端 `mapids`；R 名稱取 zone3 同編號第一個區域。點縮圖可單獨放大 |
 | 天堂R UI 解包 | 桌面 `LineageTool_20230627\_PakOutput` | `GA_R_PAKOUTPUT` | `UI\**\*.png`（略過 Sample／FX_）、`Image\PO_*.png` 立繪 |
 
 ### 狀態圖示分頁怎麼對應（statusicons.py）

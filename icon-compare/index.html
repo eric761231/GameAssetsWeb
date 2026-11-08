@@ -640,6 +640,8 @@ select {
     </div>
 </div>
 <script src="data.js"></script>
+<script src="drive-image-ids.js"></script>
+<script src="image-sources.js"></script>
 <script>
 (function () {
     var DATA = window.ICON_DATA;
@@ -708,7 +710,7 @@ select {
 
     function imgSrc(folder, dir, icon) {
         var prefix = (dir === 'r' || dir === 'R') ? 'R' : '381';
-        return 'img/' + folder + '/' + prefix + '-' + icon + '.png';
+        return window.assetImageUrl('img/' + folder + '/' + prefix + '-' + icon + '.png');
     }
 
     // 搜尋只使用圖片編號，不依名稱或資料編號配對。
@@ -939,7 +941,7 @@ select {
         var html = [];
         slice.forEach(function (r) {
             var img = r.file
-                ? '<img loading="lazy" decoding="async" alt="" src="img/maps/' + r.file + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">'
+                ? '<img loading="lazy" decoding="async" alt="" src="' + window.assetImageUrl('img/maps/' + r.file) + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">'
                 : '<div class="map-missing">缺圖</div>';
             html.push('<div class="asset-card map-card" data-map="' + r.id + '">' + img +
                 '<div class="name">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
@@ -960,7 +962,7 @@ select {
                 unknownR++;
             }
         });
-        $('summary').textContent = '地圖：點一張可單獨放大（滾輪縮放、拖曳移動）。381 名稱來自 mapnames.txt，沒有再查後端 mapids；R 名稱來自 zone3.xml 同編號的第一個區域，兩邊不一樣就各顯示各的。本頁 ' +
+        $('summary').textContent = '地圖：點一張可單獨放大（滾輪縮放、拖曳移動）。放大用的是 MapEditor 同一套圖塊畫出來的整張圖，不是色塊縮圖。381 名稱先用 mapnames.txt，沒有的再查後端 mapids；R 名稱用 zone3.xml 同編號的第一個區域。本頁 ' +
             list.length + ' 張（全部 ' + rows.length + '，381 未知 ' + unknown381 + '，R 未知 ' + unknownR + '）。';
         writeHash('&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1));
     }
@@ -989,7 +991,7 @@ select {
         var prefix = kind === 'ui' ? 'img/ui/' : 'img/portraits/';
         slice.forEach(function (r) {
             html.push('<div class="asset-card"><img loading="lazy" decoding="async" alt="" src="' +
-                prefix + r.file + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">' +
+                window.assetImageUrl(prefix + r.file) + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">' +
                 '<div class="name">' + esc(r.name) + '</div>' +
                 '<div class="meta">' + esc(r.folder || '') + '</div></div>');
         });
@@ -1280,7 +1282,13 @@ select {
         mapPanX = 0;
         mapPanY = 0;
         var img = $('mapViewImg');
-        img.src = r.file ? 'img/maps/' + r.file : '';
+        img.onerror = function () {
+            img.onerror = null;
+            if (r.file) {
+                img.src = window.assetImageUrl('img/maps/' + r.file);
+            }
+        };
+        img.src = window.assetImageUrl('img/maps/full/R-' + r.id + '.png');
         img.alt = (r.name381 || r.name || '') + ' / ' + (r.nameR || '');
         $('mapViewTitle').innerHTML = '<div class="name">地圖 ' + r.id + '</div>' +
             '<div class="meta">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
@@ -1400,6 +1408,7 @@ select {
     $('rail').addEventListener('click', function (e) {
         var b = e.target.closest('button');
         if (b) {
+            closeMap();
             state.tab = b.dataset.tab;
             state.page = 0;
             update(true);

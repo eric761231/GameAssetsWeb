@@ -9,6 +9,7 @@ r"""381 → R 版道具、技能圖示對照網頁的建置腳本（2026-11-04�
     python icon-compare/_build/build.py --check       只檢查 data.js 引用的圖是否都在三個分類資料夾、有沒有沒被引用的圖
     python icon-compare/_build/build.py --split-img  依現有 data.js 從 img/381、img/r 複製到三個分類資料夾（不解包）
     python icon-compare/_build/build.py --import-assets  掃天堂R主程式地圖並畫縮圖、從 R 版 _PakOutput 複製 UI／立繪 PNG
+    python icon-compare/_build/build.py --drive-index <清單.json>  從 rclone lsjson 清單建立 Drive 圖片索引
 
 來源路徑（全部唯讀，可用環境變數改）：
     GA_GAMELAUNCHER  GameLauncher 專案（預設 D:\程式碼測試區\C++\GameLauncher；用它的 tools/re/re_tools.py）
@@ -887,7 +888,11 @@ def load_map_names():
 
 
 def load_r_map_names():
-    """R 版 zone3.xml：同一地圖編號的第一個區域名稱。跟 381 的 mapnames 常常不同。"""
+    """R 版 zone3.xml：同一地圖編號的第一個區域名稱。跟 381 的 mapnames 常常不同。
+
+    這份 XML 有一區缺了開頭的 <zone>（傲慢之塔地下神殿），整份丟給 parser 會失敗，
+    所以只抓 <name> 後面最近的 <map num>。alias 的連續編號沿用基準地圖的名稱。
+    """
     idx = os.path.join(RCLIENT, 'data.idx')
     if not os.path.isfile(idx):
         print('R 地圖名稱：找不到 %s' % idx)
@@ -897,20 +902,25 @@ def load_r_map_names():
     if not raw:
         print('R 地圖名稱：data.idx 沒有 zone3.xml')
         return {}
-    root = ET.fromstring(xml_decrypt(raw))
+    text = xml_decrypt(raw).decode('utf-8')
     names = {}
-    for zone in root.iter('zone'):
-        name_el = zone.find('name')
-        map_el = zone.find('map')
-        if name_el is None or map_el is None:
-            continue
-        num = map_el.get('num')
-        label = clean_name(name_el.text or '')
-        if not num or not num.isdigit() or not label:
-            continue
-        mid = int(num)
-        if mid not in names:
+    for match in re.finditer(r'<name>([^<]*)</name>.*?<map\s+num="(\d+)"', text, re.S):
+        label = clean_name(match.group(1))
+        mid = int(match.group(2))
+        if label and mid not in names:
             names[mid] = label
+    for match in re.finditer(r'<alias\s+num="(\d+)">(.*?)</alias>', text, re.S):
+        base = names.get(int(match.group(1)))
+        if not base:
+            continue
+        for span in re.finditer(r'<map\s+from="(\d+)"\s+to="(\d+)"', match.group(2)):
+            start = int(span.group(1))
+            end = int(span.group(2))
+            if end < start or end - start > 5000:
+                continue
+            for mid in range(start, end + 1):
+                if mid not in names:
+                    names[mid] = base
     print('R 地圖名稱：zone3.xml %d 個地圖編號' % len(names))
     return names
 
@@ -946,7 +956,7 @@ def map_block_begin(block_coordinate):
 
 
 def scan_maps():
-    """天堂R主程式 map/<純數字>/ 的 .s32／.seg。381 名稱用 mapnames.txt，沒有再查後端；R 名稱用 zone3.xml。不複製地圖塊。"""
+    """天堂R主程式 map/<純數字>/ 的 .s32／.seg。381 名稱先 mapnames.txt，沒有再查後端；R 名稱用 zone3.xml。不複製地圖塊。"""
     client = RCLIENT
     root = os.path.join(client, 'map')
     names = load_map_names()
@@ -1132,6 +1142,50 @@ def import_assets(out_dir):
     return 0
 
 
+def import_drive_index(out_dir, listing_path):
+    folders = {
+        '道具圖': 'items',
+        '技能圖': 'skills',
+        '狀態圖': 'status',
+        '人物圖': 'portraits',
+        '地圖': 'maps',
+        'UI元件圖': 'ui',
+        '381': '381',
+        'r': 'r',
+    }
+    with open(listing_path, encoding='utf-8-sig') as f:
+        listing = json.load(f)
+    if not isinstance(listing, list):
+        raise ValueError('Drive 清單必須是 rclone lsjson 的陣列')
+    images = {}
+    counts = Counter()
+    for entry in listing:
+        if not isinstance(entry, dict) or not isinstance(entry.get('Path'), str):
+            raise ValueError('Drive 清單包含無效項目')
+        parts = entry['Path'].split('/')
+        if (len(parts) < 2 or parts[0] not in folders
+                or any(part in ('', '.', '..') or '\\' in part for part in parts[1:])
+                or not parts[-1].lower().endswith('.png')):
+            raise ValueError('未支援的 Drive 圖片路徑：%s' % entry['Path'])
+        file_id = entry.get('ID')
+        if not isinstance(file_id, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', file_id):
+            raise ValueError('Drive 圖片 ID 無效：%s' % entry['Path'])
+        path = 'img/%s/%s' % (folders[parts[0]], '/'.join(parts[1:]))
+        if path in images:
+            raise ValueError('Drive 圖片檔名重複：%s' % path)
+        images[path] = file_id
+        counts[folders[parts[0]]] += 1
+    if not images:
+        raise ValueError('Drive 圖片清單為空')
+    output = os.path.join(out_dir, 'drive-image-ids.js')
+    with open(output, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('window.DRIVE_IMAGE_IDS = ')
+        json.dump(images, f, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+        f.write(';\n')
+    print('已寫入 %s：%s' % (output, ', '.join('%s=%d' % item for item in sorted(counts.items()))))
+    return 0
+
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description='381 → R 圖示對照網頁建置')
     ap.add_argument('--out', help='輸出資料夾（預設 GameAssets\\icon-compare）')
@@ -1141,6 +1195,8 @@ if __name__ == '__main__':
                          help='依現有 data.js 從 img/381、img/r 複製到 items／skills／status（不解包）')
     actions.add_argument('--import-assets', action='store_true',
                          help='掃天堂R主程式地圖、畫縮圖，並從 _PakOutput 複製 UI／立繪 PNG 寫進 data.js')
+    actions.add_argument('--drive-index', metavar='清單.json',
+                         help='讀取 rclone lsjson 清單，建立 Drive 圖片路徑與 ID 對照')
     actions.add_argument('--import-bmp', metavar='資料夾', help='匯入 LineageTool BMP 與 INI，不覆蓋既有 381 PNG（需要 Pillow）')
     actions.add_argument('--center-381', action='store_true', help='置中道具及技能對照的 381 PNG，備份原圖（需要 Pillow）')
     actions.add_argument('--style-preview', metavar='圖號', nargs='+', type=int,
@@ -1157,6 +1213,8 @@ if __name__ == '__main__':
         sys.exit(split_existing(OUT))
     if args.import_assets:
         sys.exit(import_assets(OUT))
+    if args.drive_index:
+        sys.exit(import_drive_index(OUT, args.drive_index))
     if args.import_bmp:
         import_bmp(args.import_bmp)
         sys.exit(0)

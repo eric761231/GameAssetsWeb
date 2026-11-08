@@ -337,6 +337,8 @@ details p {
     <div class="grid" id="grid"></div>
 </main>
 <script src="shape-data.js"></script>
+<script src="drive-image-ids.js"></script>
+<script src="image-sources.js"></script>
 <script>
 (function () {
     var D = window.SHAPE_DATA;
@@ -395,9 +397,9 @@ details p {
         });
         var srcs = [];
         for (var i = 0; i < ordered.length; i++) {
-            srcs.push('img/' + ordered[i] + '/' + prefix + n + '.png');
+            srcs.push(window.assetImageUrl('img/' + ordered[i] + '/' + prefix + n + '.png'));
         }
-        srcs.push('img/' + oldDir + '/' + n + '.png');
+        srcs.push(window.assetImageUrl('img/' + oldDir + '/' + n + '.png'));
         var cls = sideKey === '381' ? ' class="icon-381"' : '';
         return '<div class="slot' + (isSame ? ' same' : '') + '"><img loading="lazy"' + cls +
             ' src="' + srcs[0] + '" data-alts="' + srcs.slice(1).join('|') +
