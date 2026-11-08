@@ -1,0 +1,10 @@
+# 建置產物：圖約 113MB，可用 icon-compare/_build/build.py 從遊戲客戶端重建
+icon-compare/img/
+icon-compare/_build/export-icon-pngs.exe
+icon-compare/_build/ids381.txt
+icon-compare/_build/381-originals/
+*.exe
+
+# Python
+__pycache__/
+*.pyc

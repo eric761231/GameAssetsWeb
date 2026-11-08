@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>圖示形狀比對</title>
+<style>
+:root {
+    --bg: #f4f2ee;
+    --panel: #ffffff;
+    --ink: #22201c;
+    --muted: #6d675e;
+    --line: #dcd6cc;
+    --accent: #8a5a1c;
+    --accent-ink: #ffffff;
+    --slot: #2a2722;
+    --slot-line: #4a443b;
+    --empty: #e8e3da;
+    --tag-both: #2f7a4b;
+    --tag-r: #2f5f9a;
+    --tag-381: #9a5a2f;
+    --warn: #b0452f;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #181715;
+        --panel: #22201d;
+        --ink: #ece7de;
+        --muted: #a39c90;
+        --line: #3a3631;
+        --accent: #d39b4f;
+        --accent-ink: #1b1813;
+        --slot: #121110;
+        --slot-line: #3d3830;
+        --empty: #2b2925;
+        --tag-both: #5fbf83;
+        --tag-r: #6f9fe0;
+        --tag-381: #e0995f;
+        --warn: #ef8a72;
+    }
+}
+:root[data-theme="dark"] {
+    --bg: #181715;
+    --panel: #22201d;
+    --ink: #ece7de;
+    --muted: #a39c90;
+    --line: #3a3631;
+    --accent: #d39b4f;
+    --accent-ink: #1b1813;
+    --slot: #121110;
+    --slot-line: #3d3830;
+    --empty: #2b2925;
+    --tag-both: #5fbf83;
+    --tag-r: #6f9fe0;
+    --tag-381: #e0995f;
+    --warn: #ef8a72;
+}
+* {
+    box-sizing: border-box;
+}
+[hidden] {
+    display: none !important;
+}
+html, body {
+    overflow-x: hidden;
+}
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+}
+a {
+    color: var(--accent);
+}
+header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 16px 8px;
+}
+.bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: center;
+}
+h1 {
+    font-size: 17px;
+    margin: 0 6px 0 0;
+    white-space: nowrap;
+}
+.group {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.group-label {
+    font-size: 12px;
+    color: var(--muted);
+}
+button {
+    font: inherit;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px 9px;
+    cursor: pointer;
+}
+button[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+button:disabled {
+    opacity: .4;
+    cursor: default;
+}
+input[type="search"], input[type="number"] {
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+input[type="search"] {
+    width: 200px;
+    max-width: 100%;
+}
+input[type="number"] {
+    width: 64px;
+}
+.count {
+    font-size: 12px;
+    opacity: .85;
+    margin-left: 2px;
+}
+main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 12px 16px 40px;
+}
+.summary {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+.stats {
+    overflow-x: auto;
+    margin-bottom: 12px;
+}
+.stats table {
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+.stats th, .stats td {
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+    white-space: nowrap;
+}
+.stats th:first-child, .stats td:first-child {
+    text-align: left;
+}
+details {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--muted);
+}
+details p {
+    margin: 6px 0;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 10px;
+}
+.row {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 0;
+}
+.row-head {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+.badge {
+    font-weight: bold;
+}
+.badge.good {
+    color: var(--tag-both);
+}
+.badge.warn {
+    color: var(--warn);
+}
+.badge.info {
+    color: var(--tag-r);
+}
+.cat {
+    color: var(--muted);
+}
+.cells {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+}
+.cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+    font-size: 12px;
+}
+.cell.src {
+    border-right: 1px dashed var(--line);
+    padding-right: 4px;
+}
+.slot {
+    width: 54px;
+    height: 54px;
+    border-radius: 6px;
+    background: var(--slot);
+    border: 2px solid var(--slot-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.slot.same {
+    border-color: var(--accent);
+}
+.slot img {
+    max-width: 48px;
+    max-height: 48px;
+}
+.slot img.icon-381 {
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+}
+.no {
+    font-weight: bold;
+    margin-top: 2px;
+}
+.score {
+    color: var(--muted);
+}
+.score.hi {
+    color: var(--tag-both);
+    font-weight: bold;
+}
+.nm {
+    color: var(--muted);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.pager {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.pager input {
+    width: 56px;
+}
+@media (max-width: 600px) {
+    header {
+        position: static;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+    <div class="bar">
+        <h1>圖示形狀比對</h1>
+        <div class="group" id="dir">
+            <button data-v="f" aria-pressed="true">381 → R</button>
+            <button data-v="r" aria-pressed="false">R → 381</button>
+        </div>
+        <div class="group" id="cat">
+            <button data-v="" aria-pressed="true">全部</button>
+            <button data-v="status" aria-pressed="false">狀態</button>
+            <button data-v="items" aria-pressed="false">道具</button>
+            <button data-v="skills" aria-pressed="false">技能</button>
+        </div>
+        <div class="group" id="flt">
+            <button data-v="" aria-pressed="true">全部</button>
+            <button data-v="notTop" aria-pressed="false">同圖號不是第一</button>
+            <button data-v="low" aria-pressed="false">最高分低於門檻</button>
+            <button data-v="sameLow" aria-pressed="false">同圖號但不像</button>
+            <button data-v="renum" aria-pressed="false">高相似但不同圖號</button>
+        </div>
+        <label class="group"><span class="group-label">門檻</span><input type="number" id="thr" min="0" max="100" step="1"></label>
+        <input type="search" id="q" placeholder="搜尋圖號或名稱">
+        <div class="pager">
+            <button id="first">首頁</button>
+            <button id="prev">上一頁</button>
+            <input type="number" id="page" min="1" value="1" aria-label="頁碼">
+            <span id="pages" class="count"></span>
+            <button id="next">下一頁</button>
+            <button id="last">末頁</button>
+        </div>
+        <button id="theme">亮／暗</button>
+        <a href="index.html">回圖示對照</a>
+    </div>
+</header>
+<main>
+    <div class="summary" id="summary"></div>
+    <div class="stats" id="stats"></div>
+    <details>
+        <summary>怎麼看這頁、分數怎麼算</summary>
+        <p>每張卡片左邊是來源圖（381 → R 時是 381 圖），右邊三格是另一邊所有圖示裡形狀最像的前 3 名（R 候選池是 icon.idx 全部 png，排除 _d 灰圖）。橘框＝跟來源同圖號。</p>
+        <p>分數 0～100，以形狀為主：去背（透明底用 alpha；有方框底的狀態／技能圖切掉外框、以底色差取圖案，不受亮底暗紋或暗底亮紋影響）→ 裁到圖案外框 → 縮成 32×32，再算遮罩容錯重疊 35%、邊緣圖相關 45%、pHash 10%、顏色 10%。</p>
+        <p>門檻預設 70：已知同圖的狀態圖 25 組有 23 組 ≥ 70；隨機不同圖號只有約 0.3% ≥ 70。道具、技能在 R 多半是重畫（構圖、比例不同），同圖號常不是第一名，形狀分數只能當參考。</p>
+        <p>「並列」：同圖號分數跟第一名差 2 分以內（R 常把同一個圖案存成多個圖號，只差顏色或細節）。</p>
+    </details>
+    <div class="grid" id="grid"></div>
+</main>
+<script src="shape-data.js"></script>
+<script>
+(function () {
+    var D = window.SHAPE_DATA;
+    var M = D.meta;
+    var PAGE = 60;
+    var CAT_NAME = { status: '狀態', items: '道具', skills: '技能' };
+    var state = { dir: 'f', cat: '', flt: '', q: '', thr: M.scoreSame, page: 1 };
+    var $ = function (id) {
+        return document.getElementById(id);
+    };
+    try {
+        var saved = JSON.parse(localStorage.getItem('shape-compare') || '{}');
+        if (saved.theme) {
+            document.documentElement.setAttribute('data-theme', saved.theme);
+        }
+    } catch (e) {
+        // 瀏覽器不給存就用預設
+    }
+    $('thr').value = state.thr;
+
+    function side(dir) {
+        return dir === 'f' ? { mine: '381', other: 'r' } : { mine: 'r', other: '381' };
+    }
+
+    function sameRank(r) {
+        for (var i = 0; i < r.top.length; i++) {
+            if (r.top[i][0] === r.n) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
+    function status(r) {
+        var top1 = r.top[0][1];
+        if (r.same === null) {
+            return { cls: 'info', text: '另一邊沒有同圖號', notTop: false };
+        }
+        var rank = sameRank(r);
+        if (rank === 1) {
+            return { cls: 'good', text: '同圖號即第一', notTop: false };
+        }
+        if (top1 - r.same <= M.tie) {
+            return { cls: 'good', text: '同圖號並列第一（' + r.same + '）', notTop: false };
+        }
+        if (rank > 0) {
+            return { cls: 'warn', text: '同圖號第 ' + rank + ' 名（' + r.same + '）', notTop: true };
+        }
+        return { cls: 'warn', text: '同圖號 ' + r.same + ' 分（不在前 3）', notTop: true };
+    }
+
+    function match(r) {
+        if (state.cat && r.c.indexOf(state.cat) < 0) {
+            return false;
+        }
+        var top1 = r.top[0][1];
+        if (state.flt === 'notTop' && !status(r).notTop) {
+            return false;
+        }
+        if (state.flt === 'low' && top1 >= state.thr) {
+            return false;
+        }
+        if (state.flt === 'sameLow' && !(r.same !== null && r.same < state.thr)) {
+            return false;
+        }
+        if (state.flt === 'renum' && !(r.top[0][0] !== r.n && top1 >= state.thr && (r.same === null || r.same < state.thr))) {
+            return false;
+        }
+        if (state.q) {
+            var q = state.q;
+            if (/^\d+$/.test(q)) {
+                var hit = String(r.n) === q;
+                for (var i = 0; i < r.top.length && !hit; i++) {
+                    hit = String(r.top[i][0]) === q;
+                }
+                return hit;
+            }
+            var text = r.nm + ' ' + r.top.map(function (c) {
+                return c[2] || '';
+            }).join(' ');
+            return text.indexOf(q) >= 0;
+        }
+        return true;
+    }
+
+    function esc(s) {
+        return String(s || '').replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    }
+
+    function slot(folder, n, isSame) {
+        var cls = folder === '381' ? ' class="icon-381"' : '';
+        return '<div class="slot' + (isSame ? ' same' : '') + '"><img loading="lazy"' + cls + ' src="img/' + folder + '/' + n + '.png" alt="' + n + '"></div>';
+    }
+
+    function card(r) {
+        var sd = side(state.dir);
+        var st = status(r);
+        var cats = r.c.map(function (c) {
+            return CAT_NAME[c] || c;
+        }).join('・');
+        var html = '<div class="row"><div class="row-head"><span class="badge ' + st.cls + '">' + st.text + '</span><span class="cat">' + cats + '</span></div><div class="cells">';
+        html += '<div class="cell src">' + slot(sd.mine, r.n, false) + '<div class="no">' + (sd.mine === '381' ? '381 ' : 'R ') + r.n + '</div><div class="nm" title="' + esc(r.nm) + '">' + esc(r.nm || '—') + '</div></div>';
+        for (var i = 0; i < r.top.length; i++) {
+            var c = r.top[i];
+            html += '<div class="cell">' + slot(sd.other, c[0], c[0] === r.n) + '<div class="no">' + c[0] + '</div><div class="score' + (c[1] >= state.thr ? ' hi' : '') + '">' + c[1] + '</div><div class="nm" title="' + esc(c[2]) + '">' + esc(c[2] || '—') + '</div></div>';
+        }
+        return html + '</div></div>';
+    }
+
+    function renderStats() {
+        var st = state.dir === 'f' ? M.stats : M.statsR;
+        var other = state.dir === 'f' ? 'R' : '381';
+        var h = '<table><tr><th>分類（' + (state.dir === 'f' ? '381 → R' : 'R → 381') + '）</th><th>張數</th><th>有同圖號</th><th>同圖號即第一＋並列</th><th>同圖號在前 3</th><th>高相似但不同圖號</th><th>' + other + ' 找不到相似圖</th><th>同圖號但不像</th></tr>';
+        M.cats.forEach(function (c) {
+            var s = st[c];
+            if (!s) {
+                return;
+            }
+            h += '<tr><td>' + CAT_NAME[c] + '</td><td>' + s.rows + '</td><td>' + s.hasSame + '</td><td>' + (s.sameTop1 + s.sameTie) + '（' + s.sameTop1Pct + '%）</td><td>' + s.sameTop3 + '</td><td>' + s.renum + '</td><td>' + s.none + '</td><td>' + s.sameLow + '</td></tr>';
+        });
+        h += '</table>';
+        $('stats').innerHTML = h;
+    }
+
+    function render() {
+        var rows = D[state.dir].filter(match);
+        var pages = Math.max(1, Math.ceil(rows.length / PAGE));
+        state.page = Math.min(Math.max(1, state.page), pages);
+        $('page').value = state.page;
+        $('page').max = pages;
+        $('pages').textContent = '/ ' + pages + ' 頁';
+        $('first').disabled = $('prev').disabled = state.page <= 1;
+        $('next').disabled = $('last').disabled = state.page >= pages;
+        var slice = rows.slice((state.page - 1) * PAGE, state.page * PAGE);
+        $('grid').innerHTML = slice.map(card).join('');
+        $('summary').textContent = '符合 ' + rows.length + ' 張（全部 ' + D[state.dir].length + '）・門檻 ' + state.thr +
+            ' 分（統計表用建置時的門檻 ' + M.scoreSame + '）・候選池 381 ' + M.pool381 + ' 張、R ' + M.poolR + ' 張・產生於 ' + M.generated;
+        renderStats();
+    }
+
+    function bindGroup(id, key) {
+        var btns = $(id).querySelectorAll('button');
+        btns.forEach(function (b) {
+            b.addEventListener('click', function () {
+                btns.forEach(function (x) {
+                    x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+                });
+                state[key] = b.getAttribute('data-v');
+                state.page = 1;
+                render();
+            });
+        });
+    }
+    bindGroup('dir', 'dir');
+    bindGroup('cat', 'cat');
+    bindGroup('flt', 'flt');
+    $('q').addEventListener('input', function () {
+        state.q = this.value.trim();
+        state.page = 1;
+        render();
+    });
+    $('thr').addEventListener('change', function () {
+        var v = parseFloat(this.value);
+        if (!isNaN(v)) {
+            state.thr = v;
+            state.page = 1;
+            render();
+        }
+    });
+    $('page').addEventListener('change', function () {
+        state.page = parseInt(this.value, 10) || 1;
+        render();
+    });
+    $('first').addEventListener('click', function () {
+        state.page = 1;
+        render();
+    });
+    $('prev').addEventListener('click', function () {
+        state.page -= 1;
+        render();
+    });
+    $('next').addEventListener('click', function () {
+        state.page += 1;
+        render();
+    });
+    $('last').addEventListener('click', function () {
+        state.page = 1e9;
+        render();
+    });
+    $('theme').addEventListener('click', function () {
+        var cur = document.documentElement.getAttribute('data-theme');
+        var dark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var next = dark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try {
+            localStorage.setItem('shape-compare', JSON.stringify({ theme: next }));
+        } catch (e) {
+            // 不存也沒關係
+        }
+    });
+    // 網址 #後面可帶 dir=r&cat=status&flt=notTop&q=5397（或只寫圖號）直接打開某個篩選
+    var hash = decodeURIComponent(location.hash.replace(/^#/, ''));
+    if (hash && hash.indexOf('=') < 0) {
+        hash = 'q=' + hash;
+    }
+    hash.split('&').forEach(function (kv) {
+        var i = kv.indexOf('=');
+        if (i < 0) {
+            return;
+        }
+        var k = kv.slice(0, i);
+        var v = kv.slice(i + 1);
+        if (k === 'q') {
+            state.q = v;
+            $('q').value = v;
+        } else if (k === 'dir' || k === 'cat' || k === 'flt') {
+            state[k] = v;
+            $(k).querySelectorAll('button').forEach(function (b) {
+                b.setAttribute('aria-pressed', b.getAttribute('data-v') === v ? 'true' : 'false');
+            });
+        }
+    });
+    render();
+})();
+</script>
+</body>
+</html>

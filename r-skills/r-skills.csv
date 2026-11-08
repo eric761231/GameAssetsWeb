@@ -1,0 +1,404 @@
+﻿類別,技能ID,名稱,原始名稱,名稱來源,表名稱,職業,職業代碼,群組階段,位置,等級,顏色碼,圖號,圖檔,圖存在,停用圖,停用圖存在,xicon,xicon圖存在,母技能ID,備註
+主動,0,初級治癒術,初級治癒術,SpellList-c.xml name,初級治癒術,通用,generic,1,,一般,,383,icon.pak:383.png,有,icon.pak:383_d.png,有,333,有,,desc=HEAL
+主動,1,日光術,日光術,SpellList-c.xml name,日光術,通用,generic,1,,一般,,384,icon.pak:384.png,有,icon.pak:384_d.png,有,334,有,,desc=LIGHT
+主動,2,保護罩,保護罩,SpellList-c.xml name,保護罩,通用,generic,1,,一般,,385,icon.pak:385.png,有,icon.pak:385_d.png,有,335,有,,desc=SHIELD
+主動,3,光箭,光箭,SpellList-c.xml name,光箭,通用,generic,1,,一般,,386,icon.pak:386.png,有,icon.pak:386_d.png,有,336,有,,
+主動,4,指定傳送,指定傳送,SpellList-c.xml name,指定傳送,通用,generic,1,,一般,,387,icon.pak:387.png,有,icon.pak:387_d.png,有,337,有,,desc=TELEPORT
+主動,5,冰箭,冰箭,SpellList-c.xml name,冰箭,通用,generic,1,,一般,,657,icon.pak:657.png,有,icon.pak:657_d.png,有,658,有,,desc=ICE_DAGGER
+主動,6,風刃,風刃,SpellList-c.xml name,風刃,通用,generic,1,,一般,,663,icon.pak:663.png,有,icon.pak:663_d.png,有,664,有,,desc=WIND_CUTTER
+主動,7,神聖武器,神聖武器,SpellList-c.xml name,神聖武器,通用,generic,1,,一般,,775,icon.pak:775.png,有,icon.pak:775_d.png,有,776,有,,desc=HOLY_WEAPON
+主動,8,解毒術,解毒術,SpellList-c.xml name,解毒術,通用,generic,2,,一般,,388,icon.pak:388.png,有,icon.pak:388_d.png,有,338,有,,desc=CURE_POISON
+主動,9,寒冷戰慄,寒冷戰慄,SpellList-c.xml name,寒冷戰慄,通用,generic,2,,一般,,389,icon.pak:389.png,有,icon.pak:389_d.png,有,339,有,,desc=CHILL_TOUCH
+主動,10,毒咒,毒咒,SpellList-c.xml name,毒咒,通用,generic,2,,一般,,390,icon.pak:390.png,有,icon.pak:390_d.png,有,340,有,,
+主動,11,擬似魔法武器,擬似魔法武器,SpellList-c.xml name,擬似魔法武器,通用,generic,2,,一般,,391,icon.pak:391.png,有,icon.pak:391_d.png,有,341,有,,
+主動,12,無所遁形術,無所遁形術,SpellList-c.xml name,無所遁形術,通用,generic,2,,一般,,392,icon.pak:392.png,有,icon.pak:392_d.png,有,342,有,,
+主動,13,負重強化,負重強化,SpellList-c.xml name,負重強化,通用,generic,2,,一般,,755,icon.pak:755.png,有,icon.pak:755_d.png,有,756,有,,
+主動,14,火箭,火箭,SpellList-c.xml name,火箭,通用,generic,2,,一般,,651,icon.pak:651.png,有,icon.pak:651_d.png,有,652,有,,
+主動,15,地獄之牙,地獄之牙,SpellList-c.xml name,地獄之牙,通用,generic,2,,一般,,659,icon.pak:659.png,有,icon.pak:659_d.png,有,660,有,,
+主動,16,極光雷電,極光雷電,SpellList-c.xml name,極光雷電,通用,generic,3,,一般,,393,icon.pak:393.png,有,icon.pak:393_d.png,有,343,有,,
+主動,17,起死回生術,起死回生術,SpellList-c.xml name,起死回生術,通用,generic,3,,一般,,394,icon.pak:394.png,有,icon.pak:394_d.png,有,344,有,,
+主動,18,中級治癒術,中級治癒術,SpellList-c.xml name,中級治癒術,通用,generic,3,,一般,,395,icon.pak:395.png,有,icon.pak:395_d.png,有,345,有,,
+主動,19,闇盲咒術,闇盲咒術,SpellList-c.xml name,闇盲咒術,通用,generic,3,,一般,,396,icon.pak:396.png,有,icon.pak:396_d.png,有,346,有,,desc=CURSE_BLIND
+主動,20,鎧甲護持,鎧甲護持,SpellList-c.xml name,鎧甲護持,通用,generic,3,,一般,,397,icon.pak:397.png,有,icon.pak:397_d.png,有,347,有,,desc=BLESSED_ARMOR
+主動,21,寒冰氣息,寒冰氣息,SpellList-c.xml name,寒冰氣息,通用,generic,3,,一般,,655,icon.pak:655.png,有,icon.pak:655_d.png,有,656,有,,desc=FROZEN_CLOUD
+主動,22,能量感測,能量感測,SpellList-c.xml name,能量感測,通用,generic,3,,一般,,848,icon.pak:848.png,有,icon.pak:848_d.png,有,849,有,,
+主動,24,燃燒的火球,燃燒的火球,SpellList-c.xml name,燃燒的火球,通用,generic,4,,一般,,398,icon.pak:398.png,有,icon.pak:398_d.png,有,348,有,,desc=FIRE_BALL
+主動,25,通暢氣脈術,通暢氣脈術,SpellList-c.xml name,通暢氣脈術,通用,generic,4,,一般,,399,icon.pak:399.png,有,icon.pak:399_d.png,有,349,有,,desc=ENCHANT_DEXTERITY
+主動,26,壞物術,壞物術,SpellList-c.xml name,壞物術,通用,generic,4,,一般,,400,icon.pak:400.png,有,icon.pak:400_d.png,有,350,有,,desc=WEAPON_BREAK
+主動,27,吸血鬼之吻,吸血鬼之吻,SpellList-c.xml name,吸血鬼之吻,通用,generic,4,,一般,,401,icon.pak:401.png,有,icon.pak:401_d.png,有,351,有,,desc=VAMPIRIC_TOUCH
+主動,28,緩速術,緩速術,SpellList-c.xml name,緩速術,通用,generic,4,,一般,,402,icon.pak:402.png,有,icon.pak:402_d.png,有,352,有,,desc=SLOW
+主動,29,岩牢,岩牢,SpellList-c.xml name,岩牢,通用,generic,4,,一般,,647,icon.pak:647.png,有,icon.pak:647_d.png,有,648,有,,desc=EARTH_JAIL
+主動,30,魔法屏障,魔法屏障,SpellList-c.xml name,魔法屏障,通用,generic,4,,一般,,746,icon.pak:746.png,有,icon.pak:746_d.png,有,747,有,,desc=COUNTER_MAGIC
+主動,31,冥想術,冥想術,SpellList-c.xml name,冥想術,通用,generic,4,,一般,,793,icon.pak:793.png,有,icon.pak:793_d.png,有,794,有,,desc=MEDITATION
+主動,32,木乃伊的詛咒,木乃伊的詛咒,SpellList-c.xml name,木乃伊的詛咒,通用,generic,5,,一般,,403,icon.pak:403.png,有,icon.pak:403_d.png,有,353,有,,desc=CURSE_PARALYZE
+主動,33,極道落雷,極道落雷,SpellList-c.xml name,極道落雷,通用,generic,5,,一般,,404,icon.pak:404.png,有,icon.pak:404_d.png,有,354,有,,desc=CALL_LIGHTNING
+主動,34,高級治癒術,高級治癒術,SpellList-c.xml name,高級治癒術,通用,generic,5,,一般,,405,icon.pak:405.png,有,icon.pak:405_d.png,有,355,有,,desc=GREATER_HEAL
+主動,35,迷魅術,迷魅術,SpellList-c.xml name,迷魅術,通用,generic,5,,一般,,406,icon.pak:406.png,有,icon.pak:406_d.png,有,356,有,,desc=TAMING_MONSTER
+主動,36,聖潔之光,聖潔之光,SpellList-c.xml name,聖潔之光,通用,generic,5,,一般,,407,icon.pak:407.png,有,icon.pak:407_d.png,有,357,有,,desc=REMOVE_CURSE
+主動,37,冰錐,冰錐,SpellList-c.xml name,冰錐,通用,generic,5,,一般,,643,icon.pak:643.png,有,icon.pak:643_d.png,有,644,有,,desc=CONE_OF_COLD
+主動,38,魔力奪取,魔力奪取,SpellList-c.xml name,魔力奪取,通用,generic,5,,一般,,791,icon.pak:791.png,有,icon.pak:791_d.png,有,792,有,,desc=DRAIN_MANA
+主動,39,黑闇之影,黑闇之影,SpellList-c.xml name,黑闇之影,通用,generic,5,,一般,,749,icon.pak:749.png,有,icon.pak:749_d.png,有,750,有,,desc=DARKNESS
+主動,40,造屍術,造屍術,SpellList-c.xml name,造屍術,通用,generic,6,,一般,,408,icon.pak:408.png,有,icon.pak:408_d.png,有,358,有,,desc=CREATE_ZOMBIE
+主動,41,體魄強健術,體魄強健術,SpellList-c.xml name,體魄強健術,通用,generic,6,,一般,,409,icon.pak:409.png,有,icon.pak:409_d.png,有,359,有,,
+主動,42,加速術,加速術,SpellList-c.xml name,加速術,通用,generic,6,,一般,,410,icon.pak:410.png,有,icon.pak:410_d.png,有,360,有,,desc=SPL_HASTE
+主動,43,魔法相消術,魔法相消術,SpellList-c.xml name,魔法相消術,通用,generic,6,,一般,,11720,icon.pak:11720.png,有,icon.pak:11720_d.png,有,11720,有,,desc=CANCELATION
+主動,44,地裂術,地裂術,SpellList-c.xml name,地裂術,通用,generic,6,,一般,,412,icon.pak:412.png,有,icon.pak:412_d.png,有,362,有,,desc=ERUPTION
+主動,45,烈炎術,烈炎術,SpellList-c.xml name,烈炎術,通用,generic,6,,一般,,661,icon.pak:661.png,有,icon.pak:661_d.png,有,662,有,,desc=SUN_BURST
+主動,46,弱化術,弱化術,SpellList-c.xml name,弱化術,通用,generic,6,,一般,,850,icon.pak:850.png,有,icon.pak:850_d.png,有,851,有,,desc=WEAKNESS
+主動,47,祝福魔法武器,祝福魔法武器,SpellList-c.xml name,祝福魔法武器,通用,generic,6,,一般,,726,icon.pak:726.png,有,icon.pak:726_d.png,有,727,有,,desc=BLESS_WEAPON
+主動,48,體力回復術,體力回復術,SpellList-c.xml name,體力回復術,通用,generic,7,,一般,,413,icon.pak:413.png,有,icon.pak:413_d.png,有,363,有,,desc=HEAL_ALL
+主動,49,冰霜之甲,冰霜之甲,SpellList-c.xml name,冰霜之甲,通用,generic,7,,一般,,9491,icon.pak:9491.png,有,icon.pak:9491_d.png,有,,,,
+主動,50,召喚術,召喚術,SpellList-c.xml name,召喚術,通用,generic,7,,一般,,415,icon.pak:415.png,有,icon.pak:415_d.png,有,365,有,,desc=SUMMON_MONSTER
+主動,51,神聖疾走,神聖疾走,SpellList-c.xml name,神聖疾走,通用,generic,7,,一般,,1578,icon.pak:1578.png,有,icon.pak:1578_d.png,有,366,有,,
+主動,52,龍捲風,龍捲風,SpellList-c.xml name,龍捲風,通用,generic,7,,一般,,417,icon.pak:417.png,有,icon.pak:417_d.png,有,367,有,,
+主動,53,強力加速術,強力加速術,SpellList-c.xml name,強力加速術,通用,generic,7,,一般,,622,icon.pak:622.png,有,icon.pak:622_d.png,有,623,有,,
+主動,54,狂暴術,狂暴術,SpellList-c.xml name,狂暴術,通用,generic,7,,一般,,1570,icon.pak:1570.png,有,icon.pak:1570_d.png,有,1587,有,,
+主動,55,準確打擊,準確打擊,SpellList-c.xml name,準確打擊,通用,generic,7,,一般,,9488,icon.pak:9488.png,有,icon.pak:9488_d.png,有,,,,
+主動,56,全部治癒術,全部治癒術,SpellList-c.xml name,全部治癒術,通用,generic,8,,一般,,418,icon.pak:418.png,有,icon.pak:418_d.png,有,368,有,,
+主動,57,火牢,火牢,SpellList-c.xml name,火牢,通用,generic,8,,一般,,419,icon.pak:419.png,有,icon.pak:419_d.png,有,369,有,,
+主動,58,冰雪暴,冰雪暴,SpellList-c.xml name,冰雪暴,通用,generic,8,,一般,,420,icon.pak:420.png,有,icon.pak:420_d.png,有,370,有,,
+主動,59,隱身術,隱身術,SpellList-c.xml name,隱身術,通用,generic,8,,一般,,421,icon.pak:421.png,有,icon.pak:421_d.png,有,371,有,,
+主動,60,返生術,返生術,SpellList-c.xml name,返生術,通用,generic,8,,一般,,422,icon.pak:422.png,有,icon.pak:422_d.png,有,372,有,,
+主動,61,震裂術,震裂術,SpellList-c.xml name,震裂術,通用,generic,8,,一般,,649,icon.pak:649.png,有,icon.pak:649_d.png,有,650,有,,
+主動,62,治癒能量風暴,治癒能量風暴,SpellList-c.xml name,治癒能量風暴,通用,generic,8,,一般,,784,icon.pak:784.png,有,icon.pak:784_d.png,有,1599,有,,
+主動,63,魔法封印,魔法封印,SpellList-c.xml name,魔法封印,通用,generic,8,,一般,,822,icon.pak:822.png,有,icon.pak:822_d.png,有,823,有,,
+主動,64,雷霆風暴,雷霆風暴,SpellList-c.xml name,雷霆風暴,通用,generic,9,,一般,,1579,icon.pak:1579.png,有,icon.pak:1579_d.png,有,1600,有,,
+主動,65,沉睡之霧,沉睡之霧,SpellList-c.xml name,沉睡之霧,通用,generic,9,,一般,,424,icon.pak:424.png,有,icon.pak:424_d.png,有,374,有,,
+主動,66,變形術,變形術,SpellList-c.xml name,變形術,通用,generic,9,,一般,,425,icon.pak:425.png,有,icon.pak:425_d.png,有,375,有,,
+主動,67,聖結界,聖結界,SpellList-c.xml name,聖結界,通用,generic,9,,一般,,426,icon.pak:426.png,有,icon.pak:426_d.png,有,376,有,,desc=IMMUNE_TO_HARM
+主動,68,集體傳送術,集體傳送術,SpellList-c.xml name,集體傳送術,通用,generic,9,,一般,,427,icon.pak:427.png,有,icon.pak:427_d.png,有,377,有,,
+主動,69,火風暴,火風暴,SpellList-c.xml name,火風暴,通用,generic,9,,一般,,653,icon.pak:653.png,有,icon.pak:653_d.png,有,654,有,,
+主動,70,致命藥水,致命藥水,SpellList-c.xml name,致命藥水,通用,generic,9,,一般,,10397,icon.pak:10397.png,有,icon.pak:10397_d.png,有,10397,有,,
+主動,71,強力無所遁形術,強力無所遁形術,SpellList-c.xml name,強力無所遁形術,通用,generic,9,,一般,,1571,icon.pak:1571.png,有,icon.pak:1571_d.png,有,779,有,,
+主動,72,治癒逆行,治癒逆行,SpellList-c.xml name,治癒逆行,通用,generic,10,,一般,,7438,icon.pak:7438.png,有,icon.pak:7438_d.png,有,7508,有,,
+主動,73,流星雨,流星雨,SpellList-c.xml name,流星雨,通用,generic,10,,一般,,429,icon.pak:429.png,有,icon.pak:429_d.png,有,379,有,,
+主動,74,終極返生術,終極返生術,SpellList-c.xml name,終極返生術,通用,generic,10,,一般,,1577,icon.pak:1577.png,有,icon.pak:1577_d.png,有,1596,有,,desc=GREAT_RESURRECTION
+主動,75,冰霜彗星,冰霜彗星,SpellList-c.xml name,終極緩速術,通用,generic,10,,一般,,1580,icon.pak:1580.png,有,icon.pak:1580_d.png,有,1601,有,,表名稱與 name 不同
+主動,76,究極光裂術,究極光裂術,SpellList-c.xml name,究極光裂術,通用,generic,10,,一般,,432,icon.pak:432.png,有,icon.pak:432_d.png,有,382,有,,
+主動,77,絕對屏障,絕對屏障,SpellList-c.xml name,絕對屏障,通用,generic,10,,一般,,715,icon.pak:715.png,有,icon.pak:715_d.png,有,716,有,,
+主動,79,寒冰尖刺,寒冰尖刺,SpellList-c.xml name,寒冰尖刺,通用,generic,10,79,一般,,5737,icon.pak:5737.png,有,icon.pak:5737_d.png,有,5797,有,,
+主動,86,衝擊之暈,衝擊之暈,SpellList-c.xml name,衝擊之暈,騎士,knight,1,16,一般,,1624,icon.pak:1624.png,有,icon.pak:1624_d.png,有,1625,有,,
+主動,90,反擊屏障,反擊屏障,SpellList-c.xml name,反擊屏障,騎士,knight,1,20,一般,,2343,icon.pak:2343.png,有,icon.pak:2343_d.png,有,2344,有,,passive=10
+主動,93,狂襲,狂襲,SpellList-c.xml name,,騎士,knight,1,19,一般,,8844,icon.pak:8844.png,有,icon.pak:8844_d.png,有,,,,SpellDesc-c.tbl[93] 沒有
+主動,96,暗隱術,暗隱術,SpellList-c.xml name,暗隱術,黑妖,darkelf,1,24,一般,,1097,icon.pak:1097.png,有,icon.pak:1097_d.png,有,1099,有,,
+主動,97,附加劇毒,附加劇毒,SpellList-c.xml name,附加劇毒,黑妖,darkelf,1,25,一般,,1100,icon.pak:1100.png,有,icon.pak:1100_d.png,有,1102,有,,
+主動,98,影之防護,影之防護,SpellList-c.xml name,影之防護,黑妖,darkelf,1,26,一般,,1103,icon.pak:1103.png,有,icon.pak:1103_d.png,有,1105,有,,
+主動,100,行走加速,行走加速,SpellList-c.xml name,行走加速,黑妖,darkelf,2,32,一般,,1109,icon.pak:1109.png,有,icon.pak:1109_d.png,有,1111,有,,
+主動,102,暗黑盲咒,暗黑盲咒,SpellList-c.xml name,暗黑盲咒,黑妖,darkelf,2,34,一般,,1115,icon.pak:1115.png,有,icon.pak:1115_d.png,有,1117,有,,
+主動,104,雙重破壞,雙重破壞,SpellList-c.xml name,雙重破壞,黑妖,darkelf,3,40,一般,,1121,icon.pak:1121.png,有,icon.pak:1121_d.png,有,1123,有,,
+主動,106,暗影之牙,暗影之牙,SpellList-c.xml name,暗影之牙,黑妖,darkelf,3,42,一般,,1127,icon.pak:1127.png,有,icon.pak:1127_d.png,有,1129,有,,
+主動,108,力量提升,力量提升,SpellList-c.xml name,力量提升,黑妖,darkelf,1,27,一般,,1574,icon.pak:1574.png,有,icon.pak:1574_d.png,有,,,,
+主動,109,敏捷提升,敏捷提升,SpellList-c.xml name,敏捷提升,黑妖,darkelf,2,36,一般,,1575,icon.pak:1575.png,有,icon.pak:1575_d.png,有,,,,
+主動,111,破壞盔甲,破壞盔甲,SpellList-c.xml name,破壞盔甲,黑妖,darkelf,4,48,一般,,4471,icon.pak:4471.png,有,icon.pak:4471_d.png,有,4472,有,,passive=11
+主動,112,精準目標,精準目標,SpellList-c.xml name,精準目標,王族,prince,1,24,一般,,894,icon.pak:894.png,有,icon.pak:894_d.png,有,,,,
+主動,113,灼熱武器,灼熱武器,SpellList-c.xml name,灼熱武器,王族,prince,1,25,一般,,878,icon.pak:878.png,有,icon.pak:878_d.png,有,,,,
+主動,114,閃亮之盾,閃亮之盾,SpellList-c.xml name,閃亮之盾,王族,prince,1,26,一般,,875,icon.pak:875.png,有,icon.pak:875_d.png,有,876,有,,
+主動,116,勇猛意志,勇猛意志,SpellList-c.xml name,勇猛意志,王族,prince,1,28,一般,,885,icon.pak:885.png,有,icon.pak:885_d.png,有,886,有,,
+主動,121,恩典庇護,恩典庇護,SpellList-c.xml name,恩典庇護,王族,prince,1,30,一般,,7426,icon.pak:7426.png,有,icon.pak:7426_d.png,有,,,,
+主動,122,帝國,帝國,SpellList-c.xml name,帝國,王族,prince,1,31,一般,,9195,icon.pak:9195.png,有,icon.pak:9195_d.png,有,9194,有,,
+主動,128,魔法防禦,魔法防禦,SpellList-c.xml name,魔法防禦,妖精,elf,1,52,一般,,811,icon.pak:811.png,有,icon.pak:811_d.png,有,812,有,,
+主動,129,心靈轉換,心靈轉換,SpellList-c.xml name,心靈轉換,妖精,elf,1,53,一般,,731,icon.pak:731.png,有,icon.pak:731_d.png,有,732,有,,
+主動,130,世界樹的呼喚,世界樹的呼喚,SpellList-c.xml name,世界樹的呼喚,妖精,elf,1,54,一般,,846,icon.pak:846.png,有,icon.pak:846_d.png,有,847,有,,
+主動,131,三重矢,三重矢,SpellList-c.xml name,三重矢,妖精,elf,1,55,一般,,1755,icon.pak:1755.png,有,icon.pak:1755_d.png,有,1880,有,,
+主動,132,弱化屬性,弱化屬性,SpellList-c.xml name,弱化屬性,妖精,elf,4,68,一般,,1744,icon.pak:1744.png,有,icon.pak:1744_d.png,有,1739,有,,
+主動,133,精靈重力,精靈重力,SpellList-c.xml name,精靈重力,妖精,elf,5,85,一般,,4553,icon.pak:4553.png,有,icon.pak:4553_d.png,有,,,,
+主動,134,魔力護盾,魔力護盾,SpellList-c.xml name,魔力護盾,妖精,elf,5,83,一般,,7434,icon.pak:7434.png,有,icon.pak:7434_d.png,有,,,,
+主動,135,煉獄,煉獄,SpellList-c.xml name,煉獄,妖精,elf,5,91,一般,,9198,icon.pak:9198.png,有,icon.pak:9198_d.png,有,,,,major=fire
+主動,136,淨化精神,淨化精神,SpellList-c.xml name,淨化精神,妖精,elf,2,56,一般,,743,icon.pak:743.png,有,icon.pak:743_d.png,有,744,有,,
+主動,144,釋放元素,釋放元素,SpellList-c.xml name,釋放元素,妖精,elf,3,60,一般,,820,icon.pak:820.png,有,icon.pak:820_d.png,有,821,有,,
+主動,146,單屬性防禦,單屬性防禦,SpellList-c.xml name,單屬性防禦,妖精,elf,3,61,一般,,871,icon.pak:871.png,有,icon.pak:871_d.png,有,,,,
+主動,147,大地武器,大地武器,SpellList-c.xml name,火焰武器,妖精,elf,3,62,一般,,8522,icon.pak:8522.png,有,icon.pak:8522_d.png,有,,,,表名稱與 name 不同；major=earth
+主動,148,水之神射,水之神射,SpellList-c.xml name,風之神射,妖精,elf,3,66,一般,,8519,icon.pak:8519.png,有,icon.pak:8519_d.png,有,,,,表名稱與 name 不同；major=water
+主動,149,鷹眼,鷹眼,SpellList-c.xml name,風之疾走,妖精,elf,3,65,一般,,8492,icon.pak:8492.png,有,icon.pak:8492_d.png,有,,,,表名稱與 name 不同；major=wind
+主動,150,火精靈盾,火精靈盾,SpellList-c.xml name,大地防護,妖精,elf,3,64,一般,,8523,icon.pak:8523.png,有,icon.pak:8523_d.png,有,,,,表名稱與 name 不同；major=fire
+主動,151,裂地一擊,裂地一擊,SpellList-c.xml name,地面障礙,妖精,elf,3,63,一般,,8495,icon.pak:8495.png,有,icon.pak:8495_d.png,有,,,,表名稱與 name 不同；major=earth
+主動,152,魔法消除,魔法消除,SpellList-c.xml name,魔法消除,妖精,elf,4,69,一般,,767,icon.pak:767.png,有,icon.pak:767_d.png,有,768,有,,
+主動,153,召喚屬性精靈,召喚屬性精靈,SpellList-c.xml name,召喚屬性精靈,妖精,elf,4,70,一般,,867,icon.pak:867.png,有,icon.pak:867_d.png,有,,,,
+主動,154,舞躍之火,舞躍之火,SpellList-c.xml name,舞躍之火,妖精,elf,4,74,一般,,7064,icon.pak:7064.png,有,icon.pak:7064_d.png,有,734,有,,major=fire
+主動,155,暴風之眼,暴風之眼,SpellList-c.xml name,暴風之眼,妖精,elf,4,75,一般,,7060,icon.pak:7060.png,有,icon.pak:7060_d.png,有,770,有,,major=wind
+主動,156,大地屏障,大地屏障,SpellList-c.xml name,大地屏障,妖精,elf,4,71,一般,,7049,icon.pak:7049.png,有,icon.pak:7049_d.png,有,892,缺,,major=earth
+主動,157,生命之泉,生命之泉,SpellList-c.xml name,生命之泉,妖精,elf,4,76,一般,,9822,icon.pak:9822.png,有,icon.pak:9822_d.png,有,9822,有,,major=water
+主動,158,大地的護衛,大地的護衛,SpellList-c.xml name,大地的護衛,妖精,elf,4,72,一般,,7048,icon.pak:7048.png,有,icon.pak:7048_d.png,有,724,有,,major=earth
+主動,159,水之防護,水之防護,SpellList-c.xml name,水之防護,妖精,elf,4,77,一般,,7055,icon.pak:7055.png,有,icon.pak:7055_d.png,有,2341,有,,major=water
+主動,160,封印禁地,封印禁地,SpellList-c.xml name,封印禁地,妖精,elf,5,84,一般,,720,icon.pak:720.png,有,icon.pak:720_d.png,有,721,有,,
+主動,161,召喚強力屬性精靈,召喚強力屬性精靈,SpellList-c.xml name,召喚強力屬性精靈,妖精,elf,5,87,一般,,869,icon.pak:869.png,有,icon.pak:869_d.png,有,,,,
+主動,162,烈炎武器,烈炎武器,SpellList-c.xml name,烈炎武器,妖精,elf,5,92,一般,,7065,icon.pak:7065.png,有,icon.pak:7065_d.png,有,737,有,,major=fire
+主動,163,生命的祝福,生命的祝福,SpellList-c.xml name,生命的祝福,妖精,elf,5,97,一般,,7053,icon.pak:7053.png,有,icon.pak:7053_d.png,有,797,有,,major=water
+主動,165,暴風神射,暴風神射,SpellList-c.xml name,暴風神射,妖精,elf,5,93,一般,,7058,icon.pak:7058.png,有,icon.pak:7058_d.png,有,826,有,,major=wind
+主動,166,颶風,颶風,SpellList-c.xml name,颶風,妖精,elf,5,94,一般,,9191,icon.pak:9191.png,有,icon.pak:9191_d.png,有,,,,major=wind
+主動,167,鋼鐵防護,鋼鐵防護,SpellList-c.xml name,鋼鐵防護,妖精,elf,5,88,一般,,7047,icon.pak:7047.png,有,icon.pak:7047_d.png,有,782,有,,major=earth
+主動,168,體能激發,體能激發,SpellList-c.xml name,體能激發,妖精,elf,5,86,一般,,11379,icon.pak:11379.png,有,icon.pak:11379_d.png,有,,,,
+主動,169,水之元氣,水之元氣,SpellList-c.xml name,水之元氣,妖精,elf,3,67,一般,,7056,icon.pak:7056.png,有,icon.pak:7056_d.png,有,1757,有,,major=water
+主動,170,屬性之火,屬性之火,SpellList-c.xml name,屬性之火,妖精,elf,5,89,一般,,7068,icon.pak:7068.png,有,icon.pak:7068_d.png,有,1735,有,,major=fire
+主動,172,污濁之水,污濁之水,SpellList-c.xml name,污濁之水,妖精,elf,5,98,一般,,7057,icon.pak:7057.png,有,icon.pak:7057_d.png,有,2347,有,,major=water
+主動,173,精準射擊,精準射擊,SpellList-c.xml name,精準射擊,妖精,elf,5,96,一般,,7059,icon.pak:7059.png,有,icon.pak:7059_d.png,有,2356,有,,major=wind
+主動,174,烈焰之魂,烈焰之魂,SpellList-c.xml name,烈焰之魂,妖精,elf,5,90,一般,,7066,icon.pak:7066.png,有,icon.pak:7066_d.png,有,2353,有,,major=fire
+主動,176,專注意志,專注意志,SpellList-c.xml name,,妖精,elf,4,78,一般,,8482,icon.pak:8482.png,有,icon.pak:8482_d.png,有,,,,SpellDesc-c.tbl[176] 沒有；major=water
+主動,177,弓魂風湧,弓魂風湧,SpellList-c.xml name,,妖精,elf,5,95,一般,,8498,icon.pak:8498.png,有,icon.pak:8498_d.png,有,,,,SpellDesc-c.tbl[177] 沒有；major=wind
+主動,178,劍魂星爆,劍魂星爆,SpellList-c.xml name,,妖精,elf,4,73,一般,,8489,icon.pak:8489.png,有,icon.pak:8489_d.png,有,,,,SpellDesc-c.tbl[178] 沒有；major=earth
+主動,181,燃燒擊砍,燃燒擊砍,SpellList-c.xml name,燃燒擊砍,龍騎,dragonknight,1,24,一般,,3076,icon.pak:3076.png,有,icon.pak:3076_d.png,有,,,,
+主動,182,撕裂護甲,撕裂護甲,SpellList-c.xml name,撕裂護甲,龍騎,dragonknight,1,25,一般,,9824,icon.pak:9824.png,有,icon.pak:9824_d.png,有,9824,有,,
+主動,183,岩漿噴吐,岩漿噴吐,SpellList-c.xml name,岩漿噴吐,龍騎,dragonknight,1,26,一般,,3087,icon.pak:3087.png,有,icon.pak:3087_d.png,有,3189,有,,
+主動,185,血之渴望,血之渴望,SpellList-c.xml name,血之渴望,龍騎,dragonknight,2,28,一般,,3074,icon.pak:3074.png,有,icon.pak:3074_d.png,有,,,,
+主動,186,屠宰者,屠宰者,SpellList-c.xml name,屠宰者,龍騎,dragonknight,2,29,一般,,3081,icon.pak:3081.png,有,icon.pak:3081_d.png,有,3185,有,,passive=15
+主動,188,岩漿之箭,岩漿之箭,SpellList-c.xml name,岩漿之箭,龍騎,dragonknight,2,30,一般,,4559,icon.pak:4559.png,有,icon.pak:4559_d.png,有,4560,有,,
+主動,191,奪命之雷,奪命之雷,SpellList-c.xml name,奪命之雷,龍騎,dragonknight,3,32,一般,,3093,icon.pak:3093.png,有,icon.pak:3093_d.png,有,3191,有,,passive=14
+主動,193,暴龍之眼,暴龍之眼,SpellList-c.xml name,暴龍之眼,龍騎,dragonknight,3,33,一般,,4583,icon.pak:4583.png,有,icon.pak:4583_d.png,有,,,,
+主動,198,暗影之足,暗影之足,SpellList-c.xml name,暗影之足,黑妖,darkelf,4,51,一般,,9818,icon.pak:9818.png,有,icon.pak:9818_d.png,有,9818,有,,
+主動,200,鏡像,鏡像,SpellList-c.xml name,鏡像,幻術,illusionist,1,0,一般,,3122,icon.pak:3122.png,有,icon.pak:3122_d.png,有,,,,
+主動,201,混亂,混亂,SpellList-c.xml name,混亂,幻術,illusionist,1,1,一般,,3098,icon.pak:3098.png,有,icon.pak:3098_d.png,有,3195,有,,
+主動,202,粉碎能量,粉碎能量,SpellList-c.xml name,粉碎能量,幻術,illusionist,1,2,一般,,3130,icon.pak:3130.png,有,icon.pak:3130_d.png,有,3108,有,,
+主動,203,幻覺：歐吉,幻覺：歐吉,SpellList-c.xml name,幻覺：歐吉,幻術,illusionist,1,3,一般,,3116,icon.pak:3116.png,有,icon.pak:3116_d.png,有,3205,有,,
+主動,204,立方：毆吉,立方：毆吉,SpellList-c.xml name,立方：燃燒,幻術,illusionist,1,4,一般,,3102,icon.pak:3102.png,有,icon.pak:3102_d.png,有,,,,表名稱與 name 不同
+主動,205,專注,專注,SpellList-c.xml name,專注,幻術,illusionist,2,8,一般,,3096,icon.pak:3096.png,有,icon.pak:3096_d.png,有,3194,有,,
+主動,206,心靈破壞,心靈破壞,SpellList-c.xml name,心靈破壞,幻術,illusionist,2,9,一般,,3121,icon.pak:3121.png,有,icon.pak:3121_d.png,有,3208,有,,
+主動,207,骷髏毀壞,骷髏毀壞,SpellList-c.xml name,骷髏毀壞,幻術,illusionist,2,10,一般,,3095,icon.pak:3095.png,有,icon.pak:3095_d.png,有,3193,有,,
+主動,209,立方：高崙,立方：高崙,SpellList-c.xml name,立方：地裂,幻術,illusionist,2,11,一般,,3105,icon.pak:3105.png,有,icon.pak:3105_d.png,有,,,,表名稱與 name 不同
+主動,210,耐力,耐力,SpellList-c.xml name,耐力,幻術,illusionist,3,16,一般,,3126,icon.pak:3126.png,有,icon.pak:3126_d.png,有,3100,有,,
+主動,211,幻想,幻想,SpellList-c.xml name,幻想,幻術,illusionist,3,17,一般,,3128,icon.pak:3128.png,有,icon.pak:3128_d.png,有,3103,有,,
+主動,212,隱身破壞者,隱身破壞者,SpellList-c.xml name,隱身破壞者,幻術,illusionist,3,18,一般,,3094,icon.pak:3094.png,有,icon.pak:3094_d.png,有,3192,有,,
+主動,214,立方：巫妖,立方：巫妖,SpellList-c.xml name,立方：衝擊,幻術,illusionist,3,19,一般,,3107,icon.pak:3107.png,有,icon.pak:3107_d.png,有,,,,表名稱與 name 不同
+主動,215,洞察,洞察,SpellList-c.xml name,洞察,幻術,illusionist,4,24,一般,,3118,icon.pak:3118.png,有,icon.pak:3118_d.png,有,3206,有,,
+主動,216,恐慌,恐慌,SpellList-c.xml name,恐慌,幻術,illusionist,4,25,一般,,3124,icon.pak:3124.png,有,icon.pak:3124_d.png,有,3210,有,,
+主動,217,降低負重,降低負重,SpellList-c.xml name,降低負重,幻術,illusionist,4,26,一般,,3120,icon.pak:3120.png,有,icon.pak:3120_d.png,有,3207,有,,
+主動,218,幻覺：化身,幻覺：化身,SpellList-c.xml name,幻覺：化身,幻術,illusionist,4,27,一般,,3110,icon.pak:3110.png,有,icon.pak:3110_d.png,有,3202,有,,
+主動,219,立方：化身,立方：化身,SpellList-c.xml name,立方：和諧,幻術,illusionist,4,28,一般,,3099,icon.pak:3099.png,有,icon.pak:3099_d.png,有,,,,表名稱與 name 不同
+主動,221,立方:衝突強化,立方:衝突強化,SpellList-c.xml name,衝突強化,幻術,illusionist,5,32,一般,,7455,icon.pak:7455.png,有,icon.pak:7455_d.png,有,7511,有,,表名稱與 name 不同
+主動,222,精通施法,精通施法,SpellList-c.xml name,,幻術,illusionist,5,33,一般,,4605,icon.pak:4605.png,有,icon.pak:4605_d.png,有,,,,SpellDesc-c.tbl[222] 沒有
+主動,224,咆哮,咆哮,SpellList-c.xml name,咆哮,戰士,warrior,1,8,一般,,6191,icon.pak:6191.png,有,icon.pak:6191_d.png,有,6207,有,,
+主動,227,拘束移動,拘束移動,SpellList-c.xml name,拘束移動,戰士,warrior,1,10,一般,,6188,icon.pak:6188.png,有,icon.pak:6188_d.png,有,6204,有,,
+主動,228,戰斧投擲,戰斧投擲,SpellList-c.xml name,戰斧投擲,戰士,warrior,1,11,一般,,10203,icon.pak:10203.png,有,icon.pak:10203_d.png,有,10203,有,,
+主動,229,亡命之徒,\aL亡命之徒,SpellList-c.xml name,亡命之徒,戰士,warrior,1,12,高級,\aL,6501,icon.pak:6501.png,有,icon.pak:6501_d.png,有,6503,有,,passive=13
+主動,230,泰坦狂暴,泰坦狂暴,SpellList-c.xml name,泰坦狂暴,戰士,warrior,1,13,一般,,7459,icon.pak:7459.png,有,icon.pak:7459_d.png,有,,,,
+主動,233,路西法,路西法,SpellList-c.xml name,路西法,黑妖,darkelf,4,49,一般,,4501,icon.pak:4501.png,有,icon.pak:4501_d.png,有,4502,有,,
+主動,240,盛世,\aF盛世,SpellList-c.xml name,盛世,王族,prince,1,32,傳說,\aF,9619,icon.pak:9619.png,有,icon.pak:9619_d.png,有,9619,有,,mythskill=true
+主動,241,強迫暈眩,\aF強迫暈眩,SpellList-c.xml name,強迫暈眩,騎士,knight,1,23,傳說,\aF,9617,icon.pak:9617.png,有,icon.pak:9617_d.png,有,9617,有,,mythskill=true
+主動,242,永恆,\aF永恆,SpellList-c.xml name,永恆,通用,generic,11,80,傳說,\aF,9616,icon.pak:9616.png,有,icon.pak:9616_d.png,有,9616,有,,mythskill=true
+主動,243,復仇,\aF復仇,SpellList-c.xml name,復仇,黑妖,darkelf,4,50,傳說,\aF,9615,icon.pak:9615.png,有,icon.pak:9615_d.png,有,9615,有,,mythskill=true
+主動,244,哈爾巴斯,\aF哈爾巴斯,SpellList-c.xml name,哈爾巴斯,龍騎,dragonknight,4,37,傳說,\aF,9620,icon.pak:9620.png,有,icon.pak:9620_d.png,有,9620,有,,mythskill=true
+主動,4914,奧拉奇里亞淨化,奧拉奇里亞淨化,SpellList-c.xml name,,通用,generic,1,83,,,10536,icon.pak:10536.png,有,10536_d.png,無,10536,有,,SpellDesc-c.tbl[4914] 沒有；displayUI=false；desc=AURAKIA_LIGHT
+主動,5000,審判,審判,SpellList-c.xml name,審判,劍士,fencer,1,26,一般,,9681,icon.pak:9681.png,有,icon.pak:9681_d.png,有,9681,有,,descid=234
+主動,5001,幻影,幻影,SpellList-c.xml name,幻影,劍士,fencer,1,25,一般,,9684,icon.pak:9684.png,有,icon.pak:9684_d.png,有,9684,有,,descid=235
+主動,5002,瞬擊,瞬擊,SpellList-c.xml name,瞬擊,劍士,fencer,1,28,一般,,9687,icon.pak:9687.png,有,icon.pak:9687_d.png,有,9687,有,,descid=236
+主動,5003,劍殺,劍殺,SpellList-c.xml name,劍殺,劍士,fencer,1,24,一般,,9675,icon.pak:9675.png,有,icon.pak:9675_d.png,有,9675,有,,descid=238
+主動,5004,地獄火,地獄火,SpellList-c.xml name,地獄火,劍士,fencer,1,27,一般,,9689,icon.pak:9689.png,有,icon.pak:9689_d.png,有,9689,有,,descid=237
+主動,5016,阿修羅,阿修羅,SpellList-c.xml name,阿修羅,劍士,fencer,1,29,一般,,9814,icon.pak:9814.png,有,icon.pak:9814_d.png,有,9814,有,,descid=239
+主動,5026,暴風雨,\a_暴風雨,SpellList-c.xml name,暴風雨,戰士,warrior,1,14,唯一,\a_,10720,icon.pak:10720.png,有,icon.pak:10720_d.png,有,10720,有,,descid=246；mythskill=true
+主動,5027,暴君,\aL暴君,SpellList-c.xml name,暴君,王族,prince,1,27,高級,\aL,10864,icon.pak:10864.png,有,icon.pak:10864_d.png,有,10864,有,,descid=262
+主動,5035,圈套誘捕,\aG圈套誘捕,SpellList-c.xml name,圈套誘捕,幻術,illusionist,5,34,英雄,\aG,11048,icon.pak:11048.png,有,icon.pak:11048_d.png,有,11048,有,,descid=263
+主動,5036,歐西里斯,\aH歐西里斯,SpellList-c.xml name,歐西里斯,幻術,illusionist,5,36,神話,\aH,11046,icon.pak:11046.png,有,icon.pak:11046_d.png,有,11046,有,,descid=264；mythskill=true
+主動,5046,勇者聯盟,\aG勇者聯盟,SpellList-c.xml name,勇者聯盟,王族,prince,1,29,英雄,\aG,11426,icon.pak:11426.png,有,icon.pak:11426_d.png,有,11426,有,,descid=265
+主動,5050,轉換,轉換,SpellList-c.xml name,轉換,槍手,lancer,1,24,一般,,10143,icon.pak:10143.png,有,icon.pak:10143_d.png,有,10143,有,,descid=247
+主動,5051,強烈意志,強烈意志,SpellList-c.xml name,強烈意志,槍手,lancer,1,25,一般,,10149,icon.pak:10149.png,有,icon.pak:10149_d.png,有,10149,有,,descid=248
+主動,5052,先鋒,先鋒,SpellList-c.xml name,先鋒,槍手,lancer,1,26,一般,,10141,icon.pak:10141.png,有,icon.pak:10141_d.png,有,10141,有,,descid=249
+主動-條件圖,5052,先鋒（條件 1）,先鋒,母技能 name,先鋒,槍手,lancer,1,26,一般,,10141,icon.pak:10141.png,有,icon.pak:10141_d.png,有,10141,有,5052,<conditiontype id=1>
+主動,5054,施壓,施壓,SpellList-c.xml name,施壓,槍手,lancer,1,28,一般,,10151,icon.pak:10151.png,有,icon.pak:10151_d.png,有,10151,有,,descid=251
+主動-條件圖,5054,施壓（條件 1）,施壓,母技能 name,施壓,槍手,lancer,1,28,一般,,10151,icon.pak:10151.png,有,icon.pak:10151_d.png,有,10151,有,5054,<conditiontype id=1>
+主動,5055,殘酷,殘酷,SpellList-c.xml name,殘酷,槍手,lancer,1,29,一般,,10145,icon.pak:10145.png,有,icon.pak:10145_d.png,有,10145,有,,descid=252
+主動-條件圖,5055,殘酷（條件 1）,殘酷,母技能 name,殘酷,槍手,lancer,1,29,一般,,10145,icon.pak:10145.png,有,icon.pak:10145_d.png,有,10145,有,5055,<conditiontype id=1>
+主動,5056,貝希摩斯,\aH貝希摩斯,SpellList-c.xml name,貝希摩斯,龍騎,dragonknight,4,38,神話,\aH,11549,icon.pak:11549.png,有,icon.pak:11549_d.png,有,11549,有,,descid=267；mythskill=true
+主動,5058,鏈式反應,\aG鏈式反應,SpellList-c.xml name,鏈式反應,龍騎,dragonknight,4,36,英雄,\aG,11548,icon.pak:11548.png,有,icon.pak:11548_d.png,有,11548,有,,descid=266
+主動,5061,奧術爆裂,\aL奧術爆裂,SpellList-c.xml name,奧術爆裂,聖騎士,holyknight,1,40,高級,\aL,11748,icon.pak:11748.png,有,icon.pak:11748_d.png,有,11748,有,,descid=268
+主動,5062,奧術閃現,奧術閃現,SpellList-c.xml name,奧術閃現,聖騎士,holyknight,1,41,一般,,11757,icon.pak:11757.png,有,icon.pak:11757_d.png,有,11757,有,,descid=269
+主動,5063,閃焰,閃焰,SpellList-c.xml name,閃焰,聖騎士,holyknight,1,42,一般,,11753,icon.pak:11753.png,有,icon.pak:11753_d.png,有,11753,有,,descid=270
+主動,5064,神聖印記,\aF神聖印記,SpellList-c.xml name,神聖印記,聖騎士,holyknight,1,43,傳說,\aF,11758,icon.pak:11758.png,有,icon.pak:11758_d.png,有,11758,有,,descid=271
+主動,5083,先鋒極限,\aG先鋒極限,SpellList-c.xml name,先鋒極限,槍手,lancer,1,30,英雄,\aG,12195,icon.pak:12195.png,有,icon.pak:12195_d.png,有,12195,有,,descid=277
+主動-條件圖,5083,先鋒極限（條件 1）,\aG先鋒極限,母技能 name,先鋒極限,槍手,lancer,1,30,英雄,\aG,12195,icon.pak:12195.png,有,icon.pak:12195_d.png,有,12195,有,5083,<conditiontype id=1>
+主動,5089,絕禦之刃,絕禦之刃,SpellList-c.xml name,絕禦之刃,騎士,knight,1,21,一般,,7431,icon.pak:7431.png,有,icon.pak:7431_d.png,有,,,,descid=91
+主動,5094,恢復,恢復,SpellList-c.xml name,恢復,活動,eventspell,1,1,,,12872,icon.pak:12872.png,有,icon.pak:12872_d.png,有,12872,有,,descid=278
+主動,5111,進階呼喚盟友,進階呼喚盟友,SpellList-c.xml name,進階呼喚盟友,王族,prince,1,33,一般,,10202,icon.pak:10202.png,有,icon.pak:10202_d.png,有,,,,descid=253
+主動,5114,聖結界：團隊,\aG聖結界：團隊,SpellList-c.xml name,聖結界(團隊),通用,generic,11,81,英雄,\aG,10201,icon.pak:10201.png,有,icon.pak:10201_d.png,有,10201,有,,descid=256；表名稱與 name 不同
+主動,5152,幻視傳送,\aH幻視傳送,SpellList-c.xml name,dummy,妖精,elf,5,80,神話,\aH,10395,icon.pak:10395.png,有,icon.pak:10395_d.png,有,10395,有,,descid=257；表名稱與 name 不同
+主動,5156,衝擊之襲,\aG衝擊之襲,SpellList-c.xml name,衝擊之襲,騎士,knight,1,22,英雄,\aG,10523,icon.pak:10523.png,有,icon.pak:10523_d.png,有,10523,有,,descid=260
+主動,5157,燃燒之箭,燃燒之箭,SpellList-c.xml name,燃燒之箭,妖精,elf,5,82,一般,,10534,icon.pak:10534.png,有,icon.pak:10534_d.png,有,10534,有,,descid=261
+主動,5777,閃爍,閃爍,SpellList-c.xml name,閃爍,活動,eventspell,1,0,,,12139,icon.pak:12139.png,有,icon.pak:12139_d.png,有,12319,缺,,descid=272
+主動,5779,吸收盾,吸收盾,SpellList-c.xml name,吸收盾,活動,eventspell,1,2,,,12138,icon.pak:12138.png,有,icon.pak:12138_d.png,有,12138,有,,descid=274
+主動,5781,急救,急救,SpellList-c.xml name,急救,活動,eventspell,1,3,,,12141,icon.pak:12141.png,有,icon.pak:12141_d.png,有,12141,有,,descid=276
+主動,6029,光束,光束,SpellList-c.xml name,,通用,generic,1,83,,,12895,12895.png,缺,12895_d.png,無,10861,有,,SpellDesc-c.tbl[6029] 沒有；displayUI=false；desc=AURAKIA_LIGHT
+主動,6333,靈魂枷鎖,\aF靈魂枷鎖,SpellList-c.xml name,靈魂枷鎖,妖精,elf,5,81,傳說,\aF,13088,icon.pak:13088.png,有,icon.pak:13088_d.png,有,13088,有,,descid=279
+主動,6483,權威,\aF權威,SpellList-c.xml name,權威,王族,prince,1,34,傳說,\aF,13350,icon.pak:13350.png,有,icon.pak:13350_d.png,有,13350,有,,descid=280
+主動,6489,十字軍,\aF十字軍,SpellList-c.xml name,十字軍,騎士,knight,1,17,傳說,\aF,13352,icon.pak:13352.png,有,icon.pak:13352_d.png,有,13352,有,,descid=281；mythskill=true
+主動,6495,詭譎,\aH詭譎,SpellList-c.xml name,詭譎,戰士,warrior,1,9,神話,\aH,13361,icon.pak:13361.png,有,icon.pak:13361_d.png,有,13361,有,,descid=282；mythskill=true
+主動,6524,報應,報應,SpellList-c.xml name,報應,格鬥家,fighter,1,16,一般,,13417,icon.pak:13417.png,有,icon.pak:13417_d.png,有,13417,有,,descid=283
+主動-蓄力圖,6524,報應（蓄力 1）,報應,母技能 name,報應,格鬥家,fighter,1,16,一般,,13419,icon.pak:13419.png,有,icon.pak:13419_d.png,有,,,6524,<chargespell>
+主動-蓄力圖,6524,報應（蓄力 2）,報應,母技能 name,報應,格鬥家,fighter,1,16,一般,,13420,icon.pak:13420.png,有,icon.pak:13420_d.png,有,,,6524,<chargespell>
+主動,6526,強制,強制,SpellList-c.xml name,強制,格鬥家,fighter,1,17,一般,,13423,icon.pak:13423.png,有,icon.pak:13423_d.png,有,13423,有,,descid=284
+主動,6528,爆發,\a_爆發,SpellList-c.xml name,爆發,格鬥家,fighter,1,19,唯一,\a_,13440,icon.pak:13440.png,有,icon.pak:13440_d.png,有,13440,有,,descid=286；mythskill=true
+主動,6529,衝鋒,衝鋒,SpellList-c.xml name,衝鋒,格鬥家,fighter,1,18,一般,,13427,icon.pak:13427.png,有,icon.pak:13427_d.png,有,13427,有,,descid=285
+主動-蓄力圖,6529,衝鋒（蓄力 1）,衝鋒,母技能 name,衝鋒,格鬥家,fighter,1,18,一般,,13428,icon.pak:13428.png,有,icon.pak:13428_d.png,有,,,6529,<chargespell>
+主動-蓄力圖,6529,衝鋒（蓄力 2）,衝鋒,母技能 name,衝鋒,格鬥家,fighter,1,18,一般,,13429,icon.pak:13429.png,有,icon.pak:13429_d.png,有,,,6529,<chargespell>
+主動,6748,鬥魂突進,\aJ鬥魂突進,SpellList-c.xml name,鬥魂突進,格鬥家,fighter,1,20,稀有,\aJ,13730,icon.pak:13730.png,有,icon.pak:13730_d.png,有,13440,有,,descid=295
+主動,6751,幻影之紗,\aJ幻影之紗,SpellList-c.xml name,幻影之紗,幻術,illusionist,5,35,稀有,\aJ,13735,icon.pak:13735.png,有,icon.pak:13735_d.png,有,11046,有,,descid=296
+被動,1,粉碎,粉碎,passiveSpells-c.xml name,,戰士,warrior,1,18,一般,,6184,icon.pak:6184.png,有,icon.pak:6184_d.png,有,,,,
+被動,2,狂暴,狂暴,passiveSpells-c.xml name,,戰士,warrior,1,16,一般,,6190,icon.pak:6190.png,有,icon.pak:6190_d.png,有,,,,
+被動,3,迅猛雙斧,迅猛雙斧,passiveSpells-c.xml name,,戰士,warrior,1,17,一般,,10649,icon.pak:10649.png,有,icon.pak:10649_d.png,有,,,,
+被動,5,護甲身軀,護甲身軀,passiveSpells-c.xml name,,戰士,warrior,1,19,一般,,6183,icon.pak:6183.png,有,icon.pak:6183_d.png,有,,,,
+被動,6,泰坦:岩石,泰坦:岩石,passiveSpells-c.xml name,,戰士,warrior,1,20,一般,,6185,icon.pak:6185.png,有,icon.pak:6185_d.png,有,,,,
+被動,7,泰坦: 子彈,泰坦: 子彈,passiveSpells-c.xml name,,戰士,warrior,1,22,一般,,6187,icon.pak:6187.png,有,icon.pak:6187_d.png,有,,,,
+被動,8,泰坦: 魔法,泰坦: 魔法,passiveSpells-c.xml name,,戰士,warrior,1,21,一般,,6186,icon.pak:6186.png,有,icon.pak:6186_d.png,有,,,,
+被動,10,反擊屏障:精通,反擊屏障:精通,passiveSpells-c.xml name,,騎士,knight,1,25,一般,,8850,icon.pak:8850.png,有,icon.pak:8850_d.png,有,,,,summary=反擊屏障發動機率提升
+被動,11,破壞盔甲:命運,破壞盔甲:命運,passiveSpells-c.xml name,,黑妖,darkelf,1,56,一般,,8847,icon.pak:8847.png,有,icon.pak:8847_d.png,有,,,,summary=破壞盔甲命中機率提升
+被動,12,雙重破壞:命運,雙重破壞:命運,passiveSpells-c.xml name,,黑妖,darkelf,1,57,一般,,8841,icon.pak:8841.png,有,icon.pak:8841_d.png,有,,,,summary=雙重破壞發動機率提升
+被動,13,亡命之徒:絕對,亡命之徒:絕對,passiveSpells-c.xml name,,戰士,warrior,1,23,英雄,,8842,icon.pak:8842.png,有,icon.pak:8842_d.png,有,,,,summary=亡命之徒持續時間增加
+被動,14,奪命之雷:勇猛,奪命之雷:勇猛,passiveSpells-c.xml name,,龍騎,dragonknight,1,40,一般,,8846,icon.pak:8846.png,有,icon.pak:8846_d.png,有,,,,summary=奪命之雷持續時間提升
+被動,15,屠宰者:勇猛,屠宰者:勇猛,passiveSpells-c.xml name,,龍騎,dragonknight,1,41,一般,,8853,icon.pak:8853.png,有,icon.pak:8853_d.png,有,,,,summary=機率性發動昏迷
+被動,16,奧拉奇里亞,奧拉奇里亞,passiveSpells-c.xml name,,龍騎,dragonknight,1,42,一般,,9445,icon.pak:9445.png,有,icon.pak:9445_d.png,有,,,,summary=覺醒技能強化
+被動,17,聖獸,聖獸,passiveSpells-c.xml name,,幻術,illusionist,1,40,高級,,9442,icon.pak:9442.png,有,icon.pak:9442_d.png,有,,,,summary=服用生命之樹果實時增加攻擊速度提升效果
+被動,18,會心一擊,會心一擊,passiveSpells-c.xml name,,黑妖,darkelf,1,58,一般,,9489,icon.pak:9489.png,有,icon.pak:9489_d.png,有,,,,summary=HP降到70%以下時暴擊率增加
+被動,21,屬性防禦,屬性防禦,passiveSpells-c.xml name,,妖精,elf,1,106,一般,,9496,icon.pak:9496.png,有,icon.pak:9496_d.png,有,,,,summary=魔法防禦、屬性防禦增加
+被動,22,榮耀大地,榮耀大地,passiveSpells-c.xml name,,妖精,elf,1,105,一般,,13092,icon.pak:13092.png,有,icon.pak:13092_d.png,有,,,,summary=可同時使用2種精靈系列魔法
+被動,23,無限:鎧甲,無限:鎧甲,passiveSpells-c.xml name,,劍士,fencer,1,36,一般,,9679,icon.pak:9679.png,有,icon.pak:9679_d.png,有,,,,summary=根據等級增加相消
+被動,24,無限:子彈,無限:子彈,passiveSpells-c.xml name,,劍士,fencer,1,39,一般,,9678,icon.pak:9678.png,有,icon.pak:9678_d.png,有,,,,summary=根據等級增加 ER 
+被動,25,無限:閃避,無限:閃避,passiveSpells-c.xml name,,劍士,fencer,1,37,一般,,9677,icon.pak:9677.png,有,icon.pak:9677_d.png,有,,,,summary=根據等級增加DG 
+被動,26,大馬士革,大馬士革,passiveSpells-c.xml name,,劍士,fencer,1,32,一般,,9671,icon.pak:9671.png,有,icon.pak:9671_d.png,有,,,,summary=防止武器損傷
+被動,27,悖論,悖論,passiveSpells-c.xml name,,劍士,fencer,1,40,一般,,9682,icon.pak:9682.png,有,icon.pak:9682_d.png,有,,,,summary=使反擊纇技能無效化
+被動,28,成長,成長 (0/0/0),passiveSpells-c.xml desc（無 name）,,劍士,fencer,1,45,,,9670,icon.pak:9670.png,有,icon.pak:9670_d.png,有,,,,summary=機率性增加經驗值獲得量
+被動,29,肆虐,肆虐,passiveSpells-c.xml name,,劍士,fencer,1,34,一般,,9673,icon.pak:9673.png,有,icon.pak:9673_d.png,有,,,,summary=攻擊時以一定機率發生強烈傷害
+被動,30,幻影:撕裂,幻影:撕裂,passiveSpells-c.xml name,,劍士,fencer,1,41,英雄,,10502,icon.pak:10502.png,有,icon.pak:10502_d.png,有,,,,summary=使用幻影時無法移動及治癒恢復減少
+被動,31,幻影:死亡,幻影:死亡,passiveSpells-c.xml name,,劍士,fencer,1,43,唯一,,9685,icon.pak:9685.png,有,icon.pak:9685_d.png,有,,,,summary=使用幻影時增加治癒逆行/大精靈的祝福效果
+被動,32,焰刃,焰刃,passiveSpells-c.xml name,,劍士,fencer,1,33,一般,,9688,icon.pak:9688.png,有,icon.pak:9688_d.png,有,,,,summary=攻擊時以一定機率發生3秒燒傷
+被動,33,無限:血魂,無限:血魂,passiveSpells-c.xml name,,劍士,fencer,1,38,一般,,9680,icon.pak:9680.png,有,icon.pak:9680_d.png,有,,,,summary=根據等級增加體力
+被動,34,生存,生存,passiveSpells-c.xml name,,劍士,fencer,1,35,一般,,9676,icon.pak:9676.png,有,icon.pak:9676_d.png,有,,,,summary=體力低時藥水恢復量增加
+被動,36,瞬擊:終結,瞬擊:終結,passiveSpells-c.xml name,,劍士,fencer,1,44,神話,,9729,icon.pak:9729.png,有,icon.pak:9729_d.png,有,,,,targetSpellId=5002；rangeExtension=4；summary=暈眩時間增加
+被動,38,魂體轉換,魂體轉換,passiveSpells-c.xml name,,妖精,elf,1,104,一般,,729,icon.pak:729.png,有,icon.pak:729_d.png,有,,,,summary=持續MP恢復
+被動,39,聖結界:神聖,聖結界:神聖,passiveSpells-c.xml name,,法師,magician,1,88,高級,,9820,icon.pak:9820.png,有,icon.pak:9820_d.png,有,,,,summary=聖結界效果強化
+被動,40,撕裂護甲: 恐懼無助,撕裂護甲: 恐懼無助,passiveSpells-c.xml name,,龍騎,dragonknight,1,43,一般,,9825,icon.pak:9825.png,有,icon.pak:9825_d.png,有,,,,summary=賦予撕裂護甲增加效果
+被動,41,撕裂護甲: 驚悚死神,撕裂護甲: 驚悚死神,passiveSpells-c.xml name,,龍騎,dragonknight,1,44,一般,,9826,icon.pak:9826.png,有,icon.pak:9826_d.png,有,,,,summary=賦予撕裂護甲增加效果
+被動,42,王者霸氣,王者霸氣,passiveSpells-c.xml name,,王族,prince,1,41,一般,,9517,icon.pak:9517.png,有,icon.pak:9517_d.png,有,,,,summary=隊員被動BUFF
+被動,43,增幅防禦:精通,增幅防禦:精通,passiveSpells-c.xml name,,騎士,knight,1,27,一般,,12560,icon.pak:12560.png,有,icon.pak:12560_d.png,有,,,,summary=增幅防禦額外效果
+被動,44,狂暴之力,狂暴之力,passiveSpells-c.xml name,,騎士,knight,1,28,一般,,9815,icon.pak:9815.png,有,icon.pak:9815_d.png,有,,,,summary=技術命中增加
+被動,45,幻覺：巫妖,幻覺：巫妖,passiveSpells-c.xml name,,幻術,illusionist,1,41,一般,,9828,icon.pak:9828.png,有,icon.pak:9828_d.png,有,,,,summary=SP 增加
+被動,46,幻覺：高崙,幻覺：高崙,passiveSpells-c.xml name,,幻術,illusionist,1,42,一般,,9827,icon.pak:9827.png,有,icon.pak:9827_d.png,有,,,,summary=AC 增加
+被動,47,燃燒鬥志,燃燒鬥志,passiveSpells-c.xml name,,黑妖,darkelf,1,59,一般,,1112,icon.pak:1112.png,有,icon.pak:1112_d.png,有,,,,summary=打擊時以一定機率強大傷害
+被動,48,迴避提升,迴避提升,passiveSpells-c.xml name,,黑妖,darkelf,1,60,一般,,1611,icon.pak:1611.png,有,icon.pak:1611_d.png,有,,,,summary=遠距離迴避增加
+被動,49,路西法:命運,路西法:命運,passiveSpells-c.xml name,,黑妖,darkelf,1,61,一般,,9817,icon.pak:9817.png,有,icon.pak:9817_d.png,有,,,,summary=路西法效果強化
+被動,50,邁斯特準確打擊,邁斯特準確打擊,passiveSpells-c.xml name,,法師,magician,1,89,一般,,9819,icon.pak:9819.png,有,icon.pak:9819_d.png,有,,,,summary=魔法武器修正
+被動,52,殘酷:定罪,殘酷:定罪,passiveSpells-c.xml name,,槍手,lancer,1,32,傳說,,10244,icon.pak:10244.png,有,icon.pak:10244_d.png,有,,,,targetSpellId=5055；rangeExtension=4；summary=殘酷的射程距離及暈眩時間增加
+被動,53,施壓:死亡召喚,施壓:死亡召喚,passiveSpells-c.xml name,,槍手,lancer,1,33,唯一,,10146,icon.pak:10146.png,有,icon.pak:10146_d.png,有,,,,summary=使用施壓時死亡傳送效果
+被動,55,閃避破壞,閃避破壞,passiveSpells-c.xml name,,槍手,lancer,1,34,一般,,10136,icon.pak:10136.png,有,icon.pak:10136_d.png,有,,,,summary=目標迴避攻擊時，以一定機率必定命中
+被動,56,漩渦,漩渦,passiveSpells-c.xml name,,槍手,lancer,1,35,高級,,10140,icon.pak:10140.png,有,icon.pak:10140_d.png,有,,,,summary=被一般暈眩/不可歸還/束縛技能攻擊時以一定機率反射
+被動,57,致命一擊,致命一擊,passiveSpells-c.xml name,,槍手,lancer,1,36,一般,,10137,icon.pak:10137.png,有,icon.pak:10137_d.png,有,,,,summary=攻擊中以一定機率給予2.5倍傷害
+被動,58,報復,報復,passiveSpells-c.xml name,,槍手,lancer,1,37,一般,,10142,icon.pak:10142.png,有,icon.pak:10142_d.png,有,,,,summary=被擊時以一定機率發生傷害減少效果
+被動,59,進階戰術,進階戰術,passiveSpells-c.xml name,,槍手,lancer,1,38,一般,,10148,icon.pak:10148.png,有,icon.pak:10148_d.png,有,,,,summary=隨著等級DG/ER/MR增加
+被動,60,範圍擴增,\aJ範圍擴增,passiveSpells-c.xml name,,槍手,lancer,1,39,稀有,\aJ,10144,icon.pak:10144.png,有,icon.pak:10144_d.png,有,,,,summary=遠距離形式的效果增加
+被動,61,龍之護鎧,龍之護鎧,passiveSpells-c.xml name,,龍騎,dragonknight,1,45,一般,,10078,icon.pak:10078.png,有,icon.pak:10078_d.png,有,,,,summary=賦予傷害減少效果
+被動,62,龍之護鎧,龍之護鎧,passiveSpells-c.xml name,,,,,,,,0,,無圖號,,,,,,
+被動,63,堅固防護,堅固防護,passiveSpells-c.xml name,,騎士,knight,1,29,一般,,10196,icon.pak:10196.png,有,icon.pak:10196_d.png,有,,,,summary=遠距離迴避力增加
+被動,64,騎士榮耀,騎士榮耀,passiveSpells-c.xml name,,騎士,knight,1,30,一般,,10204,icon.pak:10204.png,有,icon.pak:10204_d.png,有,,,,summary=依等級體力增加
+被動,65,冥想術:超越,冥想術:超越,passiveSpells-c.xml name,,法師,magician,1,90,高級,,10192,icon.pak:10192.png,有,icon.pak:10192_d.png,有,,,,summary=MP恢復提升
+被動,66,影之防護:命運,影之防護:命運,passiveSpells-c.xml name,,黑妖,darkelf,1,62,一般,,10197,icon.pak:10197.png,有,icon.pak:10197_d.png,有,,,,summary=魔法防禦力提升
+被動,67,堅固記事,堅固記事,passiveSpells-c.xml name,,龍騎,dragonknight,1,46,一般,,10195,icon.pak:10195.png,有,icon.pak:10195_d.png,有,,,,summary=防止武器損傷
+被動,68,橫衝直撞,橫衝直撞,passiveSpells-c.xml name,,龍騎,dragonknight,1,47,一般,,10199,icon.pak:10199.png,有,icon.pak:10199_d.png,有,,,,summary=狀態異常時給予額外傷害
+被動,69,骷髏毀壞:延續,骷髏毀壞:延續,passiveSpells-c.xml name,,幻術,illusionist,1,43,高級,,10194,icon.pak:10194.png,有,icon.pak:10194_d.png,有,,,,summary=骷髏毀壞暈眩時間增加
+被動,71,行走加速:最大值,行走加速:最大值,passiveSpells-c.xml name,,黑妖,darkelf,1,63,稀有,,10198,icon.pak:10198.png,有,icon.pak:10198_d.png,有,,,,summary=攻擊速度增加
+被動,76,究極光裂術:剋星,究極光裂術:剋星,passiveSpells-c.xml name,,法師,magician,1,91,神話,,10383,icon.pak:10383.png,有,icon.pak:10383_d.png,有,,,,summary=究極光裂術命中時機率性造成暈眩/無視魔法屏障 
+被動,77,神聖疾走:進化,神聖疾走:進化,passiveSpells-c.xml name,,法師,magician,1,92,英雄,,10387,icon.pak:10387.png,有,icon.pak:10387_d.png,有,,,,summary=使用神聖疾走時新增攻擊速度增加效果
+被動,78,靈魂昇華,靈魂昇華,passiveSpells-c.xml name,,法師,magician,1,93,一般,,10396,icon.pak:10396.png,有,icon.pak:10396_d.png,有,,,,summary=最大HP、MP增加
+被動,79,終極召喚術,終極召喚術,passiveSpells-c.xml name,,法師,magician,1,95,稀有,,10382,icon.pak:10382.png,有,icon.pak:10382_d.png,有,,,,summary=召喚強大的怪物
+被動,80,空靈之圈,\aJ空靈之圈,passiveSpells-c.xml name,,法師,magician,1,94,稀有,\aJ,10386,icon.pak:10386.png,有,icon.pak:10386_d.png,有,,,,summary=狀態異常中機率傷害減少
+被動,82,帝國:超載,帝國:超載,passiveSpells-c.xml name,,王族,prince,1,42,稀有,,10512,icon.pak:10512.png,有,icon.pak:10512_d.png,有,,,,summary=帝國暈眩時間增加及deBUFF
+被動,83,聖衣,聖衣,passiveSpells-c.xml name,,王族,prince,1,36,一般,,10515,icon.pak:10515.png,有,icon.pak:10515_d.png,有,,,,summary=遠距離迴避力增加
+被動,84,威嚴,威嚴,passiveSpells-c.xml name,,王族,prince,1,37,一般,,10513,icon.pak:10513.png,有,icon.pak:10513_d.png,有,,,,summary=傷害減免效果增加
+被動,85,體能強化,體能強化,passiveSpells-c.xml name,,戰士,warrior,1,24,一般,,10514,icon.pak:10514.png,有,icon.pak:10514_d.png,有,,,,summary=隨著等級增加體力
+被動,86,反擊屏障:萬能,反擊屏障:萬能,passiveSpells-c.xml name,,騎士,knight,1,26,神話,,10546,icon.pak:10546.png,有,icon.pak:10546_d.png,有,,,,summary=發動反擊屏障時，恢復受到的傷害的一定量HP
+被動,87,魔力護盾:盔甲,魔力護盾:盔甲,passiveSpells-c.xml name,,妖精,elf,1,107,高級,,10520,icon.pak:10520.png,有,icon.pak:10520_d.png,有,,,,summary=以精神力生成強大的魔力屏障
+被動,89,精準射擊:箭,精準射擊:箭,passiveSpells-c.xml name,,妖精,elf,1,116,一般,,10525,icon.pak:10525.png,有,icon.pak:10525_d.png,有,,,,summary=精準射擊命中時不可移動及治癒恢復減少
+被動,90,崩壞,崩壞,passiveSpells-c.xml name,,戰士,warrior,1,25,傳說,,10659,icon.pak:10659.png,有,icon.pak:10659_d.png,有,,,,summary=即使在暈眩狀態也可發動泰坦類技能
+被動,91,殘暴,殘暴,passiveSpells-c.xml name,,戰士,warrior,1,26,稀有,,10653,icon.pak:10653.png,有,icon.pak:10653_d.png,有,,,,summary=能力值大幅上升
+被動,93,戰斧投擲: 獵人,戰斧投擲: 獵人,passiveSpells-c.xml name,,戰士,warrior,1,28,高級,,10703,icon.pak:10703.png,有,icon.pak:10703_d.png,有,,,,summary=攻擊留有獵物標示的角色時，吸收一定量的HP
+被動,94,三重矢:加成,三重矢:加成,passiveSpells-c.xml name,,妖精,elf,1,114,神話,,10863,icon.pak:10863.png,有,icon.pak:10863_d.png,有,,,,summary=射出4發的箭，套用遠距離傷害+16
+被動,95,精準命中,精準命中,passiveSpells-c.xml name,,妖精,elf,1,113,英雄,,10393,icon.pak:10393.png,有,icon.pak:10393_d.png,有,,,,summary=對象迴避攻擊時，以一定機率必定命中
+被動,96,致命身軀,致命身軀,passiveSpells-c.xml name,,龍騎,dragonknight,1,48,一般,,10855,icon.pak:10855.png,有,icon.pak:10855_d.png,有,,,,summary=依據等級最大HP提升
+被動,97,暗影之足:追擊者,\aH暗影之足:追擊者,passiveSpells-c.xml name,,黑妖,darkelf,1,64,神話,\aH,10861,icon.pak:10861.png,有,icon.pak:10861_d.png,有,,,,targetSpellId=198；rangeExtension=4；summary=暗影之足效果強化
+被動,98,暗隱術:刺客,暗隱術:刺客,passiveSpells-c.xml name,,黑妖,darkelf,1,65,英雄,,10859,icon.pak:10859.png,有,icon.pak:10859_d.png,有,,,,summary=暗隱術效果強化
+被動,99,梅比烏斯,梅比烏斯,passiveSpells-c.xml name,,幻術,illusionist,1,44,一般,,11049,icon.pak:11049.png,有,icon.pak:11049_d.png,有,,,,summary=遠距離傷害減少
+被動,100,暴君:處決,暴君:處決,passiveSpells-c.xml name,,王族,prince,1,38,英雄,,11378,icon.pak:11378.png,有,icon.pak:11378_d.png,有,,,,summary=強化暴君傷害及賦予對象攻擊速度減少deBUFF
+被動,101,征服者,征服者,passiveSpells-c.xml name,,王族,prince,1,39,神話,,11422,icon.pak:11422.png,有,icon.pak:11422_d.png,有,,,,summary=近距離攻擊反擊與機率暈眩
+被動,102,屠宰者:力量,屠宰者:力量,passiveSpells-c.xml name,,龍騎,dragonknight,1,49,英雄,,11547,icon.pak:11547.png,有,icon.pak:11547_d.png,有,,,,summary=暈眩發動機率提升、持續時間增加1秒
+被動,103,聖魂,聖魂,passiveSpells-c.xml name,,聖騎士,holyknight,1,48,一般,,11735,icon.pak:11735.png,有,icon.pak:11735_d.png,有,,,,summary=以一定機率增加近距離攻擊傷害至1.8倍
+被動,104,聖魂:恩典,聖魂:恩典,passiveSpells-c.xml name,,聖騎士,holyknight,1,49,一般,,11737,icon.pak:11737.png,有,icon.pak:11737_d.png,有,,,,summary=以一定機率增加近距離攻擊傷害至1.8倍或2.5倍
+被動,105,聖體,聖體,passiveSpells-c.xml name,,聖騎士,holyknight,1,50,一般,,11779,icon.pak:11779.png,有,icon.pak:11779_d.png,有,,,,summary=賦予傷害減少、DG效果
+被動,106,三位一體,三位一體,passiveSpells-c.xml name,,聖騎士,holyknight,1,51,一般,,11739,icon.pak:11739.png,有,icon.pak:11739_d.png,有,,,,summary=雙手劍攻擊速度增加及盾牌配戴
+被動,107,聖盾,聖盾,passiveSpells-c.xml name,,聖騎士,holyknight,1,52,一般,,11741,icon.pak:11741.png,有,icon.pak:11741_d.png,有,,,,summary=屏障概念的神聖盾牌
+被動,108,聖潔回復,聖潔回復,passiveSpells-c.xml name,,聖騎士,holyknight,1,53,一般,,11743,icon.pak:11743.png,有,icon.pak:11743_d.png,有,,,,summary=HP掉到30%以下時，盾牌全部立即恢復
+被動,109,聖潔轉換,聖潔轉換,passiveSpells-c.xml name,,聖騎士,holyknight,1,54,高級,,11746,icon.pak:11746.png,有,icon.pak:11746_d.png,有,,,,summary=將近距離傷害的部分恢復至盾牌
+被動,110,驅魔,驅魔,passiveSpells-c.xml name,,聖騎士,holyknight,1,55,一般,,11750,icon.pak:11750.png,有,icon.pak:11750_d.png,有,,,,summary=攻擊不死族/惡魔時以一定機率造成額外傷害
+被動,111,閃焰:降臨,閃焰:降臨,passiveSpells-c.xml name,,聖騎士,holyknight,1,56,英雄,,11754,icon.pak:11754.png,有,icon.pak:11754_d.png,有,,,,summary=閃焰的持續時間增加1秒
+被動,112,莊嚴,莊嚴,passiveSpells-c.xml name,,聖騎士,holyknight,1,58,英雄,,11755,icon.pak:11755.png,有,icon.pak:11755_d.png,有,,,,summary=遭受PC攻擊時，以一定機率恢復HP
+被動,113,奧術閃現:救贖,奧術閃現:救贖,passiveSpells-c.xml name,,聖騎士,holyknight,1,59,神話,,11760,icon.pak:11760.png,有,icon.pak:11760_d.png,有,,,,summary=CC技免疫、造成敵人無法歸還
+被動,114,神聖印記:末日,神聖印記:末日,passiveSpells-c.xml name,,聖騎士,holyknight,1,60,唯一,,11763,icon.pak:11763.png,有,icon.pak:11763_d.png,有,,,,summary=強化神聖印記的效果，廣域CC技
+被動,115,恥辱烙印,恥辱烙印,passiveSpells-c.xml name,,聖騎士,holyknight,1,57,稀有,,11752,icon.pak:11752.png,有,icon.pak:11752_d.png,有,,,,summary=目標進行迴避/反擊時，使攻擊必定命中
+被動,117,悖論:崩裂,悖論:崩裂,passiveSpells-c.xml name,,劍士,fencer,1,46,稀有,,12144,icon.pak:12144.png,有,icon.pak:12144_d.png,有,,,,summary=悖論強化
+被動,118,幻影:斷念,幻影:斷念,passiveSpells-c.xml name,,劍士,fencer,1,47,傳說,,12146,icon.pak:12146.png,有,icon.pak:12146_d.png,有,,,,summary=幻影:挽歌/死亡追加恐怖效果(無法進行服用藥水外的行動)
+被動,119,咆嘯,咆嘯,passiveSpells-c.xml name,,龍騎,dragonknight,1,50,稀有,,12192,icon.pak:12192.png,有,icon.pak:12192_d.png,有,,,,summary=弱點露出發動機率提升
+被動,120,狂襲:精通,狂襲:精通,passiveSpells-c.xml name,,騎士,knight,1,32,稀有,,12190,icon.pak:12190.png,有,icon.pak:12190_d.png,有,,,,summary=狂襲效果強化
+被動,121,戰術防禦,戰術防禦,passiveSpells-c.xml name,,槍手,lancer,1,40,稀有,,12230,icon.pak:12230.png,有,icon.pak:12230_d.png,有,,,,summary=不受到對象反擊傷害的傷害
+被動,122,殘酷:死亡懲罰,殘酷:死亡懲罰,passiveSpells-c.xml name,,槍手,lancer,1,41,神話,,12232,icon.pak:12232.png,有,icon.pak:12232_d.png,有,,,,targetSpellId=5055；rangeExtension=5；summary=殘酷的射程距離及暈眩時間增加、無視衝突
+被動,123,圈套誘捕:紅色警戒,圈套誘捕:紅色警戒,passiveSpells-c.xml name,,幻術,illusionist,1,45,稀有,,12233,icon.pak:12233.png,有,icon.pak:12233_d.png,有,,,,summary=對象的PvP魔法傷害量增加10%
+被動,124,增幅防禦,增幅防禦,passiveSpells-c.xml name,,騎士,knight,1,33,一般,,12483,icon.pak:12483.png,有,icon.pak:12483_d.png,有,,,,summary=傷害減少
+被動,125,尖刺盔甲,尖刺盔甲,passiveSpells-c.xml name,,騎士,knight,1,34,一般,,12484,icon.pak:12484.png,有,icon.pak:12484_d.png,有,,,,summary=近距離命中
+被動,126,卓越劍術,卓越劍術,passiveSpells-c.xml name,,騎士,knight,1,24,一般,,12476,icon.pak:12476.png,有,icon.pak:12476_d.png,有,,,,summary=雙手劍非損傷，近距離傷害
+被動,127,絕禦之刃:禁錮,絕禦之刃:禁錮,passiveSpells-c.xml name,,騎士,knight,1,35,一般,,12478,icon.pak:12478.png,有,icon.pak:12478_d.png,有,,,,summary=移除絕對屏障，無法歸還
+被動,128,破盾者,破盾者,passiveSpells-c.xml name,,騎士,knight,1,36,高級,,12480,icon.pak:12480.png,有,icon.pak:12480_d.png,有,,,,summary=無視迴避、反擊
+被動,129,強迫暈眩:終極,強迫暈眩:終極,passiveSpells-c.xml name,,騎士,knight,1,37,唯一,,12482,icon.pak:12482.png,有,icon.pak:12482_d.png,有,,,,summary=廣域強迫暈眩
+被動,130,狂暴武器,狂暴武器,passiveSpells-c.xml name,,騎士,knight,1,31,英雄,,12485,icon.pak:12485.png,有,icon.pak:12485_d.png,有,,,,summary=脫離CC狀態時立即恢復HP，並獲得技術命中+10、攻擊速度+5%的效果
+被動,131,劍殺:崩裂,劍殺:崩裂,passiveSpells-c.xml name,,劍士,fencer,1,48,高級,,12661,icon.pak:12661.png,有,icon.pak:12661_d.png,有,,,,summary=劍殺命中時受到的傷害量增加
+被動,132,神聖防禦,神聖防禦,passiveSpells-c.xml name,,法師,magician,1,96,一般,,12663,icon.pak:12663.png,有,icon.pak:12663_d.png,有,,,,summary=生成護盾
+被動,133,恩典庇護:榮耀,恩典庇護:榮耀,passiveSpells-c.xml name,,王族,prince,1,40,高級,,12659,icon.pak:12659.png,有,icon.pak:12659_d.png,有,,,,summary=技術命中增加
+被動,134,殘暴:勇士,殘暴:勇士,passiveSpells-c.xml name,,戰士,warrior,1,29,英雄,,12854,icon.pak:12854.png,有,icon.pak:12854_d.png,有,,,,summary=殘暴強化
+被動,135,暗隱術:突擊,暗隱術:突擊,passiveSpells-c.xml name,,黑妖,darkelf,1,66,英雄,,12847,icon.pak:12847.png,有,icon.pak:12847_d.png,有,,,,summary=暗隱術效果強化
+被動,136,靈魂毀滅,靈魂毀滅,passiveSpells-c.xml name,,幻術,illusionist,1,46,英雄,,12852,icon.pak:12852.png,有,icon.pak:12852_d.png,有,,,,summary=攻擊時無視MR
+被動,137,影之侵襲,影之侵襲,passiveSpells-c.xml name,,黑妖,darkelf,1,67,高級,,12850,icon.pak:12850.png,有,icon.pak:12850_d.png,有,,,,summary=對象反擊時，必定使攻擊命中
+被動,138,先鋒:覺醒,先鋒:覺醒,passiveSpells-c.xml name,,槍手,lancer,1,42,英雄,,12858,icon.pak:12858.png,有,icon.pak:12858_d.png,有,,,,summary=強化先鋒
+被動,139,復原,復原,passiveSpells-c.xml name,,槍手,lancer,1,43,高級,,12862,icon.pak:12862.png,有,icon.pak:12862_d.png,有,,,,summary=從CC狀態脫離時立即恢復HP與pvp傷害減少
+被動,140,堅固記事:獸性,堅固記事:獸性,passiveSpells-c.xml name,,龍騎,dragonknight,1,51,高級,,12860,icon.pak:12860.png,有,icon.pak:12860_d.png,有,,,,summary=打擊時有一定機率強化傷害
+被動,141,撕裂護甲:毀滅,撕裂護甲:毀滅,passiveSpells-c.xml name,,龍騎,dragonknight,1,52,高級,,12861,icon.pak:12861.png,有,icon.pak:12861_d.png,有,,,,summary=強化撕裂護甲
+被動,142,引爆,引爆,passiveSpells-c.xml name,,活動,event,1,0,,,12874,icon.pak:12874.png,有,icon.pak:12874_d.png,有,,,,summary=傷害%增加技能發動機率提升
+被動,143,準備反擊,準備反擊,passiveSpells-c.xml name,,活動,event,1,1,,,12875,icon.pak:12875.png,有,icon.pak:12875_d.png,有,,,,summary=屏障技能發動機率提升
+被動,144,技能精通,技能精通,passiveSpells-c.xml name,,活動,event,1,2,,,12876,icon.pak:12876.png,有,icon.pak:12876_d.png,有,,,,summary=物理魔法傷害增加
+被動,145,魔法精通,魔法精通,passiveSpells-c.xml name,,活動,event,1,3,,,12877,icon.pak:12877.png,有,icon.pak:12877_d.png,有,,,,summary=魔法傷害增加
+被動,155,逆轉,逆轉,passiveSpells-c.xml name,,妖精,elf,1,108,稀有,,13093,icon.pak:13093.png,有,icon.pak:13093_d.png,有,,,,summary=異常狀態時間減少
+被動,157,逆轉:迷霧,逆轉:迷霧,passiveSpells-c.xml name,,妖精,elf,1,109,英雄,,13090,icon.pak:13090.png,有,icon.pak:13090_d.png,有,,,,summary=逆轉效果強化
+被動,159,自然回聲,自然回聲,passiveSpells-c.xml name,,妖精,elf,1,115,高級,,13086,icon.pak:13086.png,有,icon.pak:13086_d.png,有,,,,summary=追加攻擊對象周圍1角色
+被動,162,潛能,潛能,passiveSpells-c.xml name,,幻術,illusionist,1,47,傳說,,13258,icon.pak:13258.png,有,icon.pak:13258_d.png,有,,,,summary=將施法者的能力提升到極限
+被動,163,漩渦:亡靈,漩渦:亡靈,passiveSpells-c.xml name,,槍手,lancer,1,44,傳說,,13294,icon.pak:13294.png,有,icon.pak:13294_d.png,有,,,,summary=傳說昏迷/無法歸還/束縛技能被擊時以一定機率反射
+被動,164,破壞盔甲:深淵,破壞盔甲:深淵,passiveSpells-c.xml name,,黑妖,darkelf,1,68,傳說,,13293,icon.pak:13293.png,有,icon.pak:13293_d.png,有,,,,summary=破壞盔甲效果強化
+被動,165,毒性抵抗,毒性抵抗,passiveSpells-c.xml name,,黑妖,darkelf,1,69,一般,,13295,icon.pak:13295.png,有,icon.pak:13295_d.png,有,,,,summary=毒耐性
+被動,166,屠宰者:深淵巨獸,屠宰者:深淵巨獸,passiveSpells-c.xml name,,龍騎,dragonknight,1,53,傳說,,13320,icon.pak:13320.png,有,icon.pak:13320_d.png,有,,,,summary=屠宰者攻擊4次及無視對象的反擊機率
+被動,167,空靈大師,空靈大師,passiveSpells-c.xml name,,法師,magician,1,97,傳說,,13319,icon.pak:13319.png,有,icon.pak:13319_d.png,有,,,,summary=強化部分魔法
+被動,168,幻覺:天際線,幻覺:天際線,passiveSpells-c.xml name,,幻術,illusionist,1,48,傳說,,13322,icon.pak:13322.png,有,icon.pak:13322_d.png,有,,,,"targetSpellId=201,207,5036；rangeExtension=5；summary=射程增加及普攻傷害提升"
+被動,169,神聖印記:判官,神聖印記:判官,passiveSpells-c.xml name,,聖騎士,holyknight,1,61,傳說,,13354,icon.pak:13354.png,有,icon.pak:13354_d.png,有,,,,summary=神聖印記追加1秒、2秒間束縛
+被動,170,瞬擊:挽歌,\aG瞬擊:挽歌,passiveSpells-c.xml name,,劍士,fencer,1,42,英雄,\aG,13357,icon.pak:13357.png,有,icon.pak:13357_d.png,有,,,,summary=暈眩時間增加
+被動,171,魔法之盾,魔法之盾,passiveSpells-c.xml name,,妖精,elf,1,110,一般,,13359,icon.pak:13359.png,有,icon.pak:13359_d.png,有,,,,summary=遭暈眩/無法歸還/束縛技能攻擊時，機率性使其無效化
+被動,172,魔法之盾:自由,魔法之盾:自由,passiveSpells-c.xml name,,妖精,elf,1,111,傳說,,13360,icon.pak:13360.png,有,icon.pak:13360_d.png,有,,,,summary=魔法之盾強化
+被動,173,泰坦:巨像,泰坦:巨像,passiveSpells-c.xml name,,戰士,warrior,1,30,傳說,,13364,icon.pak:13364.png,有,icon.pak:13364_d.png,有,,,,summary=反擊機率/傷害強化，反擊時恢復
+被動,174,艾斯帕達,\aF艾斯帕達,passiveSpells-c.xml name,,劍士,fencer,1,49,傳說,\aF,13358,icon.pak:13358.png,有,icon.pak:13358_d.png,有,,,,summary=攻擊暈眩/無法歸還/束縛的對象時傷害增加
+被動,178,戰鬥之魂,戰鬥之魂,passiveSpells-c.xml name,,格鬥家,fighter,1,24,一般,,13411,icon.pak:13411.png,有,icon.pak:13411_d.png,有,,,,summary=獲得鬥魂量條
+被動,179,潛襲,潛襲,passiveSpells-c.xml name,,格鬥家,fighter,1,25,一般,,13407,icon.pak:13407.png,有,icon.pak:13407_d.png,有,,,,summary=無視迴避/反擊進行打擊
+被動,180,破甲,破甲,passiveSpells-c.xml name,,格鬥家,fighter,1,26,一般,,13434,icon.pak:13434.png,有,icon.pak:13434_d.png,有,,,,summary=普通攻擊時賦予烙印效果
+被動,181,戰勝,戰勝,passiveSpells-c.xml name,,格鬥家,fighter,1,27,一般,,13436,icon.pak:13436.png,有,icon.pak:13436_d.png,有,,,,summary=機率傷害減少
+被動,182,致命拳,致命拳,passiveSpells-c.xml name,,格鬥家,fighter,1,28,一般,,13438,icon.pak:13438.png,有,icon.pak:13438_d.png,有,,,,summary=傷害增加%
+被動,183,戰勝:意志,戰勝:意志,passiveSpells-c.xml name,,格鬥家,fighter,1,29,高級,,13437,icon.pak:13437.png,有,icon.pak:13437_d.png,有,,,,summary=狀態異常下，戰勝效果強化
+被動,184,戰鬥之魂:堅韌,\aL戰鬥之魂:堅韌,passiveSpells-c.xml name,,格鬥家,fighter,1,30,高級,\aL,13413,icon.pak:13413.png,有,icon.pak:13413_d.png,有,,,,summary=鬥魂點數獲得量增加
+被動,185,潛襲:壓制,潛襲:壓制,passiveSpells-c.xml name,,格鬥家,fighter,1,31,稀有,,13409,icon.pak:13409.png,有,icon.pak:13409_d.png,有,,,,summary=無視迴避/反擊進行打擊吸收HP
+被動,186,衝鋒:貫穿,\aG衝鋒:貫穿,passiveSpells-c.xml name,,格鬥家,fighter,1,32,英雄,\aG,13430,icon.pak:13430.png,有,icon.pak:13430_d.png,有,,,,summary=衝鋒無法歸還
+被動,187,戰鬥之魂:猛擊,戰鬥之魂:猛擊,passiveSpells-c.xml name,,格鬥家,fighter,1,33,英雄,,13415,icon.pak:13415.png,有,icon.pak:13415_d.png,有,,,,summary=戰鬥之魂強化
+被動,188,強制:極限,強制:極限,passiveSpells-c.xml name,,格鬥家,fighter,1,34,傳說,,13425,icon.pak:13425.png,有,icon.pak:13425_d.png,有,,,,summary=強制廣域、烙印效果
+被動,189,報應:夢魘,報應:夢魘,passiveSpells-c.xml name,,格鬥家,fighter,1,35,傳說,,13421,icon.pak:13421.png,有,icon.pak:13421_d.png,有,,,,summary=報應廣域、蓄力效果強化
+被動,190,衝鋒:穿刺,衝鋒:穿刺,passiveSpells-c.xml name,,格鬥家,fighter,1,36,神話,,13432,icon.pak:13432.png,有,icon.pak:13432_d.png,有,,,,summary=衝鋒穿透效果
+被動,191,聖盾:真諦,\aJ聖盾:真諦,passiveSpells-c.xml name,,聖騎士,holyknight,1,62,稀有,\aJ,13651,icon.pak:13651.png,有,icon.pak:13651_d.png,有,,,,summary=聖盾強化
+被動,192,精靈守衛,精靈守衛,passiveSpells-c.xml name,,妖精,elf,1,112,稀有,,13647,icon.pak:13647.png,有,icon.pak:13647_d.png,有,,,,summary=受擊時以一定機率發動傷害減免效果
+被動,193,威嚴:統治,威嚴:統治,passiveSpells-c.xml name,,王族,prince,1,43,稀有,,13649,icon.pak:13649.png,有,icon.pak:13649_d.png,有,,,,summary=傷害減免增加及魔法傷害減免追加、隊員強化
+被動,195,覺醒: 安塔瑞斯,覺醒: 安塔瑞斯,passiveSpells-c.xml name,,龍騎,dragonknight,1,56,一般,,13709,icon.pak:13709.png,有,icon.pak:13709_d.png,有,,,,summary=AC、MR增加
+被動,196,覺醒: 法利昂,覺醒: 法利昂,passiveSpells-c.xml name,,龍騎,dragonknight,1,57,一般,,13710,icon.pak:13710.png,有,icon.pak:13710_d.png,有,,,,summary=ER增加
+被動,197,覺醒: 巴拉卡斯,覺醒: 巴拉卡斯,passiveSpells-c.xml name,,龍騎,dragonknight,1,58,一般,,13708,icon.pak:13708.png,有,icon.pak:13708_d.png,有,,,,summary=耐性、命中、近距離命中增加
+被動,198,覺醒: 林德拜爾,覺醒: 林德拜爾,passiveSpells-c.xml name,,龍騎,dragonknight,1,59,一般,,13707,icon.pak:13707.png,有,icon.pak:13707_d.png,有,,,,summary=耐性、命中、近距離命中增加
+被動,199,迅猛雙斧:狂暴,迅猛雙斧:狂暴,passiveSpells-c.xml name,,戰士,warrior,1,31,稀有,,13699,icon.pak:13699.png,有,icon.pak:13699_d.png,有,,,,summary=攻擊速度提升
+被動,200,堅固記事:野性,堅固記事:野性,passiveSpells-c.xml name,,龍騎,dragonknight,1,54,稀有,,13701,icon.pak:13701.png,有,icon.pak:13701_d.png,有,,,,summary=屠宰者傷害增加、獸性發動機率提升
+被動,205,生存:生命,生存:生命,passiveSpells-c.xml name,,劍士,fencer,1,50,稀有,,13698,icon.pak:13698.png,有,icon.pak:13698_d.png,有,,,,summary=生存強化
+被動,206,肆虐:爆發,肆虐:爆發,passiveSpells-c.xml name,,劍士,fencer,1,51,高級,,13697,icon.pak:13697.png,有,icon.pak:13697_d.png,有,,,,summary=肆虐強化
+被動,207,狂暴武器:神盾,\aJ狂暴武器:神盾,passiveSpells-c.xml name,,騎士,knight,1,38,稀有,\aJ,13714,icon.pak:13714.png,有,icon.pak:13714_d.png,有,,,,summary=狂暴武器強化、所受傷害量減少
+被動,208,堅固防護:精通,\aL堅固防護:精通,passiveSpells-c.xml name,,騎士,knight,1,39,高級,\aL,13712,icon.pak:13712.png,有,icon.pak:13712_d.png,有,,,,summary=遠距離傷害減少
+被動,209,放逐,\aJ放逐,passiveSpells-c.xml name,,黑妖,darkelf,1,70,稀有,\aJ,13732,icon.pak:13732.png,有,icon.pak:13732_d.png,有,,,,summary=HP降低至特定數值以下時，進入隱身狀態並隨機傳送，同時解除CC
+被動,210,日蝕,\aL日蝕,passiveSpells-c.xml name,,黑妖,darkelf,1,71,高級,\aL,13738,icon.pak:13738.png,有,icon.pak:13738_d.png,有,,,,summary=雙重破壞命中時，依目標最大HP比例造成傷害
+被動,211,暗影閃避,暗影閃避,passiveSpells-c.xml name,,黑妖,darkelf,1,72,一般,,13737,icon.pak:13737.png,有,icon.pak:13737_d.png,有,,,,summary=DG增加

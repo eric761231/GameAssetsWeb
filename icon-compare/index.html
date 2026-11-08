@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>381 → R 圖示對照</title>
+<style>
+:root {
+    --bg: #f4f2ee;
+    --panel: #ffffff;
+    --ink: #22201c;
+    --muted: #6d675e;
+    --line: #dcd6cc;
+    --accent: #8a5a1c;
+    --accent-ink: #ffffff;
+    --slot: #2a2722;
+    --slot-line: #4a443b;
+    --empty: #e8e3da;
+    --tag-both: #2f7a4b;
+    --tag-r: #2f5f9a;
+    --tag-381: #9a5a2f;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #181715;
+        --panel: #22201d;
+        --ink: #ece7de;
+        --muted: #a39c90;
+        --line: #3a3631;
+        --accent: #d39b4f;
+        --accent-ink: #1b1813;
+        --slot: #121110;
+        --slot-line: #3d3830;
+        --empty: #2b2925;
+        --tag-both: #5fbf83;
+        --tag-r: #6f9fe0;
+        --tag-381: #e0995f;
+    }
+}
+:root[data-theme="dark"] {
+    --bg: #181715;
+    --panel: #22201d;
+    --ink: #ece7de;
+    --muted: #a39c90;
+    --line: #3a3631;
+    --accent: #d39b4f;
+    --accent-ink: #1b1813;
+    --slot: #121110;
+    --slot-line: #3d3830;
+    --empty: #2b2925;
+    --tag-both: #5fbf83;
+    --tag-r: #6f9fe0;
+    --tag-381: #e0995f;
+}
+* {
+    box-sizing: border-box;
+}
+[hidden] {
+    display: none !important;
+}
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+}
+header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px 10px;
+}
+.bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+}
+h1 {
+    font-size: 17px;
+    margin: 0 8px 0 0;
+    white-space: nowrap;
+}
+.tabs, .filters {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.top-pager {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    white-space: nowrap;
+}
+button {
+    font: inherit;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+button[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+button:disabled {
+    opacity: .4;
+    cursor: default;
+}
+input[type="search"] {
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+    width: 240px;
+    max-width: 100%;
+}
+.count {
+    font-size: 12px;
+    opacity: .85;
+    margin-left: 2px;
+}
+main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 14px 16px 40px;
+}
+.summary {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 10px;
+}
+.row {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 8px 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+    align-items: start;
+    position: relative;
+}
+.row .tag {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 11px;
+    font-weight: bold;
+}
+.tag.both {
+    color: var(--tag-both);
+}
+.tag.r {
+    color: var(--tag-r);
+}
+.tag.v381 {
+    color: var(--tag-381);
+}
+.side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+}
+.slot {
+    width: 54px;
+    height: 54px;
+    border-radius: 6px;
+    background: var(--slot);
+    border: 1px solid var(--slot-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.slot img {
+    image-rendering: auto;
+    max-width: 50px;
+    max-height: 50px;
+}
+.slot img.icon-381 {
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+}
+.slot.empty {
+    background: var(--empty);
+    border: 1px dashed var(--line);
+}
+.slot.noimg {
+    color: #8c857a;
+    font-size: 11px;
+}
+.name {
+    margin-top: 5px;
+    font-size: 13px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.meta {
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+}
+.row .eid .diffuse {
+    color: var(--tag-381);
+    font-weight: bold;
+}
+.row .eid {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: var(--muted);
+    margin: -4px 0 4px 2px;
+    padding-right: 64px;
+}
+.arrow {
+    align-self: center;
+    margin-top: -18px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 18px;
+}
+.top-pager input {
+    width: 64px;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px 6px;
+}
+.legend {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 18px;
+    line-height: 1.7;
+}
+select {
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+.cls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.cls-head {
+    font-weight: bold;
+    margin: 14px 0 2px;
+    font-size: 15px;
+}
+.cls-row {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(220px, 300px) 1fr;
+    gap: 12px;
+}
+.cls-left .icons {
+    display: flex;
+    gap: 10px;
+}
+.cls-left .icons .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+}
+.cls-left .title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+.cls-left .desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+.cand-group {
+    margin-bottom: 8px;
+}
+.cand-group .gt {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+.cands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.cand {
+    width: 128px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.cand.sel {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent) inset;
+}
+.cand .name {
+    font-size: 12px;
+}
+.cand .how {
+    font-size: 11px;
+    color: var(--accent);
+    word-break: break-all;
+}
+.cand button {
+    margin-top: 4px;
+    font-size: 12px;
+    padding: 2px 8px;
+}
+.none {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 0;
+}
+.manual {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+.manual input {
+    width: 70px;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 4px;
+}
+#exportOut {
+    width: 100%;
+    min-height: 120px;
+    font: 12px/1.4 Consolas, monospace;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-top: 10px;
+}
+@media (max-width: 720px) {
+    .cls-row {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 520px) {
+    .grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .top-pager {
+        flex-wrap: wrap;
+        white-space: normal;
+    }
+    input[type="search"] {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+    <div class="bar">
+        <h1>381 → R 圖示對照</h1>
+        <div class="tabs" id="tabs">
+            <button data-tab="items" aria-pressed="true">道具</button>
+            <button data-tab="skills" aria-pressed="false">技能</button>
+            <button data-tab="classSkills" aria-pressed="false">轉職技能</button>
+            <button data-tab="status" aria-pressed="false">狀態圖示</button>
+            <a href="shape-compare.html" style="align-self:center;margin-left:8px;color:var(--accent);white-space:nowrap">形狀比對 →</a>
+        </div>
+        <input type="search" id="q" placeholder="搜尋圖片編號" aria-label="搜尋圖片編號">
+        <select id="clsSel" aria-label="職業" hidden>
+            <option value="">全部職業</option>
+        </select>
+        <div class="filters" id="pickBar" hidden>
+            <button id="exportBtn">匯出選擇</button>
+            <button id="clearBtn">清除選擇</button>
+            <span class="count" id="pickCount"></span>
+        </div>
+        <div class="filters" id="filters">
+            <button data-f="all" aria-pressed="true">全部<span class="count"></span></button>
+            <button data-f="both" aria-pressed="false">兩邊有圖<span class="count"></span></button>
+            <button data-f="r" aria-pressed="false">只有 R 圖<span class="count"></span></button>
+            <button data-f="381" aria-pressed="false">只有 381 圖<span class="count"></span></button>
+            <button data-f="missing" aria-pressed="false">兩邊缺圖<span class="count"></span></button>
+            <button data-f="diff" aria-pressed="false" hidden>用途不同<span class="count"></span></button>
+        </div>
+        <button id="theme" title="切換深淺色">深／淺</button>
+        <nav class="top-pager" id="topPager" aria-label="上方換頁">
+            <button data-p="first">第一頁</button>
+            <button data-p="prev">上一頁</button>
+            <span>第 <input type="number" min="1" value="1" id="pgin" aria-label="頁碼"> / <span id="topPages"></span> 頁</span>
+            <button data-p="next">下一頁</button>
+            <button data-p="last">最後一頁</button>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="summary" id="summary"></div>
+    <div class="grid" id="grid"></div>
+    <div class="legend" id="legend"></div>
+</main>
+<script src="data.js"></script>
+<script>
+(function () {
+    var DATA = window.ICON_DATA;
+    var PAGE = 120;
+    var state = { tab: 'items', f: 'all', q: '', page: 0 };
+    var TABS = ['items', 'skills', 'classSkills', 'status'];
+    try {
+        var saved = JSON.parse(localStorage.getItem('iconCompareState') || '{}');
+        if (TABS.indexOf(saved.tab) >= 0) {
+            state.tab = saved.tab;
+        }
+        if (saved.theme) {
+            document.documentElement.setAttribute('data-theme', saved.theme);
+        }
+    } catch (e) {
+    }
+    var hash = location.hash.replace('#', '').split('&');
+    hash.forEach(function (kv) {
+        var p = kv.split('=');
+        if (p[0] === 'tab' && TABS.indexOf(p[1]) >= 0) {
+            state.tab = p[1];
+        } else if (p[0] === 'f' && ['all', 'both', 'r', '381', 'missing', 'diff'].indexOf(p[1]) >= 0) {
+            state.f = p[1];
+        } else if (p[0] === 'q') {
+            state.q = decodeURIComponent(p[1] || '');
+        } else if (p[0] === 'p') {
+            state.page = Math.max(0, (parseInt(p[1], 10) || 1) - 1);
+        }
+    });
+
+    function save() {
+        try {
+            localStorage.setItem('iconCompareState', JSON.stringify({
+                tab: state.tab,
+                theme: document.documentElement.getAttribute('data-theme') || ''
+            }));
+        } catch (e) {
+        }
+    }
+
+    // 搜尋只使用圖片編號，不依名稱或資料編號配對。
+    function prep(rows) {
+        rows.forEach(function (r) {
+            [r.a, r.b].forEach(function (s) {
+                if (s) {
+                    r.t = (r.t || '') + ' ' + s.iconNo + ' ';
+                }
+            });
+        });
+    }
+    prep(DATA.items);
+    prep(DATA.skills);
+    // 狀態圖示（以圖號配對）：數字搜尋比對圖號或效果 ID，文字搜尋比對名稱、說明、字串鍵
+    (DATA.status || []).forEach(function (r) {
+        var t = ' ' + r.n + ' ';
+        var n = '';
+        [r.a, r.b].forEach(function (s) {
+            if (s) {
+                s.effects.forEach(function (e) {
+                    t += e.id + ' ';
+                    n += ' ' + e.name + ' ' + e.msg + ' ' + e.key;
+                });
+            }
+        });
+        r.t = t;
+        r.n2 = n.toLowerCase();
+    });
+
+    var $ = function (id) {
+        return document.getElementById(id);
+    };
+    var esc = function (s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    };
+
+    function matches(r, q) {
+        if (!q) {
+            return true;
+        }
+        if (/^\d+$/.test(q)) {
+            return r.t.indexOf(' ' + q + ' ') >= 0;
+        }
+        return state.tab === 'status' && r.n2.indexOf(q) >= 0;
+    }
+
+    // 狀態圖示一側：圖號 N 的圖，下面列出這一版裡用到圖號 N 的效果（效果 ID、名稱、startMsgName），只是輔助資訊。
+    // 圖檔存在就顯示（2026-11-07 放寬）：這一版沒有效果用到但圖檔在時，效果列表為空，只顯示圖與提示。
+    function statusSide(s, dir) {
+        if (!s) {
+            return '<div class="side"><div class="slot empty"></div><div class="meta">這一版的狀態沒用這個圖號</div></div>';
+        }
+        var img = s.icon
+            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="img/' + dir + '/' + s.icon + '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
+            : '<div class="slot noimg">缺圖</div>';
+        if (!s.effects.length) {
+            return '<div class="side">' + img +
+                '<div class="meta">這一版的狀態沒用這個圖號</div></div>';
+        }
+        var tip = s.effects.map(function (e) {
+            return '效果 ' + e.id + '　' + e.name + (e.key ? '　' + e.key : '') + (e.msg && e.msg !== e.name ? '\n　' + e.msg : '');
+        }).join('\n');
+        var first = s.effects[0];
+        var more = s.effects.length > 1 ? '（另 ' + (s.effects.length - 1) + ' 個效果）' : '';
+        return '<div class="side" title="' + esc(tip) + '">' + img +
+            '<div class="name">' + esc(first.name) + '</div>' +
+            '<div class="meta">效果 ' + first.id + (first.key ? '・' + esc(first.key) : '') + esc(more) + '</div></div>';
+    }
+
+    function filtered() {
+        var q = state.q.trim().toLowerCase();
+        var rows = DATA[state.tab];
+        var counts = { all: 0, both: 0, r: 0, '381': 0, missing: 0, diff: 0 };
+        var list = [];
+        rows.forEach(function (r) {
+            if (!matches(r, q)) {
+                return;
+            }
+            counts.all++;
+            counts[r.k]++;
+            if (r.usage === '異') {
+                counts.diff++;
+            }
+            if (state.f === 'all' || state.f === r.k || (state.f === 'diff' && r.usage === '異')) {
+                list.push(r);
+            }
+        });
+        return { list: list, counts: counts };
+    }
+
+    function side(s, dir) {
+        if (!s) {
+            return '<div class="side"><div class="slot empty"></div></div>';
+        }
+        var img = s.icon
+            ? '<div class="slot"><img class="icon-' + dir + '" loading="lazy" decoding="async" width="50" height="50" alt="" src="img/' + dir + '/' + s.icon + '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>'
+            : '<div class="slot noimg">缺圖</div>';
+        var names = s.count ? s.names.join('、') : '未使用';
+        var tooltip = s.count ? s.names.join('\n') : '未使用';
+        return '<div class="side" title="' + esc(tooltip + '\n圖號 ' + s.iconNo + '・來源引用 ' + s.count + ' 筆') + '">' + img +
+            '<div class="name">' + esc(names) + '</div>' +
+            '<div class="meta">圖號 ' + s.iconNo + '・來源引用 ' + s.count + ' 筆</div></div>';
+    }
+
+    var TAG = { both: ['both', '兩邊有圖'], r: ['r', '只有 R 圖'], '381': ['v381', '只有 381 圖'], missing: ['', '兩邊缺圖'] };
+    var STATUS_TAG = { both: ['both', '兩邊都有'], r: ['r', '只有 R'], '381': ['v381', '只有 381'], missing: ['', '兩邊缺圖'] };
+    var FILTER_TEXT = {
+        normal: { both: '兩邊有圖', r: '只有 R 圖', '381': '只有 381 圖', missing: '兩邊缺圖' },
+        status: { both: '兩邊都有', r: '只有 R', '381': '只有 381', missing: '兩邊缺圖' }
+    };
+
+    function render() {
+        var isClass = state.tab === 'classSkills';
+        $('filters').hidden = isClass;
+        $('clsSel').hidden = !isClass;
+        $('pickBar').hidden = !isClass;
+        $('topPager').hidden = isClass;
+        if (isClass) {
+            renderClass();
+            return;
+        }
+        $('grid').className = 'grid';
+        if ($('exportOut')) {
+            $('exportOut').remove();
+        }
+        document.querySelectorAll('#tabs button').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.tab === state.tab));
+        });
+        document.querySelectorAll('#filters button').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.f === state.f));
+        });
+        var isStatus = state.tab === 'status';
+        $('filters').querySelector('[data-f="diff"]').hidden = !isStatus;
+        if (!isStatus && state.f === 'diff') {
+            state.f = 'all';
+        }
+        var res = filtered();
+        var ftext = FILTER_TEXT[isStatus ? 'status' : 'normal'];
+        document.querySelectorAll('#filters button').forEach(function (b) {
+            if (ftext[b.dataset.f]) {
+                b.firstChild.nodeValue = ftext[b.dataset.f];
+            }
+            b.querySelector('.count').textContent = ' ' + res.counts[b.dataset.f];
+        });
+        $('q').placeholder = isStatus ? '搜尋圖號、效果編號或名稱' : '搜尋圖片編號';
+        var pages = Math.max(1, Math.ceil(res.list.length / PAGE));
+        if (state.page >= pages) {
+            state.page = pages - 1;
+        }
+        $('topPager').querySelector('[data-p="prev"]').disabled = state.page === 0;
+        $('topPager').querySelector('[data-p="first"]').disabled = state.page === 0;
+        $('topPager').querySelector('[data-p="next"]').disabled = state.page >= pages - 1;
+        $('topPager').querySelector('[data-p="last"]').disabled = state.page >= pages - 1;
+        $('pgin').max = pages;
+        $('pgin').value = state.page + 1;
+        $('topPages').textContent = pages;
+        var start = state.page * PAGE;
+        var slice = res.list.slice(start, start + PAGE);
+        var html = [];
+        slice.forEach(function (r) {
+            if (isStatus) {
+                var st = STATUS_TAG[r.k];
+                html.push('<div class="row"><span class="tag ' + st[0] + '">' + st[1] + '</span>' +
+                    '<div class="eid">圖號 ' + r.n + '・對照依據：圖號' + (r.usage === '異' ? '・<span class="diffuse">用途不同</span>' : (r.usage === '同' ? '・用途相同' : '')) + '</div>' +
+                    statusSide(r.a, '381') +
+                    '<div class="arrow" aria-hidden="true">→</div>' +
+                    statusSide(r.b, 'r') + '</div>');
+                return;
+            }
+            var t = TAG[r.k];
+            html.push('<div class="row"><span class="tag ' + t[0] + '">' + t[1] + '</span>' +
+                side(r.a, '381') +
+                '<div class="arrow" aria-hidden="true">→</div>' +
+                side(r.b, 'r') + '</div>');
+        });
+        $('grid').innerHTML = html.join('') || '<div class="summary">沒有符合的資料。</div>';
+        var range = '第 ' + (res.list.length ? start + 1 : 0) + '～' + Math.min(start + PAGE, res.list.length);
+        if (isStatus) {
+            $('summary').textContent = '狀態圖示：依圖號比對（381 狀態圖號 N 對 R 狀態圖號 N；381 側已套用 RStatusIconMap.xml 改號），共 ' + res.list.length + ' 個圖號，' + range +
+                ' 個。左邊 381 EffectList2.xml 的圖、右邊 R effectlist2-c.xml 的圖；效果 ID 與用途只是輔助資訊。';
+        } else {
+            $('summary').textContent = (state.tab === 'items' ? '道具' : '技能') + '：依圖片編號比對，共 ' + res.list.length +
+                ' 個圖號，' + range + ' 個。左邊 381、右邊 R。';
+        }
+        renderLegend();
+        var h = 'tab=' + state.tab + '&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1);
+        history.replaceState(null, '', '#' + h);
+    }
+
+    // ---------- 轉職技能分頁 ----------
+    // 選擇記在 localStorage 'iconComparePicks'：{ 技能編號: { skillIcon: 圖號, statusIcon: 圖號 } }
+    var picks = {};
+    try {
+        picks = JSON.parse(localStorage.getItem('iconComparePicks') || '{}') || {};
+    } catch (e) {
+        picks = {};
+    }
+
+    function savePicks() {
+        try {
+            localStorage.setItem('iconComparePicks', JSON.stringify(picks));
+        } catch (e) {
+        }
+    }
+
+    function setPick(id, kind, icon) {
+        var p = picks[id] || {};
+        if (icon) {
+            p[kind] = icon;
+        } else {
+            delete p[kind];
+        }
+        if (p.skillIcon || p.statusIcon) {
+            picks[id] = p;
+        } else {
+            delete picks[id];
+        }
+        savePicks();
+    }
+
+    (function fillClassSelect() {
+        var seen = {};
+        DATA.classSkills.forEach(function (c) {
+            if (!seen[c.cls]) {
+                seen[c.cls] = true;
+                var o = document.createElement('option');
+                o.value = c.cls;
+                o.textContent = c.cls;
+                $('clsSel').appendChild(o);
+            }
+        });
+    })();
+
+    function slotHtml(dir, icon, emptyText) {
+        if (icon) {
+            return '<div class="slot"><img class="icon-' + dir + '" loading="lazy" width="50" height="50" alt="" src="img/' + dir + '/' + icon +
+                '.png" onerror="this.parentNode.className=\'slot noimg\';this.parentNode.textContent=\'破圖\'"></div>';
+        }
+        return '<div class="slot empty">' + (emptyText ? '<span class="meta">' + emptyText + '</span>' : '') + '</div>';
+    }
+
+    function candHtml(c, kind, cand) {
+        var p = picks[c.id] || {};
+        var sel = cand.iconNo && p[kind] === cand.iconNo;
+        var idText = kind === 'skillIcon' ? 'R 技能 ' + cand.rid + '（' + cand.cls + '）' : 'R 狀態 ' + cand.eid;
+        return '<div class="cand' + (sel ? ' sel' : '') + '">' + slotHtml('r', cand.icon, cand.icon ? '' : '無圖') +
+            '<div class="name">' + esc(cand.name || '（無名稱）') + '</div>' +
+            '<div class="meta" title="' + esc(cand.msg || '') + '">' + esc(idText) + '<br>圖 ' + cand.iconNo + '</div>' +
+            '<div class="how">' + esc(cand.how) + '</div>' +
+            '<button data-pick="' + c.id + '" data-kind="' + kind + '" data-icon="' + cand.iconNo + '">' +
+            (sel ? '取消選擇' : '選這張') + '</button></div>';
+    }
+
+    function renderClass() {
+        document.querySelectorAll('#tabs button').forEach(function (b) {
+            b.setAttribute('aria-pressed', String(b.dataset.tab === state.tab));
+        });
+        var q = state.q.trim().toLowerCase();
+        var cls = $('clsSel').value;
+        var html = [];
+        var last = '';
+        var shown = 0;
+        DATA.classSkills.forEach(function (c) {
+            if (cls && c.cls !== cls) {
+                return;
+            }
+            var hay = (c.name + ' ' + c.id + ' ' + c.cls + c.element + ' ' + c.route + ' ' + c.desc).toLowerCase();
+            if (q && hay.indexOf(q) < 0) {
+                return;
+            }
+            shown++;
+            var head = c.cls + (c.element ? '（' + c.element + '）' : '');
+            if (head !== last) {
+                html.push('<div class="cls-head">' + esc(head) + '</div>');
+                last = head;
+            }
+            var st = c.status381;
+            var stIcon = st.icon && !st.missing ? st.icon : 0;
+            var stNote = st.icon ? (st.missing ? '狀態圖 ' + st.icon + '：pak 裡沒有圖' : '狀態圖 ' + st.icon) :
+                (st.graphic ? 'castgfx ' + st.graphic + ' 不在 effectlist2' : '沒有 castgfx');
+            var p = picks[c.id] || {};
+            var left = '<div class="cls-left"><div class="icons">' +
+                '<div>' + slotHtml('381', 0, '') + '<div class="lbl">381 技能圖<br>無</div></div>' +
+                '<div>' + slotHtml('381', stIcon, '') + '<div class="lbl">381 狀態圖<br>' + esc(stNote) + '</div></div>' +
+                '</div><div class="title">' + esc(c.name) + '</div>' +
+                '<div class="meta">技能 ' + c.id + '・' + esc(head) + '・' + c.stage + ' 轉 ' + esc(c.route) + '</div>' +
+                '<div class="desc">' + esc(c.desc) + '</div>' +
+                '<div class="manual">自填技能圖號 <input type="number" min="0" data-manual="' + c.id + '" data-kind="skillIcon" value="' + (p.skillIcon || '') + '">' +
+                ' 狀態圖號 <input type="number" min="0" data-manual="' + c.id + '" data-kind="statusIcon" value="' + (p.statusIcon || '') + '"></div>' +
+                '</div>';
+            var sk = c.skillC.length ? c.skillC.map(function (x) {
+                return candHtml(c, 'skillIcon', x);
+            }).join('') : '<div class="none">無候選</div>';
+            var ss = c.statusC.length ? c.statusC.map(function (x) {
+                return candHtml(c, 'statusIcon', x);
+            }).join('') : '<div class="none">無候選</div>';
+            html.push('<div class="cls-row">' + left + '<div>' +
+                '<div class="cand-group"><div class="gt">R 技能圖候選（' + c.skillC.length + '）</div><div class="cands">' + sk + '</div></div>' +
+                '<div class="cand-group"><div class="gt">R 狀態圖候選（' + c.statusC.length + '）</div><div class="cands">' + ss + '</div></div>' +
+                '</div></div>');
+        });
+        $('grid').className = 'cls-list';
+        $('grid').innerHTML = html.join('') || '<div class="summary">沒有符合的資料。</div>';
+        $('summary').textContent = '轉職技能：' + shown + ' 個（共 ' + DATA.classSkills.length +
+            '）。左邊 381 現況，右邊 R 候選圖；按「選這張」記住選擇，最後按「匯出選擇」。';
+        $('pickCount').textContent = '已選 ' + Object.keys(picks).length + ' 個技能';
+        var h = 'tab=classSkills' + (state.q ? '&q=' + encodeURIComponent(state.q) : '');
+        history.replaceState(null, '', '#' + h);
+    }
+
+    function exportPicks() {
+        var list = [];
+        DATA.classSkills.forEach(function (c) {
+            var p = picks[c.id];
+            if (p) {
+                list.push({
+                    skillId: c.id,
+                    name: c.name,
+                    cls: c.cls + (c.element ? '(' + c.element + ')' : ''),
+                    route: c.route,
+                    skillIcon: p.skillIcon || 0,
+                    statusIcon: p.statusIcon || 0
+                });
+            }
+        });
+        var text = JSON.stringify({ source: 'R icon.idx <圖號>.png', exported: new Date().toISOString(), picks: list }, null, 2);
+        var box = $('exportOut');
+        if (!box) {
+            box = document.createElement('textarea');
+            box.id = 'exportOut';
+            box.readOnly = true;
+            $('summary').after(box);
+        }
+        box.value = text;
+        try {
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+            a.download = 'class-skill-icon-picks.json';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (e) {
+        }
+    }
+
+    $('grid').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-pick]');
+        if (!b) {
+            return;
+        }
+        var id = b.dataset.pick;
+        var kind = b.dataset.kind;
+        var icon = parseInt(b.dataset.icon, 10);
+        var cur = (picks[id] || {})[kind];
+        setPick(id, kind, cur === icon ? 0 : icon);
+        renderClass();
+    });
+    $('grid').addEventListener('change', function (e) {
+        var t = e.target;
+        if (t.dataset && t.dataset.manual) {
+            setPick(t.dataset.manual, t.dataset.kind, parseInt(t.value, 10) || 0);
+            renderClass();
+        }
+    });
+    $('clsSel').addEventListener('change', function () {
+        renderClass();
+    });
+    $('exportBtn').addEventListener('click', exportPicks);
+    $('clearBtn').addEventListener('click', function () {
+        if (confirm('清除全部選擇？')) {
+            picks = {};
+            savePicks();
+            renderClass();
+        }
+    });
+
+    function update(scroll) {
+        render();
+        save();
+        if (scroll) {
+            window.scrollTo(0, 0);
+        }
+    }
+
+    $('tabs').addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (b) {
+            state.tab = b.dataset.tab;
+            state.page = 0;
+            update(true);
+        }
+    });
+    $('filters').addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (b) {
+            state.f = b.dataset.f;
+            state.page = 0;
+            update(true);
+        }
+    });
+    function changePage(e) {
+        var b = e.target.closest('button');
+        if (!b || b.disabled) {
+            return;
+        }
+        var p = b.dataset.p;
+        if (p === 'first') {
+            state.page = 0;
+        } else if (p === 'prev') {
+            state.page--;
+        } else if (p === 'next') {
+            state.page++;
+        } else if (p === 'last') {
+            state.page = 1e9;
+        }
+        update(true);
+    }
+    $('topPager').addEventListener('click', changePage);
+    $('pgin').addEventListener('change', function () {
+        var pages = parseInt(this.max, 10);
+        state.page = Math.max(0, Math.min(pages - 1, (parseInt(this.value, 10) || 1) - 1));
+        update(true);
+    });
+    var timer = 0;
+    $('q').value = state.q;
+    $('q').addEventListener('input', function () {
+        clearTimeout(timer);
+        var v = this.value;
+        timer = setTimeout(function () {
+            state.q = v;
+            state.page = 0;
+            update(false);
+        }, 150);
+    });
+    $('theme').addEventListener('click', function () {
+        var cur = document.documentElement.getAttribute('data-theme');
+        var dark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+        save();
+    });
+
+    var m = DATA.meta;
+    var legendNormal =
+        '配對規則：只依圖片編號完全相同配對，不使用名稱或道具／技能資料編號；名稱只是顯示（過長會省略，滑鼠移到該圖上可看完整名稱）。<br>' +
+        '381 道具 ' + m.raw.items381 + ' 筆（' + esc(m.src381Items) + '）；381 技能 ' + m.raw.skills381 + ' 筆（' + esc(m.src381Skills) + '）；' +
+        'R 道具 ' + m.raw.itemsR + ' 筆、R 技能 ' + m.raw.skillsR + ' 筆（' + esc(m.srcR) + '）。<br>' +
+        '篩選依實際圖檔分類。「未使用」＝該版本的此類道具或技能資料未引用此圖號，不代表其他用途未使用；「缺圖」＝找不到該版本的圖片檔。';
+    var sm = DATA.statusMeta || {};
+    var legendStatus =
+        '配對規則：<b>以圖號為主</b>（使用者 2026-11-06 改定）——381 EffectList2.xml 的狀態圖號 N（Sprite 的 N.tbt）和 R effectlist2-c.xml 的狀態圖號 N（icon.idx 的 N.png）放同一列；' +
+        '使用者觀察兩邊大部分是同一張圖的新舊版，效果 ID／用途因改版常對不上，所以只當輔助：每側列出這一版用到這個圖號的效果（滑鼠移到圖上看全部）。' +
+        '兩邊都用到這個圖號時，有任何一個效果兩邊 startMsgName 相同標「用途相同」，否則標「用途不同」（不拆列）。圖案是否真的相同請以畫面判斷（形狀比對另有頁面）。<br>' +
+        '381：' + esc(sm.src381 || '') + '，效果 ' + (sm.effects381 || 0) + ' 筆、用到 ' + (sm.icons381 || 0) + ' 個圖號；' +
+        'R：' + esc(sm.srcR || '') + '，效果 ' + (sm.effectsR || 0) + ' 筆、用到 ' + (sm.iconsR || 0) + ' 個圖號。<br>' +
+        '兩邊都有 ' + (sm.bothIcons || 0) + ' 個圖號（用途相同 ' + (sm.usageSame || 0) + '、用途不同 ' + (sm.usageDiff || 0) + '）；只有 381 ' + (sm.only381 || 0) + '、只有 R ' + (sm.onlyR || 0) + '。「兩邊缺圖」＝兩邊都找不到圖檔。';
+
+    function renderLegend() {
+        $('legend').innerHTML = state.tab === 'status' ? legendStatus : legendNormal;
+    }
+
+    render();
+})();
+</script>
+</body>
+</html>
