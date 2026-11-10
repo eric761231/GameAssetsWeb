@@ -1320,7 +1320,26 @@ def import_drive_maps(out_dir, root_id):
         json.dump(result, f, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
         f.write(';\n')
     print('已寫入 %s' % output)
+    write_map_allow(out_dir, result)
     return 0
+
+
+def write_map_allow(out_dir, result):
+    """轉送函式（lib/drive-proxy.js）的白名單：只允許地圖清單裡的 Drive 檔案 ID。"""
+    files = set()
+    paks = set()
+    for value in result.values():
+        if not isinstance(value, dict) or 'maps' not in value:
+            continue
+        files.add(value['tileIdx'])
+        paks.add(value['tilePak'])
+        for blocks in value['maps'].values():
+            files.update(blocks.values())
+    output = os.path.join(os.path.dirname(out_dir), 'lib', 'map-drive-allow.json')
+    os.makedirs(os.path.dirname(output), exist_ok=True)
+    with open(output, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump({'files': sorted(files), 'paks': sorted(paks)}, f, separators=(',', ':'))
+    print('已寫入 %s（%d 個檔案、%d 個 pak）' % (output, len(files), len(paks)))
 
 
 def export_map_thumbs(out_dir):
