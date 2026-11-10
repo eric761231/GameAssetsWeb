@@ -1,4 +1,10 @@
 {
+    "functions": {
+        "api/drive.js": {
+            "includeFiles": "icon-compare/map-drive-ids.js",
+            "maxDuration": 30
+        }
+    },
     "redirects": [
         {
             "source": "/",

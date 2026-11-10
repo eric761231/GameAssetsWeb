@@ -40,6 +40,18 @@ python icon-compare/_build/build.py --drive-index <清單路徑>
 
 根目錄下的資料夾名稱為「道具圖」、「技能圖」、「狀態圖」、「人物圖」、「地圖」和「UI元件圖」，各自對應 `img/items`、`skills`、`status`、`portraits`、`maps`、`ui`，圖片名稱與子資料夾結構需與本機相同。形狀比對中只存在舊快取的候選圖，可另外在根目錄建立 `381` 和 `r` 資料夾，分別上傳 `img/381` 和 `img/r` 的 PNG。任何缺少索引的圖片仍使用原本路徑，若線上沒有該檔案就會顯示破圖；更新索引後須提交並重新部署。
 
+## 地圖檢視器
+
+地圖分頁點一張地圖會開檢視器，是 MapEditor「看地圖」的網頁版：從 Google 雲端讀 `.s32`／`.seg` 和 `Tile.pak`，在瀏覽器裡即時畫，可切 R 版／381 版，滾輪縮放、拖曳移動、雙擊放大，狀態列顯示滑鼠所在座標。
+
+- 雲端資料夾：`1v_LkFDSZwCXlQ3NZb4y5qKFaZqAv3YPM`，底下 `R版地圖`、`381版地圖` 各有 `map\<編號>\*.s32`、`Tile.idx`、`Tile.pak`，要維持「知道連結的任何人可檢視」。
+- 檔案清單：`python icon-compare/_build/build.py --drive-maps 1v_LkFDSZwCXlQ3NZb4y5qKFaZqAv3YPM` 產生 `icon-compare/map-drive-ids.js`（不需要授權，讀公開資料夾頁面）。雲端檔案有增減就重跑、提交、重新部署。
+- 轉送：Drive 會擋瀏覽器跨站讀取（回 403），所以一律經網站自己的 `/api/drive`（Vercel 函式 `api/drive.js`），只轉送清單裡的檔案，Tile.pak 一次最多讀 4MB，回應交給 Vercel CDN 快取。Netlify 目前沒有對應的函式，地圖檢視器只在 Vercel 能用。
+- 本機測試：`python icon-compare/_build/build.py --serve`，開 `http://127.0.0.1:8765/icon-compare/`（用 `file://` 開不能跑背景執行緒，會改顯示預先畫好的全貌圖）。
+- 程式：`icon-compare/map-viewer.js`（鏡頭、縮放、挑層、排程）、`icon-compare/map-worker.js`（背景執行緒：Tile.idx／.til 解析、Brotli 解壓、地圖塊繪製、多層縮小圖），對應的 MapEditor 函式寫在檔頭註解。Brotli 解碼用 `icon-compare/vendor/brotli-decode.min.js`（Google brotli v1.1.0，MIT）。
+- 讀過的檔案存在瀏覽器的 Cache Storage，同一台電腦第二次開很快（2026-11-10 實測地圖 4、602 塊約 20 秒畫完；第一次要先從雲端下載，要好幾分鐘）。
+- 跟 MapEditor 的差別：不畫角色、建築遮擋淡出、格線與通行屬性。
+
 ## 目錄
 
 ```
@@ -122,7 +134,7 @@ python icon-compare/_build/build.py --style-preview 424 426 651 389 720 726 655 
 | 381 Java 後端 | `C:\Users\eric7\eclipse-workspace\Lineage381C` | `GA_BACKEND` | `db\etcitem.sql`（etcitem）、`db\renewal_381.sql`（weapon、armor、skills）、`src\com\lineage\server\model\skill\L1SkillId.java`（BUFF_TRANSFOR_*） |
 | 天堂R 客戶端 | `D:\天堂資料\天堂-主程式懶人包\天堂R\LineageRemastered` | `GA_RCLIENT` | `data.idx/pak` 的 `contents\item-common.bin`、`desc-c.tbl`、`string-c.tbl`、`SpellList-c.xml`、`passiveSpells-c.xml`、`effectlist2-c.xml`；`icon.idx/pak` 的 `<圖號>.png`；根目錄 `icon\` 散檔（icon.idx 沒有時才補用） |
 | MapEditor | `D:\程式碼測試區\C++\MapEditor` | `GA_MAPEDITOR` | `mapnames.txt`（地圖名稱；沒有的再查後端 `mapids`） |
-| 天堂R 主程式地圖 | `<GA_RCLIENT>\map`、`Tile.idx`、`data.idx` 的 `zone3.xml` | `GA_RCLIENT` | 每一個 `map\<編號>\*.s32／*.seg` 畫縮圖到 `img/maps/R-<編號>.png`。381 名稱先用 MapEditor `mapnames.txt`，沒有的再查後端 `mapids`；R 名稱取 zone3 同編號第一個區域。點縮圖可單獨放大 |
+| 天堂R 主程式地圖 | `<GA_RCLIENT>\map`、`Tile.idx`、`data.idx` 的 `zone3.xml` | `GA_RCLIENT` | 每一個 `map\<編號>\*.s32／*.seg` 用 MapEditor 的圖塊管線畫整張全貌到 `img/maps/full/R-<編號>.png`（最長邊 4096），列表縮圖是從全貌縮小的。381 名稱先用 MapEditor `mapnames.txt`，沒有的再查後端 `mapids`；R 名稱取 zone3 同編號第一個區域。點縮圖可單獨放大 |
 | 天堂R UI 解包 | 桌面 `LineageTool_20230627\_PakOutput` | `GA_R_PAKOUTPUT` | `UI\**\*.png`（略過 Sample／FX_）、`Image\PO_*.png` 立繪 |
 
 ### 狀態圖示分頁怎麼對應（statusicons.py）

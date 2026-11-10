@@ -33,6 +33,7 @@ r"""381 → R 版道具、技能圖示對照網頁的建置腳本（2026-11-04�
 import argparse
 from collections import Counter
 import configparser
+import html as html_lib
 import io
 import json
 import os
@@ -1122,10 +1123,40 @@ def import_r_images(out_dir):
     return ui_rows, portrait_rows, skipped_fx
 
 
+def export_map_overviews(out_dir):
+    """用 MapEditor 的圖塊管線畫每張地圖的全貌（最長邊 4096），再縮小成列表縮圖。已有的全貌略過。"""
+    exe = os.path.join(MAPEDITOR, 'MapEditor.exe')
+    full_dir = os.path.join(out_dir, 'img', 'maps', 'full')
+    thumb_dir = os.path.join(out_dir, 'img', 'maps')
+    os.makedirs(full_dir, exist_ok=True)
+    if not os.path.isfile(exe):
+        print('地圖全貌：找不到 %s' % exe)
+        return
+    print('地圖全貌：%s --client %s overview-all' % (exe, RCLIENT))
+    result = subprocess.run([exe, '--client', RCLIENT, 'overview-all', full_dir, '4096'])
+    if result.returncode != 0:
+        print('地圖全貌：MapEditor 結束碼 %s' % result.returncode)
+    try:
+        from PIL import Image
+    except ImportError:
+        print('地圖縮圖：沒有 Pillow，列表仍用舊縮圖')
+        return
+    made = 0
+    for name in os.listdir(full_dir):
+        if not name.lower().endswith('.png'):
+            continue
+        with Image.open(os.path.join(full_dir, name)) as image:
+            image.thumbnail((420, 420), Image.Resampling.LANCZOS)
+            image.save(os.path.join(thumb_dir, name))
+        made += 1
+    print('地圖縮圖：由全貌縮小 %d 張' % made)
+
+
 def import_assets(out_dir):
     data = load_icon_data(out_dir)
     maps = scan_maps()
     mappreview.render(os.path.join(RCLIENT, 'map'), os.path.join(out_dir, 'img', 'maps'), maps)
+    export_map_overviews(out_dir)
     data['maps'] = maps
     ui_rows, portrait_rows, skipped_fx = import_r_images(out_dir)
     data['ui'] = ui_rows
@@ -1186,6 +1217,201 @@ def import_drive_index(out_dir, listing_path):
     return 0
 
 
+DRIVE_MAP_VERSIONS = (('R版地圖', 'r'), ('381版地圖', '381'))
+
+
+def drive_list_folder(folder_id):
+    """公開分享的 Drive 資料夾：讀 embeddedfolderview 頁面，回傳 [(id, 名稱, 是否資料夾)]。不需要授權。"""
+    import time
+    import urllib.request
+    url = 'https://drive.google.com/embeddedfolderview?id=' + folder_id
+    last_error = None
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(url, timeout=60) as resp:
+                html = resp.read().decode('utf-8', 'replace')
+            break
+        except Exception as exc:  # 網路偶發錯誤：重試
+            last_error = exc
+            time.sleep(1.5 * (attempt + 1))
+    else:
+        raise RuntimeError('讀不到 Drive 資料夾 %s：%s' % (folder_id, last_error))
+    entries = []
+    for chunk in html.split('class="flip-entry"')[1:]:
+        found_id = re.search(r'id="entry-([A-Za-z0-9_-]+)"', chunk)
+        found_title = re.search(r'flip-entry-title">([^<]*)<', chunk)
+        if not found_id or not found_title:
+            continue
+        title = html_lib.unescape(found_title.group(1)).strip()
+        # 資料夾的連結是 /drive/folders/<id>，檔案是 /file/d/<id>
+        is_folder = ('/drive/folders/' + found_id.group(1)) in chunk
+        entries.append((found_id.group(1), title, is_folder))
+    return entries
+
+
+def drive_map_version(folder_id):
+    """一個版本的資料夾（裡面有 map/、Tile.idx、Tile.pak）→ {'tileIdx', 'tilePak', 'maps': {編號: {檔名: ID}}}。"""
+    from concurrent.futures import ThreadPoolExecutor
+    top = {title.lower(): (fid, is_folder) for fid, title, is_folder in drive_list_folder(folder_id)}
+    for need in ('map', 'tile.idx', 'tile.pak'):
+        if need not in top:
+            raise RuntimeError('Drive 資料夾 %s 缺少 %s' % (folder_id, need))
+    folders = []
+    for fid, title, is_folder in drive_list_folder(top['map'][0]):
+        if is_folder and title.isdigit() and len(title) <= 6:
+            folders.append((int(title), fid))
+    print('  map 資料夾 %d 個，逐一列出檔案…' % len(folders))
+
+    def list_blocks(item):
+        mid, fid = item
+        chosen = {}
+        for file_id, name, is_folder in drive_list_folder(fid):
+            low = name.lower()
+            if is_folder or not (low.endswith('.s32') or low.endswith('.seg')):
+                continue
+            stem = os.path.splitext(name)[0]
+            if parse_block_stem(stem) is None:
+                continue
+            key = stem.lower()
+            # Lin.bin 0x435310：.s32 優先，缺檔才讀同名 .seg（同 MapEditor listMapBlocks）
+            if key in chosen and low.endswith('.seg'):
+                continue
+            chosen[key] = (key + ('.seg' if low.endswith('.seg') else '.s32'), file_id)
+        return mid, chosen
+
+    maps = {}
+    done = 0
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        for mid, chosen in pool.map(list_blocks, folders):
+            done += 1
+            if chosen:
+                maps[str(mid)] = {name: file_id for name, file_id in sorted(chosen.values())}
+            if done % 100 == 0 or done == len(folders):
+                print('  %d／%d' % (done, len(folders)))
+    return {'tileIdx': top['tile.idx'][0], 'tilePak': top['tile.pak'][0], 'maps': maps}
+
+
+def import_drive_maps(out_dir, root_id):
+    """公開的 Drive 地圖根資料夾（R版地圖／381版地圖）→ map-drive-ids.js，給網頁的地圖檢視器分段讀 Tile.pak 與 .s32。"""
+    root = {title: fid for fid, title, is_folder in drive_list_folder(root_id) if is_folder}
+    result = {}
+    for title, key in DRIVE_MAP_VERSIONS:
+        if title not in root:
+            print('Drive 地圖：根資料夾沒有「%s」，略過' % title)
+            continue
+        print('Drive 地圖：%s' % title)
+        result[key] = drive_map_version(root[title])
+        blocks = sum(len(v) for v in result[key]['maps'].values())
+        print('  %d 張地圖、%d 個地圖塊' % (len(result[key]['maps']), blocks))
+    if not result:
+        raise RuntimeError('Drive 地圖根資料夾裡沒有可用的版本資料夾')
+    names = load_map_names()
+    sql_names = load_sql_map_names()
+    names381 = {}
+    for key in result:
+        for mid in result[key]['maps']:
+            label = names.get(int(mid)) or sql_names.get(int(mid))
+            if label:
+                names381[mid] = label
+    result['names381'] = names381
+    output = os.path.join(out_dir, 'map-drive-ids.js')
+    with open(output, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('window.MAP_DRIVE = ')
+        json.dump(result, f, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+        f.write(';\n')
+    print('已寫入 %s' % output)
+    return 0
+
+
+def serve(port):
+    """本機開網站（GameAssets 根目錄），並提供跟 Vercel 函式 api/drive.js 相同規則的 /api/drive 轉送，給地圖檢視器測試。"""
+    import http.server
+    import urllib.parse
+    import urllib.request
+    root = os.path.dirname(OUT)
+    ids_path = os.path.join(OUT, 'map-drive-ids.js')
+    with open(ids_path, encoding='utf-8') as f:
+        text = f.read()
+    data = json.loads(text[text.index('{'):text.rindex('}') + 1])
+    files = set()
+    paks = set()
+    for value in data.values():
+        if not isinstance(value, dict) or 'maps' not in value:
+            continue
+        files.add(value['tileIdx'])
+        paks.add(value['tilePak'])
+        for blocks in value['maps'].values():
+            files.update(blocks.values())
+    max_len = 4 * 1024 * 1024
+
+    class Handler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *a, **kw):
+            super().__init__(*a, directory=root, **kw)
+
+        def fail(self, status, message):
+            body = message.encode('utf-8')
+            self.send_response(status)
+            self.send_header('Content-Type', 'text/plain; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            parsed = urllib.parse.urlparse(self.path)
+            if parsed.path != '/api/drive':
+                return super().do_GET()
+            q = urllib.parse.parse_qs(parsed.query)
+            file_id = (q.get('id') or [''])[0]
+            has_range = 'start' in q
+            try:
+                start = int((q.get('start') or ['0'])[0])
+                length = int((q.get('len') or ['0'])[0])
+            except ValueError:
+                return self.fail(400, '範圍不合理')
+            is_pak = file_id in paks
+            if not is_pak and file_id not in files:
+                return self.fail(404, '不在地圖檔案清單內')
+            if has_range and (start < 0 or length <= 0 or length > max_len):
+                return self.fail(400, '範圍不合理')
+            if not has_range and is_pak:
+                return self.fail(400, 'Tile.pak 必須指定範圍')
+            req = urllib.request.Request(
+                'https://drive.usercontent.google.com/download?id=%s&export=download&confirm=t' % file_id)
+            if has_range:
+                req.add_header('Range', 'bytes=%d-%d' % (start, start + length - 1))
+            try:
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    status = resp.status
+                    ctype = resp.headers.get('Content-Type', '')
+                    body = resp.read()
+            except Exception as exc:
+                return self.fail(502, 'Drive 連線失敗：%s' % exc)
+            if (has_range and status != 206) or (not has_range and status != 200) or 'text/html' in ctype:
+                return self.fail(502, 'Drive 回應 %s %s' % (status, ctype))
+            if has_range and len(body) != length:
+                return self.fail(502, '分段長度不符')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/octet-stream')
+            self.send_header('Content-Length', str(len(body)))
+            self.send_header('Cache-Control', 'public, max-age=86400')
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_request(self, code='-', size='-'):
+            # 轉送成功的不印（一張地圖會有上千筆）
+            if self.path.startswith('/api/drive') and str(code) == '200':
+                return
+            super().log_request(code, size)
+
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', port), Handler)
+    print('網站：http://127.0.0.1:%d/icon-compare/（Ctrl+C 結束）' % port)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description='381 → R 圖示對照網頁建置')
     ap.add_argument('--out', help='輸出資料夾（預設 GameAssets\\icon-compare）')
@@ -1197,6 +1423,10 @@ if __name__ == '__main__':
                          help='掃天堂R主程式地圖、畫縮圖，並從 _PakOutput 複製 UI／立繪 PNG 寫進 data.js')
     actions.add_argument('--drive-index', metavar='清單.json',
                          help='讀取 rclone lsjson 清單，建立 Drive 圖片路徑與 ID 對照')
+    actions.add_argument('--drive-maps', metavar='資料夾ID',
+                         help='列出公開 Drive 地圖根資料夾（R版地圖／381版地圖）的檔案 ID，寫成 map-drive-ids.js')
+    actions.add_argument('--serve', metavar='埠', type=int, nargs='?', const=8765,
+                         help='本機開網站並轉送 /api/drive（地圖檢視器測試用，預設埠 8765）')
     actions.add_argument('--import-bmp', metavar='資料夾', help='匯入 LineageTool BMP 與 INI，不覆蓋既有 381 PNG（需要 Pillow）')
     actions.add_argument('--center-381', action='store_true', help='置中道具及技能對照的 381 PNG，備份原圖（需要 Pillow）')
     actions.add_argument('--style-preview', metavar='圖號', nargs='+', type=int,
@@ -1215,6 +1445,10 @@ if __name__ == '__main__':
         sys.exit(import_assets(OUT))
     if args.drive_index:
         sys.exit(import_drive_index(OUT, args.drive_index))
+    if args.drive_maps:
+        sys.exit(import_drive_maps(OUT, args.drive_maps))
+    if args.serve:
+        sys.exit(serve(args.serve))
     if args.import_bmp:
         import_bmp(args.import_bmp)
         sys.exit(0)

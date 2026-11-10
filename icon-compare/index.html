@@ -260,6 +260,37 @@ main {
 .map-view-stage.is-drag {
     cursor: grabbing;
 }
+.map-view-stage .map-canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+}
+.map-view-note {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: min(520px, 90%);
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    line-height: 1.6;
+}
+.map-view-status {
+    padding: 6px 14px;
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.map-card .ver {
+    color: var(--muted);
+}
 .map-view-stage img {
     position: absolute;
     left: 50%;
@@ -630,18 +661,25 @@ select {
 <div id="mapView" class="map-view" hidden>
     <div class="map-view-bar">
         <div class="map-view-title" id="mapViewTitle"></div>
+        <div class="subtabs" id="mapVersion">
+            <button type="button" data-ver="r" aria-pressed="true">R 版</button>
+            <button type="button" data-ver="381" aria-pressed="false">381 版</button>
+        </div>
         <button type="button" data-zoom="in">放大</button>
         <button type="button" data-zoom="out">縮小</button>
         <button type="button" data-zoom="reset">整張</button>
         <button type="button" id="mapViewClose">關閉</button>
     </div>
     <div class="map-view-stage" id="mapViewStage">
-        <img id="mapViewImg" alt="">
+        <img id="mapViewImg" alt="" hidden>
+        <div class="map-view-note" id="mapViewNote" hidden></div>
     </div>
+    <div class="map-view-status" id="mapViewStatus"></div>
 </div>
 <script src="data.js"></script>
 <script src="drive-image-ids.js"></script>
 <script src="image-sources.js"></script>
+<script src="map-viewer.js"></script>
 <script>
 (function () {
     var DATA = window.ICON_DATA;
@@ -687,6 +725,8 @@ select {
             state.page = Math.max(0, (parseInt(p[1], 10) || 1) - 1);
         } else if (p[0] === 'map') {
             state.openMap = parseInt(p[1], 10);
+        } else if (p[0] === 'ver' && (p[1] === 'r' || p[1] === '381')) {
+            state.openVer = p[1];
         }
     });
 
@@ -927,7 +967,14 @@ select {
         $('assetSel').hidden = true;
         $('q').placeholder = '搜尋地圖編號或名稱';
         var q = state.q.trim().toLowerCase();
-        var rows = DATA.maps || [];
+        if (!window.MAP_DRIVE && !mapDriveFailed) {
+            loadMapDrive(function () {
+                if (state.tab === 'map') {
+                    renderMaps();
+                }
+            });
+        }
+        var rows = mapRows();
         var list = rows.filter(function (r) {
             if (!q) {
                 return true;
@@ -942,13 +989,19 @@ select {
         slice.forEach(function (r) {
             var img = r.file
                 ? '<img loading="lazy" decoding="async" alt="" src="' + window.assetImageUrl('img/maps/' + r.file) + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">'
-                : '<div class="map-missing">缺圖</div>';
+                : '<div class="map-missing">' + (r.only381 ? '只有 381 版（點開看）' : '缺圖') + '</div>';
+            var ver = '';
+            if (window.MAP_DRIVE) {
+                ver = '<div class="meta ver">雲端：' +
+                    (mapFiles('r', r.id) ? 'R 版' : '<s>R 版</s>') + '　' +
+                    (mapFiles('381', r.id) ? '381 版' : '<s>381 版</s>') + '</div>';
+            }
             html.push('<div class="asset-card map-card" data-map="' + r.id + '">' + img +
                 '<div class="name">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
                 '<div class="name">R　' + esc(r.nameR || '未知') + '</div>' +
                 '<div class="meta">地圖 ' + r.id + '</div>' +
-                '<div class="meta">X ' + r.startX + '～' + r.endX + '</div>' +
-                '<div class="meta">Y ' + r.startY + '～' + r.endY + '</div></div>');
+                (r.startX !== undefined ? '<div class="meta">X ' + r.startX + '～' + r.endX + '</div>' +
+                    '<div class="meta">Y ' + r.startY + '～' + r.endY + '</div>' : '') + ver + '</div>');
         });
         $('grid').className = 'map-grid';
         $('grid').innerHTML = html.join('') || '<div class="empty-state">沒有符合的地圖。</div>';
@@ -962,7 +1015,7 @@ select {
                 unknownR++;
             }
         });
-        $('summary').textContent = '地圖：點一張可單獨放大（滾輪縮放、拖曳移動）。放大用的是 MapEditor 同一套圖塊畫出來的整張圖，不是色塊縮圖。381 名稱先用 mapnames.txt，沒有的再查後端 mapids；R 名稱用 zone3.xml 同編號的第一個區域。本頁 ' +
+        $('summary').textContent = '地圖：點一張開啟地圖檢視器（MapEditor 看地圖的網頁版：從 Google 雲端讀 .s32 與 Tile.pak 即時畫，可切 R 版／381 版，滾輪縮放、拖曳移動、雙擊放大）。381 名稱先用 mapnames.txt，沒有的再查後端 mapids；R 名稱用 zone3.xml 同編號的第一個區域。本頁 ' +
             list.length + ' 張（全部 ' + rows.length + '，381 未知 ' + unknown381 + '，R 未知 ' + unknownR + '）。';
         writeHash('&f=' + state.f + (state.q ? '&q=' + encodeURIComponent(state.q) : '') + '&p=' + (state.page + 1));
     }
@@ -1254,13 +1307,73 @@ select {
         }
     }
 
-    var mapZoom = 1;
-    var mapPanX = 0;
-    var mapPanY = 0;
-    var mapDrag = null;
+    // ---- 地圖檢視器（map-viewer.js、map-worker.js；資料清單 map-drive-ids.js 用到時才載入）----
+    var mapDriveFailed = false;
+    var mapDriveWaiters = null;
+    var mapOpen = null;     // { row, version }
+
+    function loadMapDrive(done) {
+        if (window.MAP_DRIVE) {
+            done();
+            return;
+        }
+        if (mapDriveWaiters) {
+            mapDriveWaiters.push(done);
+            return;
+        }
+        mapDriveWaiters = [done];
+        var s = document.createElement('script');
+        s.src = 'map-drive-ids.js';
+        s.onload = function () {
+            var list = mapDriveWaiters;
+            mapDriveWaiters = null;
+            list.forEach(function (f) {
+                f();
+            });
+        };
+        s.onerror = function () {
+            mapDriveFailed = true;
+            var list = mapDriveWaiters;
+            mapDriveWaiters = null;
+            list.forEach(function (f) {
+                f();
+            });
+        };
+        document.head.appendChild(s);
+    }
+
+    function mapFiles(version, id) {
+        var src = window.MAP_DRIVE && window.MAP_DRIVE[version];
+        return src && src.maps ? src.maps[String(id)] || null : null;
+    }
+
+    // 列表：R 主程式掃到的地圖（data.js）＋雲端只有 381 版的地圖
+    function mapRows() {
+        var rows = (DATA.maps || []).slice();
+        var src381 = window.MAP_DRIVE && window.MAP_DRIVE['381'];
+        if (!src381) {
+            return rows;
+        }
+        var have = {};
+        rows.forEach(function (r) {
+            have[r.id] = 1;
+        });
+        var names = window.MAP_DRIVE.names381 || {};
+        Object.keys(src381.maps).forEach(function (k) {
+            var id = parseInt(k, 10);
+            if (have[id]) {
+                return;
+            }
+            rows.push({ id: id, name381: names[k] || '未知', name381Src: names[k] ? 'mapnames' : 'unknown', nameR: '', only381: true });
+        });
+        rows.sort(function (a, b) {
+            return a.id - b.id;
+        });
+        return rows;
+    }
 
     function mapById(id) {
-        var rows = DATA.maps || [];
+        var rows = mapRows();
         for (var i = 0; i < rows.length; i++) {
             if (rows[i].id === id) {
                 return rows[i];
@@ -1269,88 +1382,99 @@ select {
         return null;
     }
 
-    function applyMapTransform() {
-        var img = $('mapViewImg');
-        img.style.transform = 'translate(calc(-50% + ' + mapPanX + 'px), calc(-50% + ' + mapPanY + 'px)) scale(' + mapZoom + ')';
+    function mapNote(html) {
+        $('mapViewNote').innerHTML = html;
+        $('mapViewNote').hidden = !html;
     }
 
-    function openMap(r) {
+    function showMapVersion() {
+        var r = mapOpen.row;
+        var version = mapOpen.version;
+        Array.prototype.forEach.call($('mapVersion').querySelectorAll('button'), function (b) {
+            b.setAttribute('aria-pressed', b.dataset.ver === version ? 'true' : 'false');
+            b.disabled = !mapFiles(b.dataset.ver, r.id);
+        });
+        window.MapViewer.close();
+        $('mapViewImg').hidden = true;
+        $('mapViewStatus').textContent = '';
+        var files = mapFiles(version, r.id);
+        if (!window.MapViewer.supported()) {
+            mapNote('地圖檢視器要用網址開（https 或 http://localhost），用 file:// 開瀏覽器不准跑背景執行緒。下面先顯示預先畫好的整張圖。');
+            $('mapViewImg').hidden = false;
+            $('mapViewImg').src = window.assetImageUrl('img/maps/full/R-' + r.id + '.png');
+            return;
+        }
+        if (!files) {
+            mapNote(mapDriveFailed ? '讀不到 map-drive-ids.js（雲端檔案清單），請先執行 build.py --drive-maps。' : '雲端的' + (version === 'r' ? ' R 版' : ' 381 版') + '沒有這張地圖。');
+            return;
+        }
+        mapNote('');
+        window.MapViewer.open($('mapViewStage'), {
+            version: version,
+            mapId: r.id,
+            source: window.MAP_DRIVE[version],
+            files: files,
+            onStatus: function (text) {
+                $('mapViewStatus').textContent = (version === 'r' ? 'R 版' : '381 版') + '｜' + text;
+            },
+        });
+        writeHash('&map=' + r.id + '&ver=' + version);
+    }
+
+    function openMap(r, version) {
         if (!r) {
             return;
         }
-        mapZoom = 1;
-        mapPanX = 0;
-        mapPanY = 0;
-        var img = $('mapViewImg');
-        img.onerror = function () {
-            img.onerror = null;
-            if (r.file) {
-                img.src = window.assetImageUrl('img/maps/' + r.file);
-            }
-        };
-        img.src = window.assetImageUrl('img/maps/full/R-' + r.id + '.png');
-        img.alt = (r.name381 || r.name || '') + ' / ' + (r.nameR || '');
         $('mapViewTitle').innerHTML = '<div class="name">地圖 ' + r.id + '</div>' +
             '<div class="meta">381　' + esc(r.name381 || r.name || '未知') + '</div>' +
             '<div class="meta">R　' + esc(r.nameR || '未知') + '</div>' +
-            '<div class="meta">X ' + r.startX + '～' + r.endX + '　Y ' + r.startY + '～' + r.endY + '</div>';
+            (r.startX !== undefined ? '<div class="meta">X ' + r.startX + '～' + r.endX + '　Y ' + r.startY + '～' + r.endY + '</div>' : '');
         $('mapView').hidden = false;
-        applyMapTransform();
+        mapNote('讀取雲端檔案清單中…');
+        loadMapDrive(function () {
+            if ($('mapView').hidden) {
+                return;
+            }
+            var ver = version;
+            if (ver !== 'r' && ver !== '381') {
+                ver = mapFiles('r', r.id) ? 'r' : '381';
+            }
+            mapOpen = { row: r, version: ver };
+            showMapVersion();
+        });
     }
 
     function closeMap() {
         $('mapView').hidden = true;
+        mapOpen = null;
+        if (window.MapViewer) {
+            window.MapViewer.close();
+        }
         $('mapViewImg').removeAttribute('src');
     }
 
     $('mapViewClose').addEventListener('click', closeMap);
+    $('mapVersion').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-ver]');
+        if (!b || b.disabled || !mapOpen || mapOpen.version === b.dataset.ver) {
+            return;
+        }
+        mapOpen.version = b.dataset.ver;
+        showMapVersion();
+    });
     $('mapView').addEventListener('click', function (e) {
         var zoom = e.target.closest('button[data-zoom]');
         if (!zoom) {
             return;
         }
         if (zoom.dataset.zoom === 'in') {
-            mapZoom = Math.min(8, mapZoom * 1.25);
+            window.MapViewer.zoomBy(1.5);
         } else if (zoom.dataset.zoom === 'out') {
-            mapZoom = Math.max(0.4, mapZoom / 1.25);
+            window.MapViewer.zoomBy(1 / 1.5);
         } else {
-            mapZoom = 1;
-            mapPanX = 0;
-            mapPanY = 0;
+            window.MapViewer.fit();
         }
-        applyMapTransform();
     });
-    $('mapViewStage').addEventListener('wheel', function (e) {
-        if ($('mapView').hidden) {
-            return;
-        }
-        e.preventDefault();
-        var next = e.deltaY < 0 ? mapZoom * 1.12 : mapZoom / 1.12;
-        mapZoom = Math.max(0.4, Math.min(8, next));
-        applyMapTransform();
-    }, { passive: false });
-    $('mapViewStage').addEventListener('pointerdown', function (e) {
-        if (e.button !== 0) {
-            return;
-        }
-        mapDrag = { x: e.clientX, y: e.clientY, px: mapPanX, py: mapPanY };
-        $('mapViewStage').classList.add('is-drag');
-        $('mapViewStage').setPointerCapture(e.pointerId);
-    });
-    $('mapViewStage').addEventListener('pointermove', function (e) {
-        if (!mapDrag) {
-            return;
-        }
-        mapPanX = mapDrag.px + (e.clientX - mapDrag.x);
-        mapPanY = mapDrag.py + (e.clientY - mapDrag.y);
-        applyMapTransform();
-    });
-    function endMapDrag() {
-        mapDrag = null;
-        $('mapViewStage').classList.remove('is-drag');
-    }
-    $('mapViewStage').addEventListener('pointerup', endMapDrag);
-    $('mapViewStage').addEventListener('pointercancel', endMapDrag);
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !$('mapView').hidden) {
             closeMap();
@@ -1492,7 +1616,9 @@ select {
 
     render();
     if (state.openMap || state.openMap === 0) {
-        openMap(mapById(state.openMap));
+        loadMapDrive(function () {
+            openMap(mapById(state.openMap), state.openVer);
+        });
     }
 })();
 </script>
