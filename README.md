@@ -49,6 +49,8 @@ python icon-compare/_build/build.py --drive-index <清單路徑>
 - 轉送：Drive 會擋瀏覽器跨站讀取（回 403），所以一律經網站自己的 `/api/drive`（Vercel 函式 `api/drive.js`），只轉送清單裡的檔案，Tile.pak 一次最多讀 4MB，回應交給 Vercel CDN 快取。Netlify 目前沒有對應的函式，地圖檢視器只在 Vercel 能用。
 - 本機測試：`python icon-compare/_build/build.py --serve`，開 `http://127.0.0.1:8765/icon-compare/`（用 `file://` 開不能跑背景執行緒，會改顯示預先畫好的全貌圖）。
 - 程式：`icon-compare/map-viewer.js`（鏡頭、縮放、挑層、排程）、`icon-compare/map-worker.js`（背景執行緒：Tile.idx／.til 解析、Brotli 解壓、地圖塊繪製、多層縮小圖），對應的 MapEditor 函式寫在檔頭註解。Brotli 解碼用 `icon-compare/vendor/brotli-decode.min.js`（Google brotli v1.1.0，MIT）。
+- 列表縮圖：`python icon-compare/_build/build.py --map-thumbs` 把 `img/maps/R-<編號>.png` 轉成 `icon-compare/map-thumbs/R-<編號>.webp`（最長邊 360，全部約 12MB，進 git），線上列表直接用；沒有的才退回舊的 `img/maps`。只有 381 版的地圖沒有縮圖。
+- 預載：開地圖時另一個背景執行緒把這張地圖的地圖塊和用到的圖塊全部下載進快取，狀態列顯示「預載 n／m 個檔」，完成顯示「整張已存進快取」。換地圖時舊地圖還沒做完的下載與繪製會取消。
 - 讀過的檔案存在瀏覽器的 Cache Storage，同一台電腦第二次開很快（2026-11-10 實測地圖 4、602 塊約 20 秒畫完；第一次要先從雲端下載，要好幾分鐘）。
 - 跟 MapEditor 的差別：不畫角色、建築遮擋淡出、格線與通行屬性。
 

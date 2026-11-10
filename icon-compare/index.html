@@ -987,8 +987,11 @@ select {
         var slice = list.slice(start, start + PAGE);
         var html = [];
         slice.forEach(function (r) {
+            // 縮圖先用進 git 的 map-thumbs/*.webp（build.py --map-thumbs），沒有再用舊的 img/maps
             var img = r.file
-                ? '<img loading="lazy" decoding="async" alt="" src="' + window.assetImageUrl('img/maps/' + r.file) + '" onerror="this.alt=\'破圖\';this.style.opacity=\'.3\'">'
+                ? '<img loading="lazy" decoding="async" alt="" src="map-thumbs/R-' + r.id + '.webp" data-fallback="' +
+                    window.assetImageUrl('img/maps/' + r.file) +
+                    '" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=\'\';}else{this.alt=\'破圖\';this.style.opacity=\'.3\';}">'
                 : '<div class="map-missing">' + (r.only381 ? '只有 381 版（點開看）' : '缺圖') + '</div>';
             var ver = '';
             if (window.MAP_DRIVE) {

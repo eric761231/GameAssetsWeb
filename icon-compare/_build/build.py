@@ -1323,6 +1323,38 @@ def import_drive_maps(out_dir, root_id):
     return 0
 
 
+def export_map_thumbs(out_dir):
+    """img/maps/R-<編號>.png（不進 git）→ map-thumbs/R-<編號>.webp（最長邊 360，約 10KB，進 git 給線上地圖列表用）。"""
+    from PIL import Image
+    src_dir = os.path.join(out_dir, 'img', 'maps')
+    dest_dir = os.path.join(out_dir, 'map-thumbs')
+    os.makedirs(dest_dir, exist_ok=True)
+    made = 0
+    kept = 0
+    failed = []
+    for name in sorted(os.listdir(src_dir)):
+        if not (name.startswith('R-') and name.lower().endswith('.png')):
+            continue
+        src = os.path.join(src_dir, name)
+        dest = os.path.join(dest_dir, os.path.splitext(name)[0] + '.webp')
+        if os.path.isfile(dest) and os.path.getmtime(dest) >= os.path.getmtime(src):
+            kept += 1
+            continue
+        try:
+            with Image.open(src) as image:
+                image = image.convert('RGBA')
+                image.thumbnail((360, 360), Image.Resampling.LANCZOS)
+                image.save(dest, 'WEBP', quality=78, method=4)
+            made += 1
+        except Exception as exc:
+            failed.append('%s：%s' % (name, exc))
+    total = sum(os.path.getsize(os.path.join(dest_dir, n)) for n in os.listdir(dest_dir))
+    print('地圖縮圖：新寫 %d 張、已有 %d 張，map-thumbs 共 %.1f MB' % (made, kept, total / 1048576.0))
+    for line in failed:
+        print('  轉不出來 ' + line)
+    return 1 if failed else 0
+
+
 def serve(port):
     """本機開網站（GameAssets 根目錄），並提供跟 Vercel 函式 api/drive.js 相同規則的 /api/drive 轉送，給地圖檢視器測試。"""
     import http.server
@@ -1425,6 +1457,8 @@ if __name__ == '__main__':
                          help='讀取 rclone lsjson 清單，建立 Drive 圖片路徑與 ID 對照')
     actions.add_argument('--drive-maps', metavar='資料夾ID',
                          help='列出公開 Drive 地圖根資料夾（R版地圖／381版地圖）的檔案 ID，寫成 map-drive-ids.js')
+    actions.add_argument('--map-thumbs', action='store_true',
+                         help='把 img/maps 的地圖縮圖轉成小 WebP 到 map-thumbs/（進 git，線上列表用；需要 Pillow）')
     actions.add_argument('--serve', metavar='埠', type=int, nargs='?', const=8765,
                          help='本機開網站並轉送 /api/drive（地圖檢視器測試用，預設埠 8765）')
     actions.add_argument('--import-bmp', metavar='資料夾', help='匯入 LineageTool BMP 與 INI，不覆蓋既有 381 PNG（需要 Pillow）')
@@ -1447,6 +1481,8 @@ if __name__ == '__main__':
         sys.exit(import_drive_index(OUT, args.drive_index))
     if args.drive_maps:
         sys.exit(import_drive_maps(OUT, args.drive_maps))
+    if args.map_thumbs:
+        sys.exit(export_map_thumbs(OUT))
     if args.serve:
         sys.exit(serve(args.serve))
     if args.import_bmp:

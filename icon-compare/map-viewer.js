@@ -19,6 +19,8 @@
     var workers = [];
     var jobSeq = 0;
     var view = null;
+    var session = 0;          // 每開一張地圖加一；背景執行緒放棄舊 session 的工作
+    var prefetcher = null;    // 專門預載的背景執行緒（不跟繪製搶下載位置）
 
     function blockBegin(b) {
         return (b - BLOCK_BIAS) * BLOCK_SIZE;
@@ -46,7 +48,25 @@
             }(slot));
             workers.push(slot);
         }
+        if (!prefetcher) {
+            prefetcher = new Worker('map-worker.js', { type: 'module' });
+            prefetcher.onmessage = function (event) {
+                if (view && event.data.session === session) {
+                    view.onPrefetch(event.data);
+                }
+            };
+        }
         return workers;
+    }
+
+    function broadcastSession() {
+        session++;
+        workers.forEach(function (s) {
+            s.worker.postMessage({ type: 'session', session: session });
+        });
+        if (prefetcher) {
+            prefetcher.postMessage({ type: 'session', session: session });
+        }
     }
 
     function idleWorker() {
@@ -318,6 +338,7 @@
             slot.worker.postMessage({
                 type: 'render',
                 job: job,
+                session: this.session,
                 version: this.opts.version,
                 source: { tileIdx: this.source.tileIdx, tilePak: this.source.tilePak },
                 files: this.files,
@@ -372,6 +393,17 @@
         this.dirty = true;
     };
 
+    View.prototype.onPrefetch = function (msg) {
+        if (msg.type === 'progress') {
+            this.prefetch = msg;
+        } else if (msg.type === 'prefetched') {
+            this.prefetchDone = true;
+            this.prefetchError = msg.error || '';
+            this.failed = {};   // 檔案都進快取了，失敗的地圖塊馬上重畫
+        }
+        this.dirty = true;
+    };
+
     // 大的層有記憶體上限，最久沒用的先丟（之後要用再重畫）
     View.prototype.trim = function () {
         if (this.bigBytes <= BIG_BUDGET) {
@@ -409,6 +441,14 @@
         var text = '縮放 ' + Math.round(this.zoom * 1000) / 10 + '%｜已畫 ' + ready + '／' + this.blocks.length + ' 塊';
         if (this.inFlightCount > 0 || (this.wanted && this.wanted.length)) {
             text += '｜讀取中…';
+        }
+        if (this.prefetchDone) {
+            text += this.prefetchError ? '｜預載失敗：' + this.prefetchError : '｜整張已存進快取';
+        } else if (this.prefetch) {
+            var p = this.prefetch;
+            text += '｜預載 ' + p.done + '／' + p.total + ' 個檔（從雲端下載 ' + p.fetched + '）';
+        } else {
+            text += '｜預載準備中…';
         }
         if (this.failCount) {
             text += '｜失敗 ' + this.failCount + ' 次（' + (this.lastError || '') + '，稍後重試）';
@@ -522,13 +562,24 @@
         open: function (stage, opts) {
             this.close();
             ensureWorkers();
+            broadcastSession();
             view = new View(stage, opts);
+            view.session = session;
+            // 預載這張地圖的所有檔案（地圖塊與用到的圖塊）進瀏覽器快取
+            prefetcher.postMessage({
+                type: 'prefetch',
+                session: session,
+                version: opts.version,
+                source: { tileIdx: opts.source.tileIdx, tilePak: opts.source.tilePak },
+                files: opts.files,
+            });
             return view;
         },
         close: function () {
             if (view) {
                 view.destroy();
                 view = null;
+                broadcastSession();
             }
         },
         fit: function () {

@@ -40,11 +40,22 @@ function driveUrl(id, start, length) {
 let activeFetches = 0;
 const fetchWaiters = [];
 
-async function withFetchSlot(task) {
+// 換地圖時主執行緒送新的 session；舊地圖還在排隊的下載與繪製直接放棄，不佔位置
+let currentSession = 0;
+const CANCELLED = new Error('已換地圖，取消');
+
+async function withFetchSlot(task, session) {
     while (activeFetches >= FETCH_LIMIT) {
         await new Promise((resolve) => {
             fetchWaiters.push(resolve);
         });
+    }
+    if (session !== undefined && session !== currentSession) {
+        const next = fetchWaiters.shift();
+        if (next) {
+            next();
+        }
+        throw CANCELLED;
     }
     activeFetches++;
     try {
@@ -98,7 +109,7 @@ async function cachedBytes(key, download) {
     return bytes;
 }
 
-async function fetchWhole(id) {
+async function fetchWhole(id, session) {
     return withFetchSlot(async () => {
         let lastError = null;
         for (let attempt = 0; attempt < 3; attempt++) {
@@ -114,10 +125,10 @@ async function fetchWhole(id) {
             }
         }
         throw new Error('Drive 下載失敗：' + (lastError && lastError.message));
-    });
+    }, session);
 }
 
-async function fetchRange(id, start, length) {
+async function fetchRange(id, start, length, session) {
     if (length <= 0) {
         return new Uint8Array(0);
     }
@@ -126,7 +137,7 @@ async function fetchRange(id, start, length) {
         const parts = [];
         for (let at = 0; at < length; at += RANGE_CHUNK) {
             const size = Math.min(RANGE_CHUNK, length - at);
-            parts.push(fetchRange(id, start + at, size).then((bytes) => {
+            parts.push(fetchRange(id, start + at, size, session).then((bytes) => {
                 out.set(bytes, at);
             }));
         }
@@ -152,7 +163,7 @@ async function fetchRange(id, start, length) {
             }
         }
         throw new Error('Drive 分段讀取失敗：' + (lastError && lastError.message));
-    });
+    }, session);
 }
 
 // ---------------------------------------------------------------------------
@@ -324,7 +335,7 @@ function trimTiles(state, keep) {
     }
 }
 
-function loadTile(state, tileId) {
+function loadTile(state, tileId, session) {
     if (state.tiles.has(tileId)) {
         const value = state.tiles.get(tileId);
         touchTile(state, tileId, value);
@@ -341,7 +352,7 @@ function loadTile(state, tileId) {
             const stored = entry.flags === 2 ? entry.packed : entry.size;
             try {
                 const raw = await cachedBytes(state.name + '/' + state.tilePak + '/' + tileId + '.til',
-                    () => fetchRange(state.tilePak, entry.offset, stored));
+                    () => fetchRange(state.tilePak, entry.offset, stored, session));
                 let data = null;
                 if (entry.flags === 2) {
                     const out = BrotliDecode(new Int8Array(raw.buffer, raw.byteOffset, raw.byteLength));
@@ -651,35 +662,36 @@ function collectTileIds(parsed, into) {
     }
 }
 
-function loadParsed(state, fileName, fileId) {
-    if (state.parsed.has(fileName)) {
-        const value = state.parsed.get(fileName);
-        state.parsed.delete(fileName);
-        state.parsed.set(fileName, value);
+// 快取鍵用 Drive 檔案 ID：不同地圖有同名的地圖塊（例如 7fff8000.s32），用檔名會拿到上一張地圖的資料
+function loadParsed(state, fileName, fileId, session) {
+    if (state.parsed.has(fileId)) {
+        const value = state.parsed.get(fileId);
+        state.parsed.delete(fileId);
+        state.parsed.set(fileId, value);
         return Promise.resolve(value);
     }
-    if (state.parsedPromises.has(fileName)) {
-        return state.parsedPromises.get(fileName);
+    if (state.parsedPromises.has(fileId)) {
+        return state.parsedPromises.get(fileId);
     }
     const promise = (async () => {
         try {
-            const bytes = await cachedBytes(state.name + '/map/' + fileId, () => fetchWhole(fileId));
+            const bytes = await cachedBytes(state.name + '/map/' + fileId, () => fetchWhole(fileId, session));
             let value = null;
             try {
                 value = parseBlockFile(bytes, fileName.endsWith('.seg'));
             } catch (e) {
                 value = null;
             }
-            state.parsed.set(fileName, value);
+            state.parsed.set(fileId, value);
             while (state.parsed.size > PARSED_BLOCK_LIMIT) {
                 state.parsed.delete(state.parsed.keys().next().value);
             }
             return value;
         } finally {
-            state.parsedPromises.delete(fileName);
+            state.parsedPromises.delete(fileId);
         }
     })();
-    state.parsedPromises.set(fileName, promise);
+    state.parsedPromises.set(fileId, promise);
     return promise;
 }
 
@@ -892,7 +904,26 @@ async function buildLevels(pixels, wantFull) {
     return out;
 }
 
+function checkSession(session) {
+    if (session !== currentSession) {
+        throw CANCELLED;
+    }
+}
+
+// 共用的下載可能是舊地圖發起、被取消的；這張地圖還有效就重來一次
+async function retryIfCancelled(session, task) {
+    try {
+        return await task();
+    } catch (e) {
+        if (e === CANCELLED && session === currentSession) {
+            return task();
+        }
+        throw e;
+    }
+}
+
 async function renderJob(msg) {
+    const session = msg.session;
     const state = versionState(msg.version, msg.source);
     const files = msg.files;
     const neighbors = [];
@@ -906,7 +937,7 @@ async function renderJob(msg) {
             if (!name) {
                 continue;
             }
-            waits.push(loadParsed(state, name, files[name]).then((parsed) => {
+            waits.push(retryIfCancelled(session, () => loadParsed(state, name, files[name], session)).then((parsed) => {
                 if (parsed) {
                     neighbors.push({ bx: nbx, by: nby, parsed: parsed });
                 }
@@ -914,6 +945,7 @@ async function renderJob(msg) {
         }
     }
     await Promise.all(waits);
+    checkSession(session);
     const tileIds = new Set();
     for (const n of neighbors) {
         collectTileIds(n.parsed, tileIds);
@@ -921,17 +953,126 @@ async function renderJob(msg) {
     await loadIndex(state);
     const loads = [];
     for (const id of tileIds) {
-        loads.push(loadTile(state, id).catch(() => null));
+        loads.push(retryIfCancelled(session, () => loadTile(state, id, session)).catch((e) => {
+            if (e === CANCELLED) {
+                throw e;
+            }
+            return null;
+        }));
     }
     await Promise.all(loads);
+    checkSession(session);
     const pixels = renderCanvas(state, msg.bx, msg.by, neighbors);
     const levels = await buildLevels(pixels, msg.wantFull);
     trimTiles(state, tileIds);
     return levels;
 }
 
+// 預載：開地圖時把這張地圖的地圖塊與用到的 .til 全部先下載進 Cache Storage（不解壓、不留在記憶體），
+// 之後畫的時候直接從快取讀。下次再開同一張地圖也不用再向雲端下載。
+const PREFETCH_PARALLEL = 6;
+
+async function hasCached(key) {
+    const cache = await openCache();
+    if (!cache) {
+        return false;
+    }
+    try {
+        return !!(await cache.match('https://ga-map.invalid/' + key));
+    } catch (e) {
+        return false;
+    }
+}
+
+async function runQueue(items, session, worker) {
+    let next = 0;
+    const runners = [];
+    for (let i = 0; i < PREFETCH_PARALLEL; i++) {
+        runners.push((async () => {
+            while (next < items.length) {
+                checkSession(session);
+                const item = items[next++];
+                try {
+                    await worker(item);
+                } catch (e) {
+                    if (e === CANCELLED) {
+                        throw e;
+                    }
+                }
+            }
+        })());
+    }
+    await Promise.all(runners);
+}
+
+async function prefetchJob(msg) {
+    const session = msg.session;
+    const state = versionState(msg.version, msg.source);
+    const names = Object.keys(msg.files);
+    let done = 0;
+    let total = names.length;
+    let fetched = 0;
+    let lastPost = 0;
+    const post = (force) => {
+        const now = Date.now();
+        if (force || now - lastPost > 400) {
+            lastPost = now;
+            self.postMessage({ type: 'progress', session: session, done: done, total: total, fetched: fetched });
+        }
+    };
+    post(true);
+    const index = await loadIndex(state);
+    const tileIds = new Set();
+    // 第一段：地圖塊（小檔），順便收集用到的圖塊
+    await runQueue(names, session, async (name) => {
+        const id = msg.files[name];
+        if (!(await hasCached(state.name + '/map/' + id))) {
+            fetched++;
+        }
+        const parsed = await loadParsed(state, name, id, session);
+        if (parsed) {
+            collectTileIds(parsed, tileIds);
+        }
+        done++;
+        post(false);
+    });
+    // 第二段：圖塊（Tile.pak 分段）
+    const tiles = Array.from(tileIds).filter((id) => index.has(id + '.til'));
+    total = names.length + tiles.length;
+    post(true);
+    await runQueue(tiles, session, async (tileId) => {
+        const entry = index.get(tileId + '.til');
+        const key = state.name + '/' + state.tilePak + '/' + tileId + '.til';
+        if (!(await hasCached(key))) {
+            const stored = entry.flags === 2 ? entry.packed : entry.size;
+            if (stored > 0 && stored <= 32 * 1024 * 1024) {
+                fetched++;
+                await cachedBytes(key, () => fetchRange(state.tilePak, entry.offset, stored, session));
+            }
+        }
+        done++;
+        post(false);
+    });
+    post(true);
+}
+
 self.onmessage = async (event) => {
     const msg = event.data;
+    if (msg.type === 'session') {
+        currentSession = msg.session;
+        return;
+    }
+    if (msg.type === 'prefetch') {
+        try {
+            await prefetchJob(msg);
+            self.postMessage({ type: 'prefetched', session: msg.session });
+        } catch (e) {
+            if (e !== CANCELLED) {
+                self.postMessage({ type: 'prefetched', session: msg.session, error: String(e && e.message || e) });
+            }
+        }
+        return;
+    }
     if (msg.type !== 'render') {
         return;
     }
@@ -940,6 +1081,6 @@ self.onmessage = async (event) => {
         const transfer = Object.keys(levels).map((k) => levels[k]);
         self.postMessage({ type: 'rendered', job: msg.job, levels: levels }, transfer);
     } catch (e) {
-        self.postMessage({ type: 'failed', job: msg.job, error: String(e && e.message || e) });
+        self.postMessage({ type: 'failed', job: msg.job, cancelled: e === CANCELLED, error: String(e && e.message || e) });
     }
 };
